@@ -79,7 +79,7 @@ class BankController extends Controller
     public function edit($id)
     {
         //
-        return view ('bank.edit',['bank' => \App\bank::findOrFail($id)]);
+        return view ('bank.edit',['bank' => \App\Bank::findOrFail($id)]);
     }
 
     /**

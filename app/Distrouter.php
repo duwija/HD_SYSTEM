@@ -10,190 +10,191 @@ use Exception;
 
 class Distrouter extends Model
 {
-	 use softDeletes;
+	use softDeletes;
     //
+	protected $fillable =['name','ip', 'port', 'web','user','password','created_at','updated_at','note','deleted_at'];
 	public function customer()
 	{
 		return $this->hasmany('\App\Customer', 'id_distrouter');
 	}
 
-public static function mikrotik_connection ($host,$user,$pass,$port)
-{
-	 try {
+	public static function mikrotik_connection ($host,$user,$pass,$port)
+	{
+		try {
 
-        $client = new Client([
+			$client = new Client([
             //to login to api
-            'host' => $host,
-            'user' => $user,
-            'pass' => $pass,
-            'port' => $port,
+				'host' => $host,
+				'user' => $user,
+				'pass' => $pass,
+				'port' => $port,
             //data
-            
+				
 
-        ]);
-    }
-    catch (Exception $e)
-    {
-    	 return false;
-    }
-    finally {
-    	return true;
-    }
-}
+			]);
+		}
+		catch (Exception $e)
+		{
+			return false;
+		}
+		finally {
+			return true;
+		}
+	}
 
-   public static function mikrotik_addsecreate($host,$user,$pass,$port,$cid,$cidpass,$profile,$comment)
-     
-    {
+	public static function mikrotik_addsecreate($host,$user,$pass,$port,$cid,$cidpass,$profile,$comment)
+	
+	{
 
-       try {
+		try {
 
-        $client = new Client([
+			$client = new Client([
             //to login to api
-            'host' => $host,
-            'user' => $user,
-            'pass' => $pass,
-            'port' => $port,
+				'host' => $host,
+				'user' => $user,
+				'pass' => $pass,
+				'port' => $port,
             //data
-            
+				
 
-        ]);
-        
+			]);
+			
 
 
 
 
 // check user exist 
-        $query_check =
+			$query_check =
 
-        (new Query('/ppp/secret/print'))
+			(new Query('/ppp/secret/print'))
 
-        ->where('name',$cid);
+			->where('name',$cid);
 
-        $users = $client->query($query_check)->read();
+			$users = $client->query($query_check)->read();
 
 
 //var_dump($users);
             // if user exist
-        if (!empty($users[0]['.id'])) {
+			if (!empty($users[0]['.id'])) {
             // set the user enable
-         foreach ($users as $user) {
+				foreach ($users as $user) {
 
     // enable
-            $query_enable = (new Query('/ppp/secret/set'))
-            ->equal('.id', $user['.id'])
-            ->equal('disabled', 'false');
-           
+					$query_enable = (new Query('/ppp/secret/set'))
+					->equal('.id', $user['.id'])
+					->equal('disabled', 'false');
+					
 
 
-            $result = $client->query($query_enable)->read();
+					$result = $client->query($query_enable)->read();
 
 // echo $result;
 
-        }
-    }
+				}
+			}
 
-    else
-    {
+			else
+			{
 
-        $query_add =
+				$query_add =
 
-        (new Query('/ppp/secret/add '))
-        ->equal('name', $cid)
-        ->equal('password', $cidpass)
-        ->equal('comment', $comment)
-        ->equal('profile', $profile);
-
-
-        $response = $client->query($query_add)->read();
-
-    }
-
-} catch (Exception $ex) {
-    return('field connecting to router');
-}
-}
+				(new Query('/ppp/secret/add '))
+				->equal('name', $cid)
+				->equal('password', $cidpass)
+				->equal('comment', $comment)
+				->equal('profile', $profile);
 
 
-     public static function mikrotik_addprofile($host,$user,$pass,$port,$name,$limit,$comment)
-    {
+				$response = $client->query($query_add)->read();
 
-       try {
+			}
 
-        $client = new Client([
+		} catch (Exception $ex) {
+			return('field connecting to router');
+		}
+	}
+
+
+	public static function mikrotik_addprofile($host,$user,$pass,$port,$name,$limit,$comment)
+	{
+
+		try {
+
+			$client = new Client([
             //to login to api
-            'host' => $host,
-            'user' => $user,
-            'pass' => $pass,
-            'port' => $port,
+				'host' => $host,
+				'user' => $user,
+				'pass' => $pass,
+				'port' => $port,
             //data
-            
+				
 
-        ]);
-        $name      = $name;
-        $limit   = $limit;
-        $comment   = $comment;
-       
+			]);
+			$name      = $name;
+			$limit   = $limit;
+			$comment   = $comment;
+			
 
 
 
 
 // check user exist 
-        $query_check =
+			$query_check =
 
-        (new Query('/ppp/profile/print'))
+			(new Query('/ppp/profile/print'))
 
-        ->where('name',$name);
+			->where('name',$name);
 
-        $profiles = $client->query($query_check)->read();
+			$profiles = $client->query($query_check)->read();
 
 
 
 
 //var_dump($users);
             // if user exist
-        if (!empty($profiles[0]['.id'])) {
+			if (!empty($profiles[0]['.id'])) {
             // set the user enable
-         foreach ($profiles as $profile) {
+				foreach ($profiles as $profile) {
 
     // enable
-            $query_enable = (new Query('/ppp/profile/set'))
-            ->equal('.id', $profile['.id'])
-            ->equal('disabled', 'false');
+					$query_enable = (new Query('/ppp/profile/set'))
+					->equal('.id', $profile['.id'])
+					->equal('disabled', 'false');
 
 
-            $result = $client->query($query_enable)->read();
-           
+					$result = $client->query($query_enable)->read();
+					
 
 // echo $result;
 
-        }
-    }
+				}
+			}
 
-    else
-    {
+			else
+			{
 
-        $query_add =
+				$query_add =
 
-        (new Query('/ppp/profile/add '))
-        ->equal('name',$name)
-        ->equal('rate-limit', $limit)
-        ->equal('comment', $comment);
-
-
-        $response = $client->query($query_add)->read();
-        
-
-    }
+				(new Query('/ppp/profile/add '))
+				->equal('name',$name)
+				->equal('rate-limit', $limit)
+				->equal('comment', $comment);
 
 
-       
+				$response = $client->query($query_add)->read();
+				
 
-} catch (Exception $ex) {
-    return "field connecting to router";
-}
+			}
 
 
-}
+			
+
+		} catch (Exception $ex) {
+			return "field connecting to router";
+		}
+
+
+	}
 
 
 
@@ -303,23 +304,23 @@ public static function mikrotik_connection ($host,$user,$pass,$port)
 
 
 				$query_status =
-			(new Query('/ppp/active/print'))
-			->where('name', $cid);
+				(new Query('/ppp/active/print'))
+				->where('name', $cid);
 
-			$response_status = $client->query($query_status)->read();
-			if (!empty($response_status ))
-			{
+				$response_status = $client->query($query_status)->read();
+				if (!empty($response_status ))
+				{
 
 
-			foreach ($response_status as $response_status) {
-				$query = (new Query('/ppp/active/remove'))
-				->equal('.id', $response_status['.id']);
-				$client->query($query)->read();
-				
+					foreach ($response_status as $response_status) {
+						$query = (new Query('/ppp/active/remove'))
+						->equal('.id', $response_status['.id']);
+						$client->query($query)->read();
+						
+					}
+				}
 			}
-		}
-	}
-		
+			
 
 
 
@@ -389,17 +390,63 @@ public static function mikrotik_connection ($host,$user,$pass,$port)
 	}
 
 
+
+	public static function mikrotik_remove_active_connection($ip, $user, $pass, $port, $cid)
+	{
+		try {
+			$client = new Client([
+				'host' => $ip,
+				'user' => $user,
+				'pass' => $pass,
+				'port' => $port
+			]);
+
+        // Ambil daftar koneksi aktif berdasarkan nama pengguna (cid)
+			$query = (new Query('/ppp/active/print'))->where('name', $cid);
+			$activeConnections = $client->query($query)->read();
+
+			if (empty($activeConnections)) {
+          //  echo "Tidak ada koneksi aktif untuk user: $cid" . PHP_EOL;
+				return;
+			}
+
+        //echo "Sebelum penghapusan koneksi..." . PHP_EOL;
+
+			foreach ($activeConnections as $connection) {
+				echo "Menghapus koneksi aktif dengan ID: " . $connection['.id'] . PHP_EOL;
+
+            // Hapus koneksi aktif berdasarkan ID
+				$deleteQuery = (new Query('/ppp/active/remove'))
+				->equal('.id', $connection['.id']);
+
+				$client->query($deleteQuery)->read();
+			}
+
+       // echo "Koneksi aktif berhasil dihapus untuk user: $cid" . PHP_EOL;
+
+		} catch (Exception $ex) {
+       // echo "Terjadi kesalahan: " . $ex->getMessage();
+		}
+	}
+
+
+
+
+
+
+
 	public function mikrotik_status($ip,$user,$pass,$port,$cid)
 	{
 		$result = 'unknow';
 
 		$status['online']= 'Unknow';
-				$status['ip'] = 'Unknow';
-				$status['uptime']  = 'Unknow';
-				$status['user']  = 'User not Found';
+		$status['ip'] = 'Unknow';
+		$status['uptime']  = 'Unknow';
+		$status['user']  = 'User not Found';
+		$status['ip_count']  = 0;
 
-				
-			
+		
+		
 
 		try {
 
@@ -418,51 +465,59 @@ public static function mikrotik_connection ($host,$user,$pass,$port)
 			$response = $client->query($query)->read();
 			if (!empty($response)){
 
-			foreach ($response as $response) {
-				$result = $response['disabled'];
+				foreach ($response as $response) {
+					$result = $response['disabled'];
+				}
+
+
+				if ($result == 'true')
+				{
+					$status['user'] = 'Disable';
+				}
+				else if ($result =='false')
+				{
+					$status['user'] = 'Enable';
+				}
+				else
+				{
+					$status['user'] = 'Unknow';
+				}
+
+				
+
+
+				$query_status =
+				(new Query('/ppp/active/print'))
+				->where('name', $cid);
+
+				$response_status = $client->query($query_status)->read();
+				if (!empty($response_status ))
+				{
+					$status['online']= 'Online';
+					foreach ($response_status as $response_ip) {
+						$status['ip'] = ($response_ip['address']);
+						$status['uptime']  = ($response_ip['uptime']);
+
+
+						$query_ip =
+						(new Query('/ip/address/print'))
+						->where('network',$status['ip']);
+
+						$status['ip_count'] = count($client->query($query_ip)->read());
+
+					}
+
+				}
+				else
+				{
+					$status['online']= 'Offline';
+					$status['ip'] = 'Unknow';
+					$status['uptime']  = 'Unknow';
+				}
+
+
+
 			}
-
-
-if ($result == 'true')
-		{
-			$status['user'] = 'Disable';
-		}
-		else if ($result =='false')
-		{
-			$status['user'] = 'Enable';
-		}
-		else
-		{
-			$status['user'] = 'Unknow';
-		}
-
-		
-
-
-			$query_status =
-			(new Query('/ppp/active/print'))
-			->where('name', $cid);
-
-			$response_status = $client->query($query_status)->read();
-			if (!empty($response_status ))
-			{
-				$status['online']= 'Online';
-				foreach ($response_status as $response_ip) {
-				$status['ip'] = ($response_ip['address']);
-				$status['uptime']  = ($response_ip['uptime']);
-			}
-
-			}
-			else
-			{
-				$status['online']= 'Offline';
-				$status['ip'] = 'Unknow';
-				$status['uptime']  = 'Unknow';
-			}
-
-
-
-}
 
 
 		} catch (Exception $ex) {
@@ -471,14 +526,59 @@ if ($result == 'true')
 
 
 
-return $status;
+		return $status;
 		
 
 	}
+	
 
 
 
+	public function mikrotik_status_ip($ip,$user,$pass,$port,$ipc)
+	{
+		$result = 'unknow';
 
+		$status['network'] = 'unknow';
+		$status['interface']  = 'unknow';
+
+		try {
+
+			$client = new Client([
+				'host' => $ip,
+				'user' => $user,
+				'pass' => $pass,
+				'port' => $port
+			]);
+
+			$query =
+			(new Query('/ip/address/print'))
+			->where('network', '10.5.51.175');
+
+
+			$response = $client->query($query)->read();
+			$status = count($response);
+// 			if (!empty($response)){
+
+// 			// foreach ($response as $response) {
+// 			// 	$status['network'] = ($response['network']);
+// 			// 	$status['interface']  = ($response['interface']);
+// 			// }
+// $status=$response;
+
+
+// }
+
+
+		} catch (Exception $ex) {
+			$result = 'Unknow';
+		}
+
+
+
+		return $status;
+		
+
+	}
 
 
 }

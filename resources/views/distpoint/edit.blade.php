@@ -34,15 +34,15 @@
           <div class="input-group mb-3">
             <select name="id_site" id="id_site" class="form-control">
               @foreach ($site as $id => $name)
-              @if ($id == $distpoint->id )
-              {
+              @if ($id == $distpoint->id_site )
+              
 
-                <option selected value="{{ $id }}">{{ $name }}</option>
-              }
+              <option selected value="{{ $id }}">{{ $name }}</option>
+              
               @else
-              {
-                <option value="{{ $id }}">{{ $name }}</option>
-              }
+              
+              <option value="{{ $id }}">{{ $name }}</option>
+              
               @endif
 
               @endforeach
@@ -51,29 +51,29 @@
         </div>
       </div>
       <div class="form-group  col-md-3">
-        <label for="ip">IP Address</label>
-        <input type="text" class="form-control" name="ip" id="ip"  placeholder="Enter IP Address" value="{{$distpoint->ip}}">
+        <label for="ip">Capacity</label>
+        <input type="text" class="form-control" name="ip" id="ip"  placeholder="ODP Capacity" value="{{$distpoint->ip}}">
       </div>
 
       <div class="form-group  col-md-3">
-        <label for="security">Security</label>
-        <input type="text" class="form-control" name="security" id="security"  placeholder="Enter Security Key" value="{{$distpoint->security}}">
+        <label for="security">Optic Power</label>
+        <input type="text" class="form-control" name="security" id="security"  placeholder="Redaman" value="{{$distpoint->security}}">
       </div>
 
       <div class="form-group  col-md-3">
        <label for="parrent"> Parrent </label>
        <div class="input-group mb-3">
-        <select name="parrent" id="parrent" class="form-control">
+        <select name="parrent" id="parrent" class="form-control select2">
           @foreach ($distpoint_name  as $id => $name)
-          @if ($id == $distpoint->id )
-          {
-            <option selected="" value="{{ $id }}">{{ $name }}</option>
-          }
+          @if ($id == $distpoint->parrent )
+          
+          <option selected="" value="{{ $id }}">{{ $name }}</option>
+          
           @else
-          {
+          
           <option value="{{ $id }}">{{ $name }}</option>
-        }
-        @endif
+          
+          @endif
 
           @endforeach
         </select>
@@ -101,27 +101,27 @@
       @enderror
     </div>
 
-       <div class="form-group col-md-1">
-       <label for="monitoring"> Monitoring </label>
-       <div class="input-group mb-3">
-        <select name="monitoring" id="monitoring" class="form-control">
-          
-          <option value="0">No</option>
-          <option value="1">Yes</option>
-          
-        </select>
-      </div>
+    <div class="form-group col-md-1">
+     <label for="monitoring"> Monitoring </label>
+     <div class="input-group mb-3">
+      <select name="monitoring" id="monitoring" class="form-control">
+        
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+        
+      </select>
     </div>
-
-
-
   </div>
-  <!-- /.card-body -->
 
-  <div class="card-footer">
-    <button type="submit" class="btn btn-primary">Update</button>
-  </form>
-  <a href="{{url('distpoint')}}" class="btn btn-secondary  float-right">Cancel</a>
+
+
+</div>
+<!-- /.card-body -->
+
+<div class="card-footer">
+  <button type="submit" class="btn btn-primary">Update</button>
+</form>
+<a href="{{url('distpoint')}}" class="btn btn-secondary  float-right">Cancel</a>
 </div>
 
 </div>

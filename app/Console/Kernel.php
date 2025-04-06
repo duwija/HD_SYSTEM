@@ -14,9 +14,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
 
-         Commands\InvoiceCron::class,
+     Commands\InvoiceCron::class,
         //
-    ];
+ ];
 
     /**
      * Define the application's command schedule.
@@ -27,9 +27,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-         $schedule->command('wa:cron')
-                 ->everyMinute();
-    }
+     $schedule->command('customerisolir:cron')
+     ->everyMinute();
+ }
 
     /**
      * Register the commands for the application.

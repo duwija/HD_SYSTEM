@@ -1,0 +1,18 @@
+from telethon import TelegramClient
+import asyncio
+
+api_id = 27100075
+api_hash = "8231487461400441459a400320c34cfd"
+
+client = TelegramClient("session_name", api_id, api_hash)
+
+async def get_groups():
+    await client.start()
+    dialogs = await client.get_dialogs()
+
+    for chat in dialogs:
+        if chat.is_group:
+            print(f"📢 Nama Grup: {chat.title}, ID: {chat.id}")
+
+with client:
+    client.loop.run_until_complete(get_groups())

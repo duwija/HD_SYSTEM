@@ -4,200 +4,211 @@
 <section class="content-header">
 
   <div class="card card-primary card-outline">
-              <div class="card-header">
-                <h3 class="card-title font-weight-bold">BUKU BESAR  </h3>
+    <div class="card-header">
+      <h3 class="card-title font-weight-bold">BUKU BESAR  </h3>
 
+      <div class="float-right">
+        <div class="input-group">
+          <form role="form" method="post" action="/jurnal/create">
+            @csrf
+            <select style="border: 1px solid blue"  name="akuntransaction" id="akuntransaction" class="form-control-sm">
+              @foreach ($akuntransaction as $id => $name)
+              <option value="{{ $id }}">{{ $name }}</option>
+              @endforeach
+            </select>
+            <button type="submit" class="float-right btn bg-primary btn-sm">Add New Jurnal</button>
+          </form>
+        </div>
+      </div>
+      <br>
+      <hr>
 
-
-  <br>
-
-@if (empty($date_from))
-@php
-$date_from=date('Y-m-d');
-$date_to=date('Y-m-d');
-@endphp
-
-@else
-
-@endif
-   <form role="form" method="post" action="/jurnal/bukubesar">
-      @csrf
-<div class="row pt-2 pl-2">
-                <a class=" pt-2"> Show From :</a>
-                    <div class="input-group p-1 col-md-2   date" id="reservationdate" data-target-input="nearest">
-                        <input type="text" name="date_from" id="date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{$date_from}}" />
-                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                    </div>
-               <a class=" pt-2"> To </a>
-                 
-                    <div class="input-group p-1 col-md-2 date" id="reservationdate" data-target-input="nearest">
-                        <input type="text" name="date_end" id="date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{$date_to}}" />
-                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                    </div>
-                    
-          <select   name="akun" id="akun" class="input-group m-1 col-md-2" >
-         
-            @foreach ($akun as $id =>$name)
-            <option value="{{ $id }}">{{ $name }}</option>
-            @endforeach
-          </select>
-       
-
-                    <div class="input-group p-1 col-md-3">
-                       <button type="submit" class="btn btn-primary">show</button>
-                    </div> 
-                </div>
-              </form>
-
-
-
-
-
+      <div class="row pt-2 pl-4">
+        <div class="form-group col-md-3">
+          <label for="site location">  Transaction Date Start </label>
+          <div class="input-group mb-3">
+            <div class="input-group p-1  date" id="reservationdate" data-target-input="nearest">
+              <input type="text" name="date_from" id="date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{date('Y-m-01')}}" />
+              <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
               </div>
-              <div class="text-center bg-primary p-2 ">
-                {{$date_msg}}
-              </div>
-          
-              <div class="card-body">
-               <table id="example1" class="table table-bordered table-striped">
-  <thead >
-    <tr>
-      <th scope="col">#</th>
-      
-      <th scope="col">Date</th>
-      <th scope="col">Akun</th>
-      
-      <th scope="col">Debet</th>
-       <th scope="col">Kredit</th>
-        <th scope="col">Reff</th>
-         <th scope="col">Description</th> 
-         <th scope="col">Type</th>
-       {{--    <th scope="col">Action</th> --}}
-    </tr>
-  </thead>
-  <tbody>
-    @php
-    $debet =0;
-    $kredit =0;
-    $number=0;
-   //  $date_from= date("Y-m", strtotime($date['from']));
-   // $date_to= date("Y-m", strtotime($date['to']));
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="site location">  Transaction Date End </label>
+          <div class="input-group mb-3">
+           <div class="input-group p-1 date" id="reservationdate" data-target-input="nearest">
+            <input type="text" name="date_end" id="date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{date('Y-m-d')}}" />
+            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="site location">  Kode Akun </label>
+        <div class="input-group mb-3">
+          <div class="input-group p-1 date" id="reservationdate" data-target-input="nearest">
+            <select name="akun_filter" id="akun_filter" class="form-control">
+              <option value="">All Akun</option>
+              @foreach ($akun as $akun_code =>$name)
+              <option value="{{$akun_code }}">{{ $akun_code }} | {{ $name}}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="site location">   </label>
 
-    $debet= $jsaldo['debet'];
-    $kredit=  $jsaldo['kredit'];
+        <div class="input-group p-1 col-md-3">
 
-    @endphp
+          <button type="button" class="btn mt-2   bg-gradient-primary  btn-primary"  id="bukubesar">Filter
+          </button>
+        </div> 
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="card-body">
+      <div id="totals" style="margin-bottom: 10px;">
+
+      </div>
+      <table id="bukubesar-table" class="table table-bordered table-striped">
+        <thead>
+         <tr>
+
+          <th colspan="12"class="text-right border-0" >
+            <div class="row float-right">
+
+
+
+            </div>
+          </th>
+
+
+
+
+        </tr>
+
         <tr>
-      <th scope="row" class="text-center">{{ $number=$number+1}}</th>
-     
-    <td>{{ $date_from }}</td>
-      <td>Saldo Awal</td>
-      <td>{{ number_format($jsaldo['debet'], 0, ',', ',') }}</td>
-      <td>{{ number_format($jsaldo['kredit'], 0, ',', ',') }}</td>
-      <td>{{ '0000000000' }}</td>
-      <td> Saldo Awal</td>
-   
-    </tr>
-  	@foreach( $jurnal as $jurnal)
-    @php
-     if ($jurnal->type == 'jumum'){
-        $badge_sts = "badge-success";
-        $msg="Jurnal Umum";
-      }
-      elseif ($jurnal->type == 'closed')
-      {
-         $badge_sts = "badge-secondary";
-      
-       $msg="Jurnal Penutup";
-     }
-      
-       else
-       {
-         $badge_sts = "badge-warning";
-       
-       $msg=$jurnal->type;
-     }
-    @endphp
+          <th scope="col">#</th>
+          <th scope="col">Date</th>
+
+          <th scope="col">Akun</th>
 
 
-    <tr>
-      <th scope="row" class="text-center">{{ $number=$number+1}}</th>
-     
-      <td>{{ $jurnal->date }}</td>
-      <td>{{ $jurnal->akun_name->name }}</td>
-      <td>{{ number_format($jurnal->debet, 0, ',', ',') }}</td>
-      <td>{{ number_format($jurnal->kredit, 0, ',', ',') }}</td>
-      <td>{{ $jurnal->reff }}</td>
-      <td>{{ $jurnal->description }}</td>
-        <td class="text-center"><a class="badge text-white {{$badge_sts}}">{{ $msg }}</a></td>
-      @php
-$debet =$debet + $jurnal->debet;
-$kredit =$kredit + $jurnal->kredit;
-@endphp
-
-    
-    </tr>
-    @endforeach
-    <tr class="bg-primary">
-      <td class="text-center border-right-0 text-primary">{{ $number=$number+1}}</td>
-       <td class="border-right-0" colspan=""><strong>Total : </strong></td>
-      <td class="border-right-0"></td>
-      
-       
-     
-      <td class="border-right-0" colspan=""><strong>{{number_format($debet, 0, ',', ',')}}</strong></td>
-      <td class="border-right-0" colspan=""><strong>{{number_format($kredit, 0, ',', ',')}}</strong></td>
-        <td class="border-right-0" colspan=""></td> 
-        <td class="border-right-0"></td>
-         <td class="border-right-0"></td>
-          
-   
-    </tr>
-       <tr class="bg-primary ">
-      <td class="text-center  border-right-0  text-primary">{{ $number=$number+1}}</td>
-      <td class="border-right-0" colspan=""><strong>Saldo : </strong></td>
-      <td class="border-right-0"></td>
-      
-       <td class="border-right-0"></td>
-      
-      <td class="border-right-0"colspan=""><strong>{{number_format($debet-$kredit, 0, ',', ',')}}</strong></td>
-   
-        <td class="border-right-0" colspan=""></td> <td class="border-right-0"></td>
-         <td class="border-right-0"></td>
-          
-   
-    </tr>
-    
-  </tbody>
-</table>
-
+          <th scope="col">Total Rp. <span name='total-debet' id='total-debet'>0 </span></br> Debet   </th>
+          <th scope="col">Total Rp. <span name='total-kredit' id='total-kredit'>0 </span></br> Kredit</th>
+          <th scope="col"> Saldo</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
 </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </section>
-
 @endsection
 
-    
+@section('footer-scripts')
+
+<script>
+ var index = 0;
+ $('#bukubesar').click(function() 
+ {
+  var index=0;
+  $('#bukubesar-table').DataTable().ajax.reload();
+
+});
+
+ var table = $('#bukubesar-table').DataTable({
+   "responsive": true,
+   "autoWidth": false,
+       // "searching": true,
+   "language": {
+    "processing": "<span class='fa-stack fa-lg'>\n\
+    <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
+    </span>&emsp;Processing ..."
+  },
+  dom: 'lBfrtip',
+  buttons: [
+    'copy', 'excel', 'pdf', 'csv', 'print'
+    ],
+  "lengthMenu": [[10,50, 100, 200, 500, 1000], [10,50, 100, 200, 1000]],
+  processing: true,
+  serverSide: true,
+  ajax: {
+
+    url: '/jurnal/getbukubesardata',
+    type: 'POST',
+    data: function ( d ) {
+     return $.extend( {}, d, {
+      "date_from": $(document.querySelector('[name="date_from"]')).val(),
+      "date_end": $(document.querySelector('[name="date_end"]')).val(),
+      "akun_filter": $(document.querySelector('[name="akun_filter"]')).val(),
+
+    } );
+   },
+   dataSrc: function (json) {
+                // Update totals in the div
+    $('#total-debet').text(json.totals.debet.toLocaleString());
+    $('#total-kredit').text(json.totals.kredit.toLocaleString());
+    table.start = json.start;
+    return json.data; 
+
+  },
+},
+columns: [
+  { data: null, name: null, orderable: false, searchable: false, className: 'dt-center' },
+  { data: 'date', name: 'date', className: 'dt-left', orderable: false, searchable: false },
+  { data: 'akun_name', name: 'akun_name', className: 'dt-left', orderable: false, searchable: false },
+  { data: 'debet', name: 'debet', className: 'dt-right' },
+  { data: 'kredit', name: 'kredit', className: 'dt-right' },
+        { data: 'saldo', name: 'saldo', className: 'dt-right' } // Kolom Saldo
+        ],
+rowCallback: function (row, data) {
+  if (data.is_group) {
+    index++;
+    $(row).addClass('bg-light text-bold');
+            $('td', row).eq(0).html(data.index); // Nomor dan description
+            // $('td:gt(1)', row).remove(); // Hapus kolom lain di baris grup
+            $('td', row).eq(1).html(`
+              <strong>${data.description}</strong> 
+              `);
+            $('td', row).eq(2).html(`
+              Saldo Awal
+              `);
+          } else if (data.akun_name === 'Saldo Akhir') {
+            $(row).addClass('bg-secondary');
+            $('td', row).eq(0).html('');
+
+            $('td', row).eq(2).html('<strong>Saldo Akhir</strong>'); // Kolom akun_name
+            $('td', row).eq(3).html(`<strong>${data.debet}</strong>`); // Kolom debet
+            $('td', row).eq(4).html(`<strong>${data.kredit}</strong>`); // Kolom kredit
+            $('td', row).eq(5).html(`<strong>${data.saldo}</strong>`); // Kolom saldo
+          } else {
+            $('td', row).eq(0).html(''); // Kosongkan nomor untuk baris biasa
+          }
+        }
+      // drawCallback: function (settings) {
+        // Nomor hanya untuk baris grup
+        // var api = this.api();
+        // var rows = api.rows({ page: 'current' }).nodes();
+         // var startIndex = settings._iDisplayStart; // Offset data dari DataTables
+    // var index = startIndex + 1; // Hitungan nomor dimulai dari offset
+
+
+         // api.column(0, { page: 'current' }).data().each(function (data, i) {
+         //  if (data.is_group) {
+            // Set nomor dan tambahkan description
+        // $(rows).eq(i).find('td:first').html(`<strong>${index++}</strong>`);
+        //   }
+        // });
+       // },
+      });
+
+    </script>
+
+
+    @endsection

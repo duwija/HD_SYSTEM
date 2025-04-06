@@ -130,6 +130,7 @@
             <th scope="col">Invoice Date</th>
             <th scope="col">Invoice NO</th>
             <th scope="col">CID</th>
+            <th scope="col">Name</th>
             <th scope="col">Address</th>
             <th scope="col">Total Amount</th>
             <th scope="col">Status</th>
@@ -162,7 +163,8 @@
 
 
          
-          <td><strong><a href="/customer/{{ $suminvoice->customer->id }}">{{ $suminvoice->customer->customer_id }} </a></strong> <br>{{ $suminvoice->customer->name  }}</td>
+          <td><strong><a href="/customer/{{ $suminvoice->customer->id }}">{{ $suminvoice->customer->customer_id }} </a></strong></td>
+          <td>{{ $suminvoice->customer->name  }}</td>
           <td>{{$suminvoice->customer->address}}</td>
 <td><strong>{{ number_format($suminvoice->total_amount, 0, ',', ',') }}</strong></td>
       @php

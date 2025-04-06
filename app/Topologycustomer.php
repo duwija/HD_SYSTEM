@@ -12,7 +12,7 @@ class Topologycustomer extends Model
 
      public function customer()
     {
-        return $this->belongsTo('\App\customer', 'id_customer');
+        return $this->belongsTo('\App\Customer', 'id_customer');
     }
      public function parrent()
     {

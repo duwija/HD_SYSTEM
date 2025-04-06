@@ -30,72 +30,72 @@
         </div>
         <div class="form-group col-md-3">
           <label for="site location">  Location </label>
+          <div class="input-group mb-3">
+            <select name="id_site" id="id_site" class="form-control">
+              {{-- <option value="1">none</option> --}}
+              @foreach ($site as $id => $name)
+              <option value="{{ $id }}">{{ $name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+        </div>
+        <div class="form-group col-md-3">
+          <label for="ip">Capacity</label>
+          <input type="text" class="form-control" name="ip" id="ip"  placeholder="ODP Capacity" value="{{old('ip')}}">
+
+        </div>
+        <div class="form-group col-md-3">
+          <label for="security">Optic Power</label>
+          <input type="text" class="form-control" name="security" id="security"  placeholder="Redaman" value="{{old('security')}}">
+        </div>
+
+        <div class="form-group col-md-3">
+         <label for="parrent"> Parrent </label>
          <div class="input-group mb-3">
-          <select name="id_site" id="id_site" class="form-control">
+          <select name="parrent" id="parrent" class="form-control select2">
             {{-- <option value="1">none</option> --}}
-            @foreach ($site as $id => $name)
+            @foreach ($distpoint  as $id => $name)
             <option value="{{ $id }}">{{ $name }}</option>
             @endforeach
           </select>
         </div>
-
       </div>
       <div class="form-group col-md-3">
-        <label for="ip">IP Address</label>
-        <input type="text" class="form-control" name="ip" id="ip"  placeholder="Enter IP Address" value="{{old('ip')}}">
+        <label for="coordinate"> Coordinate </label>
+        <div class="input-group mb-3">
 
-      </div>
-      <div class="form-group col-md-3">
-        <label for="security">Security</label>
-        <input type="text" class="form-control" name="security" id="security"  placeholder="Enter Security Key" value="{{old('security')}}">
-      </div>
-
-      <div class="form-group col-md-3">
-       <label for="parrent"> Parrent </label>
-       <div class="input-group mb-3">
-        <select name="parrent" id="parrent" class="form-control">
-          {{-- <option value="1">none</option> --}}
-          @foreach ($distpoint  as $id => $name)
-          <option value="{{ $id }}">{{ $name }}</option>
-          @endforeach
-        </select>
-      </div>
-    </div>
-    <div class="form-group col-md-3">
-      <label for="coordinate"> Coordinate </label>
-      <div class="input-group mb-3">
-
-        <input type="text" class="form-control @error('coordinate') is-invalid @enderror" name="coordinate"  id="coordinate" placeholder="Coordinate" value="{{old('coordinate')}}">
-        @error('coordinate')
-        <div class="error invalid-feedback">{{ $message }}</div>
-        @enderror
-        <div class="input-group-append">
-         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-maps">Get From Maps </button>
+          <input type="text" class="form-control @error('coordinate') is-invalid @enderror" name="coordinate"  id="coordinate" placeholder="Coordinate" value="{{old('coordinate')}}">
+          @error('coordinate')
+          <div class="error invalid-feedback">{{ $message }}</div>
+          @enderror
+          <div class="input-group-append">
+           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-maps">Get From Maps </button>
+         </div>
        </div>
      </div>
-   </div>
-   <div class="form-group">
-    <input type="hidden" name="create_at" value="{{now()}}" >
-  </div>
-
-  <div class="form-group col-md-5">
-    <label for="description">Description  </label>
-    <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Site Descrition " value="{{old('description')}}">
-    @error('description')
-    <div class="error invalid-feedback">{{ $message }}</div>
-    @enderror
-  </div>
-   <div class="form-group col-md-1">
-       <label for="monitoring"> Monitoring </label>
-       <div class="input-group mb-3">
-        <select name="monitoring" id="monitoring" class="form-control">
-          
-          <option value="0">No</option>
-          <option value="1">Yes</option>
-          
-        </select>
-      </div>
+     <div class="form-group">
+      <input type="hidden" name="create_at" value="{{now()}}" >
     </div>
+
+    <div class="form-group col-md-5">
+      <label for="description">Description  </label>
+      <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Site Descrition " value="{{old('description')}}">
+      @error('description')
+      <div class="error invalid-feedback">{{ $message }}</div>
+      @enderror
+    </div>
+    <div class="form-group col-md-1">
+     <label for="monitoring"> Monitoring </label>
+     <div class="input-group mb-3">
+      <select name="monitoring" id="monitoring" class="form-control">
+
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+
+      </select>
+    </div>
+  </div>
 
 </div>
 <!-- /.card-body -->

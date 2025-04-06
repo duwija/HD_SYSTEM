@@ -10,13 +10,29 @@ class Customer extends Model
 	use SoftDeletes;
 
 
-    protected $fillable =['customer_id','password','name', 'contact_name', 'phone','id_plan','id_distpoint','id_status','id_distrouter','email','address','npwp','tax','coordinate','note' ,'created_by','updated_by','created_at','update_at','deleted_at'];
+    protected $fillable =['customer_id','pppoe','password','name','id_card', 'contact_name','id_olt','id_onu','date_of_birth', 'phone','id_plan','id_distpoint','id_status','id_distrouter','email','address','id_merchant','npwp','tax','billing_start','coordinate','note','id_sale','created_by','updated_by','created_at','update_at','deleted_at'];
 
+    public function customerlog_name()
+    {
+
+        return $this->hasMany('\App\Customerlog', 'id_customer')->withTrashed();
+    }
+    public function suminvoices()
+    {
+        return $this->hasMany('\App\Suminvoice', 'id_customer');
+    }
     public function plan_name()
     {
         return $this->belongsTo('\App\Plan', 'id_plan')->withTrashed();
     }
-
+    public function olt_name()
+    {
+        return $this->belongsTo('\App\Olt', 'id_olt')->withTrashed();
+    }
+    public function sale_name()
+    {
+        return $this->belongsTo('\App\Sale', 'id_sale')->withTrashed();
+    }
     public function distpoint_name()
     {
         return $this->belongsTo('\App\Distpoint', 'id_distpoint')->withTrashed();
@@ -25,24 +41,36 @@ class Customer extends Model
     {
         return $this->belongsTo('\App\Statuscustomer', 'id_status')->withTrashed();
     }
+    public function merchant_name()
+    {
+        return $this->belongsTo('\App\Merchant', 'id_merchant')->withTrashed();
+    }
     public function invoice()
     {
 
-        return $this->hasMany('\App\invoice', 'id_customer');
+        return $this->hasMany('\App\Invoice', 'id_customer')->withTrashed();
     }
     public function device()
     {
 
-        return $this->hasMany('\App\device', 'id_customer');
+        return $this->hasMany('\App\Device', 'id_customer');
     }
-     public function file()
+    public function file()
     {
 
-        return $this->hasMany('\App\file', 'id_customer');
+        return $this->hasMany('\App\File', 'id_customer');
     }
     public function distrouter()
     {
         return $this->belongsTo('\App\Distrouter', 'id_distrouter');
     }
-  
+    public function update_status()
+    {
+        // \Log::channel('notif')->info('JOB ISOLLIR model '.$id.' | ' .$status); 
+        // \App\Customer::where('id',$id)->update([
+        //     'id_status' => $status,
+        // ]);
+        return "DATA DARI MODEL";
+    }
+
 }

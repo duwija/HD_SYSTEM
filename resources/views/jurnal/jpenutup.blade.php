@@ -23,7 +23,7 @@
            
           
               <div class="card-body">
-               <table id="tabel" class="table table-bordered table-striped">
+               <table id="example1" class="table table-bordered table-striped">
   <thead >
     <tr class="bg-primary">
       <th scope="col">#</th>
@@ -101,9 +101,9 @@ elseif ($saldo_pendapatan > 0)
       <td><strong>{{ number_format($saldo_p_kredit, 0, ',', ',') }}</strong></td>
      {{--  <td>{{ $pendapatan->reff }}</td>
       <td>{{ $pendapatan->description }}</td> --}}
-      <td> <input type="hidden" name="akun_id[]" value={{$pendapatan->id_akun }}></td>
-       <td><input type="hidden" name="akun_debet[]" value={{$saldo_p_debet }}></td>
-      <td> <input type="hidden" name="akun_kredit[]" value={{$saldo_p_kredit }}></td>
+      <input type="hidden" name="akun_id[]" value={{$pendapatan->id_akun }}>
+       <input type="hidden" name="akun_debet[]" value={{$saldo_p_debet }}>
+      <input type="hidden" name="akun_kredit[]" value={{$saldo_p_kredit }}>
 
 
 
@@ -115,35 +115,35 @@ elseif ($saldo_pendapatan > 0)
 $total_pendapatan = $total_pendapatan + $saldo_pendapatan;
 @endphp
     @endforeach
-    @if ($saldo_pendapatan < 0)    <tr class="bg-secondary">
+    @if ($total_pendapatan < 0)    <tr class="bg-secondary">
       <td class="text-center">{{ $number=$number+1}}</td>
       <td>{{env('IKHTISAR_LABA_RUGI_ID')}}</td>
        <td>Iktisar Laba rugi </td>
        
       
       <td colspan=""><strong>0</strong></td>
-      <td colspan=""><strong>{{number_format(abs($saldo_pendapatan), 0, ',', ',')}}</strong></td>
+      <td colspan=""><strong>{{number_format(abs($total_pendapatan), 0, ',', ',')}}</strong></td>
        {{--  <td colspan=""></td> <td></td> --}}
    
            <input type="hidden" name="akun_id[]" value={{env('IKHTISAR_LABA_RUGI_ID')}}>
        <input type="hidden" name="akun_debet[]" value='0'>
-       <input type="hidden" name="akun_kredit[]" value={{abs($saldo_pendapatan) }}>
+       <input type="hidden" name="akun_kredit[]" value={{abs($total_pendapatan) }}>
    
     </tr>
   
-  @elseif(($saldo_pendapatan > 0))
+  @elseif(($total_pendapatan > 0))
      <tr class="bg-secondary">
       <td class="text-center ">{{ $number=$number+1}}</td>
        <td>{{env('IKHTISAR_LABA_RUGI_ID')}}</td>
        <td>Iktisar Laba rugi </td>
        
       
-      <td colspan=""><strong>{{number_format(abs($saldo_pendapatan),0 , ',', ',')}}</strong></td>
+      <td colspan=""><strong>{{number_format(abs($total_pendapatan),0 , ',', ',')}}</strong></td>
       <td colspan=""><strong>0</strong></td>
        {{--  <td colspan=""></td> <td></td> --}}
        
            <input type="hidden" name="akun_id[]" value={{env('IKHTISAR_LABA_RUGI_ID')}}>
-       <input type="hidden" name="akun_debet[]" value={{abs($saldo_pendapatan) }}>
+       <input type="hidden" name="akun_debet[]" value={{abs($total_pendapatan) }}>
        <input type="hidden" name="akun_kredit[]" value='0'>
    
     </tr>

@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 
 class PlanController extends Controller
 {
-     public function __construct()
-    {
-        $this->middleware('auth');
-    }
+   public function __construct()
+   {
+    $this->middleware('auth');
+}
 
     /**
      * Display a listing of the resource.
@@ -36,8 +36,8 @@ class PlanController extends Controller
      */
     public function create()
     {
-         return view ('plan/create');
-    }
+       return view ('plan/create');
+   }
 
     /**
      * Store a newly created resource in storage.
@@ -56,11 +56,11 @@ class PlanController extends Controller
         //]);
 
         $request ->validate([
-            'name' => 'required',
-            'speed' => 'required',
-            'price' => 'required|integer',
-            'description' => 'required'
-        ]);
+         'name' => 'required|unique:plans,name',
+         'speed' => 'required',
+         'price' => 'required|integer',
+         'description' => 'required'
+     ]);
 
 
         \App\Plan::create($request->all());
@@ -78,8 +78,8 @@ class PlanController extends Controller
     {
         //
 
-          return view ('plan.edit',['plan' => \App\Plan::findOrFail($id)]);
-    }
+      return view ('plan.edit',['plan' => \App\Plan::findOrFail($id)]);
+  }
 
     /**
      * Show the form for editing the specified resource.
@@ -112,14 +112,14 @@ class PlanController extends Controller
         ]);
 
         \App\Plan::where('id', $id)
-            ->update([
-                'name' => $request->name,
-                'speed' => $request->speed,
-                'price' => $request->price,
-                'description' => $request->description
+        ->update([
+            'name' => $request->name,
+            'speed' => $request->speed,
+            'price' => $request->price,
+            'description' => $request->description
 
 
-            ]);
+        ]);
         return redirect ('/plan')->with('success','Item updated successfully!');
     }
 
@@ -132,6 +132,6 @@ class PlanController extends Controller
     public function destroy($id)
     {
         \App\Plan::destroy($id);
-         return redirect ('/plan')->with('success','Item deleted successfully!');
+        return redirect ('/plan')->with('success','Item deleted successfully!');
     }
 }

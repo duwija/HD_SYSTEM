@@ -12,6 +12,6 @@ class Ticketdetail extends Model
     //
 	 public function ticket()
     {
-        return $this->belongsTo('\App\ticket', 'id_ticket');
+        return $this->belongsTo('\App\Ticket', 'id_ticket');
     }
 }

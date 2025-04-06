@@ -1,0 +1,794 @@
+Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-10:02:38-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'onu 128 type ZTE_ALL sn ZTEGD33BA05B':
+
+.[Successful]
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+Output after command 'interface gpon-onu_1/2/4:128':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'description ini test aja':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'tcont 1 profile 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'gemport 1 tcont 1':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+OLT_TGM_BLAHBATUH(config-if)#
+Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+Output after command 'pon-onu-mng gpon-onu_1/2/4:128':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:128)#
+Output after command 'service internet gemport 1 vlan 200':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:128)#
+Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:128)#
+Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:128)#
+Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:128)#
+Output after command 'end':
+
+OLT_TGM_BLAHBATUH#
+Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+Final command output:
+
+2024-09-15 11:38:05.921872: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-10:05:21-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 11:38:05.967798: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 11:38:06.011826: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 11:38:06.062520: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.585256: Output after command 'onu 127 type ZTE_ALL sn ZTEGD33BA08B':
+
+.[Successful]
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.629019: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 11:38:06.672475: Output after command 'interface gpon-onu_1/2/4:127':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.719934: Output after command 'description ini test aja':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.764674: Output after command 'tcont 1 profile 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.808467: Output after command 'gemport 1 tcont 1':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.852247: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.899504: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:38:06.944013: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 11:38:06.987801: Output after command 'pon-onu-mng gpon-onu_1/2/4:127':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:38:07.031551: Output after command 'service internet gemport 1 vlan 200':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:38:07.076766: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:38:07.120674: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:38:07.164462: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:38:07.208529: Output after command 'end':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 11:38:27.229781: Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+2024-09-15 11:38:47.240439: Final command output:
+
+2024-09-15 11:41:14.355542: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-11:36:33-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 11:41:14.401688: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 11:41:14.446852: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 11:41:14.490556: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.535085: Output after command 'onu 127 type ZTE_ALL sn ZTEGD33BA08B':
+
+%Code 62391-GPONSRV : The entry is existed. This is a re-create operation.
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.578542: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 11:41:14.622847: Output after command 'interface gpon-onu_1/2/4:127':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.669097: Output after command 'description ini test aja':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.712500: Output after command 'tcont 1 profile 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.762880: Output after command 'gemport 1 tcont 1':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.807274: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.852138: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+%Code 66661: The service is already existed.
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 11:41:14.897867: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 11:41:14.944328: Output after command 'pon-onu-mng gpon-onu_1/2/4:127':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:41:14.990953: Output after command 'service internet gemport 1 vlan 200':
+
+%Code 63869-GPONRM : Record already exists.
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:41:15.035690: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:41:15.079670: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:41:15.124302: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:127)#
+2024-09-15 11:41:15.168943: Output after command 'end':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 11:41:35.189856: Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+2024-09-15 11:41:55.191837: Final command output:
+
+2024-09-15 12:03:46.399684: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-11:39:42-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 12:03:46.447151: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 12:03:46.491965: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 12:03:46.540148: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 12:03:46.585445: Output after command 'onu 128 type ZTE_ALL sn ZTEGD33BA05B':
+
+%Code 62391-GPONSRV : The entry is existed. This is a re-create operation.
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 12:03:46.585486: Error: The entry is existed. Stopping command execution.
+2024-09-15 12:04:06.605798: Final command output:
+
+2024-09-15 13:06:58.756227: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-13:03:14-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 13:06:58.803140: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:06:58.848871: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:06:58.892563: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.412601: Output after command 'onu 126 type ZTE_ALL sn ZTEGD33BA01B':
+
+.[Successful]
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.456589: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:06:59.500476: Output after command 'interface gpon-onu_1/2/4:126':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.544406: Output after command 'description ini test aja':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.588696: Output after command 'tcont 1 profile 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.632595: Output after command 'gemport 1 tcont 1':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.676684: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.720765: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:06:59.769190: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:06:59.813568: Output after command 'pon-onu-mng gpon-onu_1/2/4:126':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:126)#
+2024-09-15 13:06:59.857562: Output after command 'service internet gemport 1 vlan 200':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:126)#
+2024-09-15 13:06:59.903078: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:126)#
+2024-09-15 13:06:59.947507: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:126)#
+2024-09-15 13:06:59.992141: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:126)#
+2024-09-15 13:07:00.036442: Output after command 'end':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:07:20.057234: Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+2024-09-15 13:07:40.077711: Final command output:
+
+2024-09-15 13:07:40.084231: Output after verify command 'show run interface gpon-onu_1/2/4:126':
+
+
+%Error 20205: Invalid input detected at '^' marker in mutual command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:07:40.084274: Configuration failed.
+2024-09-15 13:50:53.519683: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-13:09:08-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 13:50:53.564422: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:53.608613: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:53.652284: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:50:53.713192: Output after command 'onu 125 type ZTE_ALL sn ZTEGD33BA05B':
+
+%Code 62320-GPONSRV : GPON ONU sn already exists.
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 13:50:53.761454: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:53.805846: Output after command 'interface gpon-onu_1/2/4:125':
+
+                                    ^
+%Error 20202: Invalid input detected at '^' marker.Invalid parameter
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:53.849805: Output after command 'description ini test aja':
+
+                            ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:53.894042: Output after command 'tcont 1 profile 100M':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:53.938036: Output after command 'gemport 1 tcont 1':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:53.981834: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:54.027025: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+                                 ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 13:50:54.070267: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:54.119131: Output after command 'pon-onu-mng gpon-onu_1/2/4:125':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:54.163929: Output after command 'service internet gemport 1 vlan 200':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:54.208799: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:54.252982: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:54.296914: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:50:54.367080: Output after command 'end':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:51:14.370835: Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+2024-09-15 13:51:34.391240: Final command output:
+
+2024-09-15 13:51:34.398067: Output after verify command 'show run interface gpon-onu_1/2/4:128':
+
+
+%Error 20205: Invalid input detected at '^' marker in mutual command
+OLT_TGM_BLAHBATUH#
+2024-09-15 13:51:34.398109: Configuration Tidak Berhasil.
+2024-09-15 14:26:48.815879: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-14:23:13-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 14:26:48.861767: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:26:48.906144: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:48.954687: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:26:48.999008: Output after command 'onu 125 type ZTE_ALL sn ZTEGD33BA05B':
+
+%Code 62320-GPONSRV : GPON ONU sn already exists.
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:26:49.043696: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.088384: Output after command 'interface gpon-onu_1/2/4:125':
+
+
+interface gpon-onu_1/2/4:125
+          ^
+%Error 20202: Invalid input detected at '^' marker.Invalid parameter
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.132938: Output after command 'description ini test aja':
+
+                            ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.177054: Output after command 'tcont 1 profile 100M':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.222045: Output after command 'gemport 1 tcont 1':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.266529: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.319533: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+                                 ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:26:49.363447: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:26:49.408278: Output after command 'pon-onu-mng gpon-onu_1/2/4:125':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:26:49.452929: Output after command 'service internet gemport 1 vlan 200':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:26:49.496910: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:26:49.541058: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:26:49.585394: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:27:09.605889: Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+2024-09-15 14:27:29.626461: Final command output:
+
+2024-09-15 14:27:29.631778: Output after verify command 'show run interface gpon-onu_1/2/4:128':
+
+
+%Error 20205: Invalid input detected at '^' marker in mutual command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:27:29.631850: Configuration Tidak Berhasil.
+2024-09-15 14:30:59.491844: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-14:25:16-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 14:30:59.537599: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:30:59.581752: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.625719: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:30:59.669758: Output after command 'onu 124 type ZTE_ALL sn ZTEGD33BA05B':
+
+%Code 62320-GPONSRV : GPON ONU sn already exists.
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:30:59.713757: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.758133: Output after command 'interface gpon-onu_1/2/4:124':
+
+
+interface gpon-onu_1/2/4:124
+          ^
+%Error 20202: Invalid input detected at '^' marker.Invalid parameter
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.802006: Output after command 'description ini test aja':
+
+                            ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.846925: Output after command 'tcont 1 profile 100M':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.895097: Output after command 'gemport 1 tcont 1':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.939951: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+                           ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:30:59.983924: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+                                 ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:31:00.027715: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:00.072029: Output after command 'pon-onu-mng gpon-onu_1/2/4:124':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:00.115924: Output after command 'service internet gemport 1 vlan 200':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:00.161035: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:00.204866: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:00.251757: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+                   ^
+%Error 20200: Invalid input detected at '^' marker.Invalid command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:20.272190: Output after command 'exit':
+
+The configuration is changed,confirm to logout without saving? [yes/no]:
+2024-09-15 14:31:40.292695: Final command output:
+
+2024-09-15 14:31:40.296864: Output after verify command 'show run interface gpon-onu_1/2/4:124':
+
+
+%Error 20205: Invalid input detected at '^' marker in mutual command
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:31:40.296935: Configuration Tidak Berhasil.
+2024-09-15 14:33:38.903498: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-14:29:27-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 14:33:38.949541: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:33:38.993900: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:33:39.037557: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.559481: Output after command 'onu 124 type ZTE_ALL sn ZTEGD03BA05B':
+
+.[Successful]
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.603493: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:33:39.648561: Output after command 'interface gpon-onu_1/2/4:124':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.694522: Output after command 'description ini test aja':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.738870: Output after command 'tcont 1 profile 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.820520: Output after command 'gemport 1 tcont 1':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.864760: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.908607: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:33:39.952805: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:33:39.996685: Output after command 'pon-onu-mng gpon-onu_1/2/4:124':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:124)#
+2024-09-15 14:33:40.041943: Output after command 'service internet gemport 1 vlan 200':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:124)#
+2024-09-15 14:33:40.085881: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:124)#
+2024-09-15 14:33:40.129596: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:124)#
+2024-09-15 14:33:40.173487: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:124)#
+2024-09-15 14:33:40.217874: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:34:00.238236: Final command output:
+
+2024-09-15 14:34:00.311560: Output after verify command 'show run interface gpon-onu_1/2/4:124':
+
+Building configuration...
+interface gpon-onu_1/2/4:124
+  description ini test aja
+  tcont 1 profile 100M
+  gemport 1 tcont 1
+  gemport 1 traffic-limit upstream 100M downstream 100M 
+  service-port 1 vport 1 user-vlan 200 vlan 200 
+!
+end
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:34:00.311706: Configuration is successful.
+2024-09-15 14:44:48.867470: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-14:32:06-UTC, 0 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 14:45:08.889151: Output after sending password:
+
+Password:
+2024-09-15 14:45:28.910303: Output after command 'configure terminal':
+
+%Error 20209: No username or bad password
+Username:
+2024-09-15 14:45:48.931150: Output after command 'interface gpon-olt_1/2/4':
+
+Password:
+2024-09-15 14:46:08.952221: Output after command 'onu 123 type ZTE_ALL sn ZTEGD43BA05B':
+
+%Error 20209: No username or bad password
+Username:
+2024-09-15 14:46:28.972997: Output after command 'exit':
+
+Password:
+2024-09-15 14:46:28.976484: Output after command 'interface gpon-onu_1/2/4:123':
+
+
+2024-09-15 14:48:39.758854: Initial output from OLT:
+************************************************
+Welcome to ZXAN product C300 of ZTE Corporation
+************************************************
+
+Last login time is 09.15.2024-14:32:06-UTC, 3 authentication failures happened s
+ince that time.
+Username:
+2024-09-15 14:48:39.804412: Output after sending password:
+
+Password:
+OLT_TGM_BLAHBATUH#
+2024-09-15 14:48:39.849353: Output after command 'configure terminal':
+
+%Info 20272: Enter configuration commands, one per line. End with CTRL/Z.
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:48:39.895604: Output after command 'interface gpon-olt_1/2/4':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.421269: Output after command 'onu 123 type ZTE_ALL sn ZTEGD43BA05B':
+
+.[Successful]
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.464509: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:48:40.508268: Output after command 'interface gpon-onu_1/2/4:123':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.552460: Output after command 'description ini test aja':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.596463: Output after command 'tcont 1 profile 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.640700: Output after command 'gemport 1 tcont 1':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.684709: Output after command 'gemport 1 traffic-limit upstream 100M downstream 100M':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.729324: Output after command 'service-port 1 vport 1 user-vlan 200 vlan 200':
+
+OLT_TGM_BLAHBATUH(config-if)#
+2024-09-15 14:48:40.775426: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:48:40.819770: Output after command 'pon-onu-mng gpon-onu_1/2/4:123':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:123)#
+2024-09-15 14:48:40.863737: Output after command 'service internet gemport 1 vlan 200':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:123)#
+2024-09-15 14:48:40.907499: Output after command 'wan-ip 1 mode pppoe username TEST password TEST vlan-profile vlan200 host 1':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:123)#
+2024-09-15 14:48:40.958480: Output after command 'wan-ip 1 ping-response enable traceroute-response enable':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:123)#
+2024-09-15 14:48:41.002461: Output after command 'security-mgmt 1 state enable mode forward protocol web':
+
+OLT_TGM_BLAHBATUH(gpon-onu-mng 1/2/4:123)#
+2024-09-15 14:48:41.046596: Output after command 'exit':
+
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:49:01.066982: Final command output:
+
+2024-09-15 14:49:01.126130: Output after verify command 'show run interface gpon-onu_1/2/4:123':
+
+Building configuration...
+interface gpon-onu_1/2/4:123
+  description ini test aja
+  tcont 1 profile 100M
+  gemport 1 tcont 1
+  gemport 1 traffic-limit upstream 100M downstream 100M 
+  service-port 1 vport 1 user-vlan 200 vlan 200 
+!
+end
+OLT_TGM_BLAHBATUH(config)#
+2024-09-15 14:49:01.126206: Configuration is successful.

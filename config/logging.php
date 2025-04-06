@@ -101,6 +101,22 @@ return [
             'level' => 'info',
         ],
 
+        'notif' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/notif.log'),
+            'level' => 'info',
+        ],
+        'isolir' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/isolir.log'),
+            'level' => 'info',
+        ],
+	 'payment' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/payment.log'),
+            'level' => 'info',
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

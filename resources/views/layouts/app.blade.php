@@ -75,6 +75,7 @@
         
         <main class="py-4">
             @yield('content')
+            <!-- @yield('footer-scripts') -->
         </main>
     </div>
 </body>

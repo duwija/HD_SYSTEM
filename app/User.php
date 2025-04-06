@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'full_name', 'email', 'password', 'date_of_bird', 'job_title', 'employee_type', 'join_date', 'address', 'phone','date_of_birth', 'email', 'photo', 'updated_at','created_at','deleted_at'
+        'name', 'full_name', 'email', 'password', 'date_of_bird', 'job_title', 'employee_type', 'join_date', 'address', 'phone','privilege','date_of_birth', 'email', 'photo','description', 'updated_at','created_at','deleted_at','id_merchant'
     ];
 
     /**
@@ -39,11 +39,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-     public function user($id)
+    public function user($id)
     {
-           $user = $this->where('id', $id)
-           ->first();
-           return $user;
-         
-    }
+     $user = $this->where('id', $id)
+     ->first();
+     return $user;
+
+ }
+ public function groups()
+ {
+    return $this->belongsToMany(Group::class, 'usergroups', 'id_user', 'id_group');
+}
+public function akuns()
+{
+    return $this->belongsToMany(Akun::class, 'akunusers', 'id_user', 'akun_code');
+}
 }

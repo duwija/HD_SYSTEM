@@ -88,6 +88,7 @@
   <table id="example3" class="table table-bordered table-striped">
     @php
     $total=0;
+    $no=0;
     @endphp
     <thead >
       <tr>
@@ -97,6 +98,7 @@
 
         <th scope="col">Invoice NO</th>
         <th scope="col">CID</th>
+         <th scope="col">Payment Point</th>
         <th scope="col">Note</th>
         <th scope="col">Tax %</th>
         <th scope="col">Amount</th>
@@ -107,7 +109,9 @@
     </thead>
     <tbody>
      @foreach( $suminvoice as $suminvoice)
-
+     @php
+     $no=$no+1;
+     @endphp
 
      <tr>
       <th class=" text-center">{{ $loop->iteration }} 
@@ -120,7 +124,14 @@
 
 
 
-      <td><strong><a href="/customer/{{ $suminvoice->customer->id }}">{{ $suminvoice->customer->customer_id }} </a></strong> </br> {{ $suminvoice->customer->name  }}</td>
+      <td><strong><a class="badge bg-primary" href="/customer/{{ $suminvoice->customer->id }}">{{ $suminvoice->customer->customer_id }} </a></strong> </br> {{ $suminvoice->customer->name  }}</td>
+       @if(is_numeric($suminvoice->payment_point))
+      <td>{{ $suminvoice->bank->name  }}</td>
+
+      @else
+       <td>{{ $suminvoice->payment_point  }}</td>
+
+      @endif
       <td>{{ $suminvoice->note  }}</td>
       <td>{{ $suminvoice->tax  }}</td>
       <td align="right"><strong>{{ number_format($suminvoice->recieve_payment, 0, ',', '.')}} </strong></td>
@@ -153,7 +164,8 @@
     </tr>
     @endforeach
  <tr class="bg-primary">
-<td align="center">x</td>
+<td align="center">{{$no+1}}</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>

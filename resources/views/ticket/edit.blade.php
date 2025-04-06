@@ -13,7 +13,7 @@
 
     document.getElementById("phone").value= {!! json_encode($customer->phone) !!};
   }
-  </script> --}}
+</script> --}}
 
 @section('content')
 <section class="content-header">
@@ -26,93 +26,93 @@
       @csrf
       <div class="card-body row">
 
-    <div class="form-group">
-     
-    <input type="hidden" name="id_customer" value="{{$customer->id}}" >
-  </div>
+        <div class="form-group">
 
-       
-<table class="table table-borderless col-md-6 table-sm">
-  
-  <tbody>
-    
-      <tr class="col-md-6">
-    <tr>
-      <th style="width: 25%" class="text-right">Customer ID (CID) :</th>
-      <td>{{$customer->customer_id}}</td>
-      
-    </tr>
-    <tr>
-     <th style="width: 25%" class="text-right">Customer Name :</th>
-      <td>{{$customer->name}}</td>
-      
-    </tr>
-    <tr>
-      <th style="width: 25%" class="text-right">Contact Name : </th>
-      <td colspan="2">{{$customer->contact_name}}</td>
-      
-    </tr>
-    <tr>
-      <th style="width: 25%" class="text-right">Phone : </th>
-      <td colspan="2">{{$customer->phone}}</td>
-      
-    </tr>
-    <tr>
-      <th style="width: 25%" class="text-right">Address : </th>
-      <td colspan="2">{{$customer->address}}</td>
-      
-    </tr>
-  </tr>
+          <input type="hidden" name="id_customer" value="{{$customer->id}}" >
+        </div>
 
+        
+        <table class="table table-borderless col-md-6 table-sm">
 
-  </tbody>
-</table>
+          <tbody>
 
-  <table class="table table-borderless col-md-6 table-sm">
-  
-  <tbody>
-    
-      <tr class="col-md-6">
-    <tr>
-      <th style="width: 25%; " class="text-right">Status :</th>
-      <th style="color: " >{{$customer->status_name}}</th>
-      
-    </tr>
-    <tr>
-     <th style="width: 25%" class="text-right">Plan :</th>
-      <td>{{$customer->plan_name}}</td>
-      
-    </tr>
-    <tr>
-      <th style="width: 25%" class="text-right">Distribution Point :</th>
-      <td colspan="2">
-
-        @if ( empty($customer->distpoint_name))
-
-        {{'-'}}
-        @else
-        {{ $customer->distpoint_name }}
-        @endif
-
-      </td>
-      
-    </tr>
-     <tr>
-      <th style="width: 25%" class="text-right">Note :</th>
-      <td colspan="2">{{$customer->note}}</td>
-      
-    </tr>
-  </tr>
+            <tr class="col-md-6">
+              <tr>
+                <th style="width: 25%" class="text-right">Customer ID (CID) :</th>
+                <td>{{$customer->customer_id}}</td>
+                
+              </tr>
+              <tr>
+               <th style="width: 25%" class="text-right">Customer Name :</th>
+               <td>{{$customer->name}}</td>
+               
+             </tr>
+             <tr>
+              <th style="width: 25%" class="text-right">Contact Name : </th>
+              <td colspan="2">{{$customer->contact_name}}</td>
+              
+            </tr>
+            <tr>
+              <th style="width: 25%" class="text-right">Phone : </th>
+              <td colspan="2">{{$customer->phone}}</td>
+              
+            </tr>
+            <tr>
+              <th style="width: 25%" class="text-right">Address : </th>
+              <td colspan="2">{{$customer->address}}</td>
+              
+            </tr>
+          </tr>
 
 
-  </tbody>
-</table>
-<div class="col-md-12">
-  <hr>
-  </div>
-<div class="form-group col-md-12">
-</div>
-      <div class="form-group col-md-3">
+        </tbody>
+      </table>
+
+      <table class="table table-borderless col-md-6 table-sm">
+
+        <tbody>
+
+          <tr class="col-md-6">
+            <tr>
+              <th style="width: 25%; " class="text-right">Status :</th>
+              <th style="color: " >{{$customer->status_name}}</th>
+              
+            </tr>
+            <tr>
+             <th style="width: 25%" class="text-right">Plan :</th>
+             <td>{{$customer->plan_name}}</td>
+             
+           </tr>
+           <tr>
+            <th style="width: 25%" class="text-right">Distribution Point :</th>
+            <td colspan="2">
+
+              @if ( empty($customer->distpoint_name))
+
+              {{'-'}}
+              @else
+              {{ $customer->distpoint_name }}
+              @endif
+
+            </td>
+            
+          </tr>
+          <tr>
+            <th style="width: 25%" class="text-right">Note :</th>
+            <td colspan="2">{{$customer->note}}</td>
+            
+          </tr>
+        </tr>
+
+
+      </tbody>
+    </table>
+    <div class="col-md-12">
+      <hr>
+    </div>
+    <div class="form-group col-md-12">
+    </div>
+    <div class="form-group col-md-3">
       <label for="called_by">Called By </label>
       <div class="input-group mb-3">
 
@@ -125,132 +125,132 @@
        </div>
      </div>
    </div>
-          <div class="form-group col-md-3">
-          <label for=phone>Called Phone No</label>
-           <div class="input-group mb-3">
-          <input type="text" class="form-control @error('phone') is-invalid @enderror " name="phone" id="phone"  placeholder="Called phone" value="{{old('phone')}}">
-          @error('phone')
-          <div class="error invalid-feedback">{{ $message }}</div>
-          @enderror
-          <div class="input-group-append">
-         <button type="button" class="btn btn-primary"  onclick="copy_called_phone()" ><i class="fa fa-clone" aria-hidden="true"></i></button>
-       </div>
-        </div>
-      </div>
+   <div class="form-group col-md-3">
+    <label for=phone>Called Phone No</label>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control @error('phone') is-invalid @enderror " name="phone" id="phone"  placeholder="Called phone" value="{{old('phone')}}">
+      @error('phone')
+      <div class="error invalid-feedback">{{ $message }}</div>
+      @enderror
+      <div class="input-group-append">
+       <button type="button" class="btn btn-primary"  onclick="copy_called_phone()" ><i class="fa fa-clone" aria-hidden="true"></i></button>
+     </div>
+   </div>
+ </div>
 
 
  <div class="form-group col-md-3">
-          <label for="status">  Status </label>
-         <div class="input-group mb-3">
-          @php
-           $status=['Open', 'Inprogress','Pending','Close'];
-          @endphp
-          <select name="status" id="status" class="form-control">
-            @foreach ($status as $status)
-            @if ($ticket->status == $status){
-            <option value="{{ $status }}" selected="">{{ $status }}</option>
+  <label for="status">  Status </label>
+  <div class="input-group mb-3">
+    @php
+    $status=['Open', 'Inprogress','Pending','Solve','Close'];
+    @endphp
+    <select name="status" id="status" class="form-control">
+      @foreach ($status as $status)
+      @if ($ticket->status == $status){
+        <option value="{{ $status }}" selected="">{{ $status }}</option>
 
-          }
-          @else
-          {
+      }
+      @else
+      {
         <option value="{{ $status }}">{{ $status }}</option>
-          }
-          @endif
-            
-            @endforeach
+      }
+      @endif
+      
+      @endforeach
 
-                  
-          </select>
-        </div>
-
-      </div>
-       <div class="form-group col-md-3">
-          <label for="category">  Category</label>
-         <div class="input-group mb-3">
-          <select name="id_categori" id="id_categori" class="form-control">
-            @foreach ($category as $id => $name)
-            <option value="{{ $id }}">{{ $name }}</option>
-            @endforeach
-          </select>
-        </div>
-
-      </div>
-
-<div class="form-group col-md-6">
-          <label for="tittle">Tittle</label>
-          <input type="text" class="form-control @error('tittle') is-invalid @enderror " name="tittle" id="tittle"  placeholder="Ticket tittle" value="{{old('tittle')}}">
-          @error('tittle')
-          <div class="error invalid-feedback">{{ $message }}</div>
-          @enderror
-        </div>
-
-              <div class="form-group col-md-3">
-          <label for="assign_to"> Assign to  </label>
-         <div class="input-group mb-3">
-          <select name="assign_to" id="assign_to" class="form-control">
-           
-            @foreach ($user as $id => $name)
-            <option value="{{ $id }}">{{ $name }}</option>
-            @endforeach
-          </select>
-        </div>
-
-      </div>
-
-        <div class="form-group col-md-3">
-          <label for="member">  Member </label>
-          <div class="form-group">
-                  
-                  <select name="member[]" class="select2" multiple="multiple" data-placeholder="Select a member" style="width: 100%;">
-            <option value="1">none</option>
-            @foreach ($user as $id => $name)
-            <option value="{{ $name }}">{{ $name }}</option>
-            @endforeach
-                  </select>
-                </div>
-         
-     </div>
-        
-        <div class="form-group col-md-12">
-             <label for="nama">Description</label>
-            
-              <!-- tools box -->
-              
-              <!-- /. tools -->
-            
-            <!-- /.card-header -->
-            
-              
-                <textarea name="description" class="textarea" ></textarea>
-            
-             
-           
-          </div>
-        
-        
-  
-   <div class="form-group">
-    <input type="hidden" name="create_at" value="{{now()}}" >
-     <input type="hidden" name="create_by" value="{{ Auth::user()->name }} " >
+      
+    </select>
   </div>
 
- 
+</div>
 <div class="form-group col-md-3">
-                  <label>Date:</label>
-                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                        <input type="text" name="date" id="date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{date("Y-m-d")}}" />
-                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                    </div>
-                </div>
+  <label for="category">  Category</label>
+  <div class="input-group mb-3">
+    <select name="id_categori" id="id_categori" class="form-control">
+      @foreach ($category as $id => $name)
+      <option value="{{ $id }}">{{ $name }}</option>
+      @endforeach
+    </select>
+  </div>
+
+</div>
+
+<div class="form-group col-md-6">
+  <label for="tittle">Tittle</label>
+  <input type="text" class="form-control @error('tittle') is-invalid @enderror " name="tittle" id="tittle"  placeholder="Ticket tittle" value="{{old('tittle')}}">
+  @error('tittle')
+  <div class="error invalid-feedback">{{ $message }}</div>
+  @enderror
+</div>
 
 <div class="form-group col-md-3">
-   <label>Time:</label>
-<div class="input-group bootstrap-timepicker timepicker">
-            <input id="time" name='time' type="text" class="form-control input-small" value="{{date("H:i")}}">
-            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-        </div>
+  <label for="assign_to"> Assign to  </label>
+  <div class="input-group mb-3">
+    <select name="assign_to" id="assign_to" class="form-control select2">
+
+      @foreach ($user as $id => $name)
+      <option value="{{ $id }}">{{ $name }}</option>
+      @endforeach
+    </select>
+  </div>
+
+</div>
+
+<div class="form-group col-md-3">
+  <label for="member">  Member </label>
+  <div class="form-group">
+
+    <select name="member[]" class="select2" multiple="multiple" data-placeholder="Select a member" style="width: 100%;">
+      <option value="1">none</option>
+      @foreach ($user as $id => $name)
+      <option value="{{ $name }}">{{ $name }}</option>
+      @endforeach
+    </select>
+  </div>
+  
+</div>
+
+<div class="form-group col-md-12">
+ <label for="nama">Description</label>
+ 
+ <!-- tools box -->
+ 
+ <!-- /. tools -->
+ 
+ <!-- /.card-header -->
+ 
+ 
+ <textarea name="description" class="textarea" ></textarea>
+ 
+ 
+ 
+</div>
+
+
+
+<div class="form-group">
+  <input type="hidden" name="create_at" value="{{now()}}" >
+  <input type="hidden" name="create_by" value="{{ Auth::user()->name }} " >
+</div>
+
+
+<div class="form-group col-md-3">
+  <label>Date:</label>
+  <div class="input-group date" id="reservationdate" data-target-input="nearest">
+    <input type="text" name="date" id="date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{date("Y-m-d")}}" />
+    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+    </div>
+  </div>
+</div>
+
+<div class="form-group col-md-3">
+ <label>Time:</label>
+ <div class="input-group bootstrap-timepicker timepicker">
+  <input id="time" name='time' type="text" class="form-control input-small" value="{{date("H:i")}}">
+  <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+</div>
 </div>
 
 
@@ -278,8 +278,8 @@
               
               
            </div>-->
-         
-          <div class="modal-footer justify-content-between float-right">
+           
+           <div class="modal-footer justify-content-between float-right">
             <button type="button" class="btn btn-primary float-right " data-dismiss="modal">Apply</button>
 
           </div>

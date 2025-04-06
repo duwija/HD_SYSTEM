@@ -20,9 +20,9 @@ class AccountingController extends Controller
     {
         //
 
-         $accounting = \App\accounting::orderBy('id','ASC')->get();
+         $accounting = \App\Accounting::orderBy('id','ASC')->get();
          $acccategory = \App\Accountingcategorie::pluck('name', 'id');
-         $sum = \App\accounting::groupBy('id_category')->select('id_category', \DB::raw('sum(income) as income'), \DB::raw('sum(expense) as expense') )->get();
+         $sum = \App\Accounting::groupBy('id_category')->select('id_category', \DB::raw('sum(income) as income'), \DB::raw('sum(expense) as expense') )->get();
         // dd ($sum);
     
         return view ('accounting/index',['accounting' =>$accounting, 'acccategory' => $acccategory,'ladger' =>$sum]);
@@ -57,7 +57,7 @@ class AccountingController extends Controller
           //$type =array['income','expanse']
           if($request->type == 'income')
           {
-            $result = \App\accounting::create([
+            $result = \App\Accounting::create([
             'date' => $request->date,
             'id_category' =>$request->category,
             'income' => $request->amount, 
@@ -70,7 +70,7 @@ class AccountingController extends Controller
           }
           elseif($request->type == 'expense')
           {
-            $result = \App\accounting::create([
+            $result = \App\Accounting::create([
             'date' => $request->date,
             'id_category' =>$request->category,
              
@@ -83,7 +83,7 @@ class AccountingController extends Controller
           }
            elseif($request->type == 'account_payable')
           {
-            $result = \App\accounting::create([
+            $result = \App\Accounting::create([
             'date' => $request->date,
             'id_category' =>$request->category,
              
@@ -96,7 +96,7 @@ class AccountingController extends Controller
           }
            elseif($request->type == 'account_recievable')
           {
-            $result = \App\accounting::create([
+            $result = \App\Accounting::create([
             'date' => $request->date,
             'id_category' =>$request->category,
              

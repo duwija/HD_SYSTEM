@@ -6,7 +6,7 @@
 
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title font-weight-bold"> Add New Employee </h3>
+      <h3 class="card-title font-weight-bold"> Add New User </h3>
     </div>
     <form role="form" method="post" action="/user" enctype="multipart/form-data">
       @csrf
@@ -35,56 +35,56 @@
           </div>
         </div>
         <div class="row">
-     
-     <div class="form-group col-sm-3">
-       <label for="email"> Email  </label>
-       <input type="text" class="form-control @error('email') is-invalid @enderror" name="email"  id="email" placeholder="email" value="{{old('email')}}">
-       @error('email')
-       <div class="error invalid-feedback">{{ $message }}</div>
-       @enderror
-     </div>
-     <div class="form-group col-sm-3">
-     <label for="password"> Password </label>
-     <input type="password" class="form-control @error('password') is-invalid @enderror" name="password"  id="password" placeholder="password" value="{{old('password')}}">
-     @error('password')
-     <div class="error invalid-feedback">{{ $message }}</div>
-     @enderror
-   </div>
-        <div class="form-group col-sm-3">
-           <label for="job_title"> Job Title </label>
-            <select name="job_title" id="job_title" class="form-control">
-            <option value="Network Engineer">Network Engineer</option>
-             <option value="NOC">NOC</option>
-              <option value="Inventoryr">Inventory</option>
-             <option value="Accounting">Accounting</option>
-              <option value="Marketing">Marketing</option>
-               <option value="HRD">HRD</option>
-                <option value="GA">GA</option>
-                <option value="Management">Management</option>
-           
-          </select>
+
+         <div class="form-group col-sm-3">
+           <label for="email"> Email  </label>
+           <input type="text" class="form-control @error('email') is-invalid @enderror" name="email"  id="email" placeholder="email" value="{{old('email')}}">
+           @error('email')
+           <div class="error invalid-feedback">{{ $message }}</div>
+           @enderror
          </div>
-   </div>
-       {{--  <div class="row">
-     
-        
+         <div class="form-group col-sm-3">
+           <label for="password"> Password </label>
+           <input type="password" class="form-control @error('password') is-invalid @enderror" name="password"  id="password" placeholder="password" value="{{old('password')}}">
+           @error('password')
+           <div class="error invalid-feedback">{{ $message }}</div>
+           @enderror
+         </div>
+         <div class="form-group col-sm-3">
+           <label for="job_title"> Job Title </label>
+           <select name="job_title" id="job_title" class="form-control">
+            <option value="Network Engineer">Network Engineer</option>
+            <option value="NOC">NOC</option>
+            <option value="Inventoryr">Inventory</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Marketing">Marketing</option>
+            <option value="HRD">HRD</option>
+            <option value="GA">GA</option>
+            <option value="Management">Management</option>
+
+          </select>
+        </div>
+      </div>
+      {{--  <div class="row">
+
+
       </div> --}}
       <div class="row">
-         <div class="form-group col-sm-3">
+        <div class="form-group col-sm-2">
           <label for="employee_type"> Employee Type </label>
           <div class="input-group mb-3">
-            
-              <select name="employee_type" id="employee_type" class="form-control">
-            <option value="Full Time">Full Time</option>
-             <option value="Part Time">Part Time</option>
+
+            <select name="employee_type" id="employee_type" class="form-control">
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
               <option value="Fixed-Term Contract">Fixed-Term Contract</option>
-             <option value="Accounting">Probation</option>
-           </select>
-            
-            
+              <option value="Accounting">Probation</option>
+            </select>
+
+
           </div>
         </div>
-        <div class="form-group col-sm-3">
+        <div class="form-group col-sm-1">
          <label for="join_date"> Join Date </label>
          <input type="date" class="form-control @error('join_date') is-invalid @enderror" name="join_date"  id="join_date" value="{{old('join_date')}}">
          @error('join_date')
@@ -92,23 +92,51 @@
          @enderror
        </div>
        <div class="form-group col-sm-3">
-         <label for="address"> Address </label>
-         <input type="text" class="form-control @error('address') is-invalid @enderror" name="address"  id="address" placeholder="address" value="{{old('address')}}">
-         @error('address')
-         <div class="error invalid-feedback">{{ $message }}</div>
-         @enderror
-       </div>
-     </div>
-    
-   <div class="row">
-     <div class="form-group col-sm-3">
-       <label for="phone"> Phone </label>
-       <input type="text" class="form-control @error('phone') is-invalid @enderror" name="phone"  id="phone" placeholder="phone" value="{{old('phone')}}">
-       @error('phone')
-       <div class="error invalid-feedback">{{ $message }}</div>
-       @enderror
-     </div>
-   <div class="form-group col-sm-6">
+        <label for="groups">Assign Tiket Groups</label>
+        <select name="groups[]" id="groups" class="form-control select2" multiple>
+         @foreach ($groups as $group)
+         <option value="{{ $group->id }}">
+          {{ $group->name }}
+        </option>
+        @endforeach
+      </select>
+      @error('groups')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+      @enderror
+    </div>
+    <div class="form-group col-sm-3">
+      <label for="groups">Assign Bank Akun</label>
+      <select name="akuns[]" id="akuns" class="form-control select2" multiple>
+        @foreach ($akuns as $akun)
+        <option value="{{ $akun->akun_code }}">
+          {{ $akun->name }}
+        </option>
+        @endforeach
+      </select>
+      @error('akuns')
+      <div class="invalid-feedback d-block">{{ $message }}</div>
+      @enderror
+    </div>
+
+
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-2">
+     <label for="phone"> Phone </label>
+     <input type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" id="phone" placeholder="phone" value="{{ old('phone') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+     @error('phone')
+     <div class="error invalid-feedback">{{ $message }}</div>
+     @enderror
+   </div>
+   <div class="form-group col-sm-3">
+     <label for="address"> Address </label>
+     <input type="text" class="form-control @error('address') is-invalid @enderror" name="address"  id="address" placeholder="address" value="{{old('address')}}">
+     @error('address')
+     <div class="error invalid-feedback">{{ $message }}</div>
+     @enderror
+   </div>
+   <div class="form-group col-sm-4">
     <label for="description">Note  </label>
     <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" id="description" placeholder="Note " value="{{old('description')}}">
     @error('description')
@@ -139,9 +167,9 @@
 </div>
 <!-- /.card-body -->
 <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                  <a href="{{url('user')}}" class="btn btn-default float-right">Cancel</a>
-                </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  <a href="{{url('user')}}" class="btn btn-default float-right">Cancel</a>
+</div>
 
 </form>
 

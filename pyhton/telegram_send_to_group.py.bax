@@ -1,0 +1,36 @@
+from telethon import TelegramClient
+import sys
+import asyncio
+
+# Ganti dengan API ID dan API Hash milikmu
+api_id = 27100075
+api_hash = "8231487461400441459a400320c34cfd"
+
+# Inisialisasi klien Telethon
+client = TelegramClient("session_name", api_id, api_hash)
+
+async def send_message_to_group(group_id_or_username, message):
+    """Mengirim pesan ke grup Telegram berdasarkan ID atau username."""
+    await client.start()
+    print(f"🚀 Mengirim pesan ke grup {group_id_or_username}...")
+
+    try:
+        await client.send_message(group_id_or_username, message)
+        print("✅ Pesan berhasil dikirim!")
+    except Exception as e:
+        print(f"❌ Error: {e}")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("⚠️ Gunakan format:")
+        print("   python3 send_to_group.py <group_id/username> '<pesan>'")
+        print("Contoh:")
+        print("   python3 send_to_group.py -1001234567890 'Halo grup!'")
+        print("   python3 send_to_group.py @nama_grup 'Halo dari Python!'")
+        sys.exit(1)
+
+    group_id_or_username = sys.argv[1]  # Bisa ID atau @username grup
+    message = sys.argv[2]
+
+    with client:
+        client.loop.run_until_complete(send_message_to_group(group_id_or_username, message))

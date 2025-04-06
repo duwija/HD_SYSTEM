@@ -19,9 +19,9 @@ class DeviceController extends Controller
     public function index($id)
     {
         //
-          $device = \App\device::Where('id_customer',$id)->get();
-            $cutomerdevice = \App\customer::Where('id',$id)->first();
-             $devicelist = \App\device::Where('id_customer',$id)->pluck('name','id');
+          $device = \App\Device::Where('id_customer',$id)->get();
+            $cutomerdevice = \App\Customer::Where('id',$id)->first();
+             $devicelist = \App\Device::Where('id_customer',$id)->pluck('name','id');
 
         //$customer =DB::table('customers')->get();
         //dump($plan);
@@ -57,7 +57,7 @@ class DeviceController extends Controller
         ]);
 
 //dd ($request);
-       \App\device::create($request->all());
+       \App\Device::create($request->all());
         
          $url ='device/'.$request->id_customer;
 
@@ -133,7 +133,7 @@ class DeviceController extends Controller
     public function destroy($cust,$id)
     {
         //
-        \App\device::destroy($id);
+        \App\Device::destroy($id);
          return redirect ('/device/'.$cust)->with('success','Item deleted successfully!');
     }
 

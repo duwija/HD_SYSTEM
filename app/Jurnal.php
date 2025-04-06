@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Jurnal extends Model
 {
+  use SoftDeletes;
     //
-       protected $fillable =['date','id_akun', 'kredit', 'debet','reff','type','description',"created_by"];
-        public function akun_name()
-    {
-        return $this->belongsTo('\App\akun', 'id_akun');
-    }
+  protected $fillable =['date','id_akun', 'kredit', 'debet','reff','type','description',"created_by",'deleted_at','note','created_by', 'supplier_id','category','memo'];
+
+  public function akun_name()
+  {
+    return $this->belongsTo('\App\Akun', 'id_akun');
+  }
+
 }
