@@ -96,6 +96,13 @@
       }
     }
 
+    .badge-soft-danger    { background-color: #ffdddd !important; color: #a94442 !important; }
+    .badge-soft-warning   { background-color: #fff8e1 !important; color: #a68c31 !important; }
+    .badge-soft-info      { background-color: #e3f1fc !important; color: #2c5463 !important; }
+    .badge-soft-success   { background-color: #d4f8e8 !important; color: #35694c !important; }
+    .badge-soft-secondary { background-color: #eeeef2 !important; color: #55576b !important; }
+
+
   </style>
 
 </head>
@@ -104,7 +111,7 @@
 
 
 
-  <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="loadingModal" tabindex="-5" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-center p-4">
         <i class="fa fa-spinner fa-spin" style="font-size:40px"></i>
@@ -116,7 +123,7 @@
   <!-- Site wrapper -->
   <div class="wrapper">
     <!-- Navbar -->
-    <nav style="background-color:#a3301c" class="main-header navbar navbar-expand navbar-white ">
+    <nav style="background-color:#02336e" class="main-header navbar navbar-expand navbar-white ">
       <!-- Left navbar links -->
       <ul class="navbar-nav  m-2">
         <li class="nav-item">
@@ -126,8 +133,11 @@
       </ul>
 
       <!-- SEARCH FORM -->
+      @php
+      $privilege = Auth::user()?->privilege ?? 'merchant';
+      @endphp
 
-      @switch (Auth::user()->privilege)
+      @switch ($privilege)
 
       @case ("admin") 
       <form action="/customer/search" method="GET" class="form-inline  ml-6">
@@ -246,7 +256,7 @@
           </a>
 
 
-          @switch (Auth::user()->privilege)
+          @switch ($privilege)
 
           @case ("admin") 
 
@@ -273,6 +283,10 @@
           <hr>
           <a class="dropdown-item" href="{{'/user/'.(Auth::user()->id.'/myprofile') }}">
             {{ " My Profile"}}
+          </a>
+          
+          <a class="dropdown-item" href="/suminvoice/mytransaction">
+            {{ " My Transaction"}}
           </a>
           <a class="dropdown-item" href="{{ route('logout') }}"
           onclick="event.preventDefault();
@@ -321,7 +335,7 @@
             </a>
 
           </li>
-          @switch (Auth::user()->privilege)
+          @switch ($privilege)
 
           @case ("admin") 
           @include('layout/customer')
@@ -332,6 +346,7 @@
           @include('layout/distpoint')
           @include('layout/olt')
           @include('layout/distrouter')
+          @include('layout/map')
           <hr>
           @include('layout/payment')
           @include('layout/marketing')
@@ -353,6 +368,7 @@
           @include('layout/distpoint')
           @include('layout/olt')
           @include('layout/distrouter')
+          @include('layout/map')
 
           <hr>
           @include('layout/tool')
@@ -369,6 +385,7 @@
           @include('layout/distpoint')
           @include('layout/olt')
           @include('layout/distrouter') -->
+          @include('layout/map')
           <hr>
           @include('layout/payment')
           @include('layout/marketing')
@@ -387,6 +404,7 @@
           @include('layout/plan')
           <!-- @include('layout/site') -->
           @include('layout/distpoint')
+          @include('layout/map')
          <!--  @include('layout/olt')
           @include('layout/distrouter') -->
           <hr>
@@ -416,6 +434,7 @@
           <!-- @include('layout/plan') -->
           @include('layout/site')
           @include('layout/distpoint')
+          @include('layout/map')
           <!-- @include('layout/olt') -->
           <!-- @include('layout/distrouter') -->
 
@@ -467,7 +486,7 @@
   @yield('footer-scripts')
   <!-- /.content-wrapper -->
 
-  <footer style="background-color:#a3301c" class="main-footer">
+  <footer style="background-color:#02336e" class="main-footer">
     <div class="float-right d-none d-sm-block">
       <b>Version</b> 2.0.1
     </div>
@@ -509,7 +528,7 @@ Bootstrap 4
 <script src="{{url('dashboard/plugins/summernote/summernote-bs4.min.js')}}"></script>
 
 
-<script>
+<!-- <script>
   $(document).ready(function() {
     $('form').submit(function(e) {
       // Mencegah submit ganda
@@ -524,6 +543,25 @@ Bootstrap 4
       });
     });
   });
+</script> -->
+
+
+<script>
+
+  $(document).ready(function() {
+  // Hanya blok UI untuk form selain #sendForm
+    $('form').not('#sendForm').submit(function(e) {
+    // Mencegah submit ganda
+      $(this).find(':button[type=submit]').addClass('disabled');
+      
+    // Tampilkan modal loading
+      $('#loadingModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
+    });
+  });
+
 </script>
 <script>
   function myFunction(a) {
@@ -581,15 +619,15 @@ Bootstrap 4
           <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
           </span>&emsp;Processing ..."
         },
-        dom: 'lBfrtip',
+        dom: 'Bfrtip',
         buttons: [
-          'copy', 'excel', 'pdf', 'csv', 'print'
+          'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
           ],
         serverSide: true,
         ajax: {
           url: '/sale/table_sale_customer',
           method: 'POST',
-        // },
+          
           data: function ( d ) {
            return $.extend( {}, d, {
             "id_sale":$("#id_sale").val(),

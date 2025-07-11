@@ -165,7 +165,7 @@ public function update_tripay(Request $request)
     $changes = [];
     // 
 
-    Log::channel('payment')->info("=== Callback received from Tripay | STATUS : ".$request->status." ===", [
+    \Log::channel('payment')->debug("=== Callback received from Tripay | STATUS : ".$request->status." ===", [
         'merchant_ref' => $number,
         'status' => $request->status,
         'amount_received' => $request->amount_received,
@@ -177,7 +177,7 @@ public function update_tripay(Request $request)
 
     $cekstatus = \App\Suminvoice::where('number', $number)->first();
     if (!$cekstatus) {
-        Log::channel('payment')->error("Invoice tidak ditemukan: $number");
+        \Log::channel('payment')->error("Invoice tidak ditemukan: $number");
         return response()->json(['success' => false, 'message' => 'Invoice not found'], 404);
     }
 
@@ -209,42 +209,42 @@ public function update_tripay(Request $request)
 
         $oldStatus = $customers->status_name->name ?? 'Unknown';
         $totalamountandfee = $request->amount_received + $request->fee_merchant;
-        qontak_whatsapp_helper_receive_payment_confirmation(
-            $customers->phone, $customers->name, $number, $customers->customer_id, $totalamountandfee, "/invoice/cst/" . Crypt::encryptString($customers->id)
-        );
+        // qontak_whatsapp_helper_receive_payment_confirmation(
+        //     $customers->phone, $customers->name, $number, $customers->customer_id, $totalamountandfee, "/invoice/cst/" . Crypt::encryptString($customers->id)
+        // );
 
         // Kirim Notifikasi Telegram
-        $notif_group = "[ONLINE PAYMENT]\n\n" .
-        "CID: {$customers->customer_id}\n" .
-        "Nama: {$customers->name}\n" .
-        "SUDAH DITERIMA\n" .
-        "Jumlah: Rp " . number_format($request->amount_received, 0, ',', '.') . "\n" .
-        "Oleh: TRIPAY | {$request->payment_method}\n" .
-        "👉 " . url("/suminvoice/" . $invoice->tempcode) . "\n\n" .
-        "Terima kasih\n~ " . env("SIGNATURE") . " ~";
+        // $notif_group = "[ONLINE PAYMENT]\n\n" .
+        // "CID: {$customers->customer_id}\n" .
+        // "Nama: {$customers->name}\n" .
+        // "SUDAH DITERIMA\n" .
+        // "Jumlah: Rp " . number_format($request->amount_received, 0, ',', '.') . "\n" .
+        // "Oleh: TRIPAY | {$request->payment_method}\n" .
+        // "👉 " . url("/suminvoice/" . $invoice->tempcode) . "\n\n" .
+        // "Terima kasih\n~ " . env("SIGNATURE") . " ~";
 
-        $process = new Process([
-            "python3", env("PHYTON_DIR") . "telegram_send_to_group.py",
-            env("TELEGRAM_GROUP_PAYMENT"), $notif_group
-        ]);
-        $process->run();
+        // $process = new Process([
+        //     "python3", env("PHYTON_DIR") . "telegram_send_to_group.py",
+        //     env("TELEGRAM_GROUP_PAYMENT"), $notif_group
+        // ]);
+        // $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        // if (!$process->isSuccessful()) {
+        //     throw new ProcessFailedException($process);
+        // }
 
         // Entri Jurnal Keuangan
         \App\Jurnal::create([
             'date' => $date, 'reff' => $invoice->tempcode . 'receive',
             'type' => 'jumum', 'description' => 'Receive Payment #' . $number . ' | ' . $customers->name,
-            'note' => 'Receive Payment ONLINE #' . $number . ' | ' . $customers->customer_id,
-            'id_akun' => '1-10039', 'debet' => $request->amount_received
+            'note' => 'Receive Payment ONLINE #' . $number . ' | ' . $customers->customer_id. ' | ' . $customers->name,
+            'id_akun' => '1-10039', 'debet' => $request->amount_received, 'contact_id' => $customers->customer_id
         ]);
         \App\Jurnal::create([
             'date' => $date, 'reff' => $invoice->tempcode . 'receive',
             'type' => 'jumum', 'description' => 'Receive Payment #' . $number . ' | ' . $customers->name,
-            'note' => 'Receive Payment ONLINE #' . $number . ' | ' . $customers->customer_id,
-            'id_akun' => '1-10100', 'kredit' => $request->amount_received
+            'note' => 'Receive Payment ONLINE #' . $number . ' | ' . $customers->customer_id. ' | ' . $customers->name,
+            'id_akun' => '1-10100', 'kredit' => $request->amount_received, 'contact_id' => $customers->customer_id
         ]);
 
         // Cek jika tidak ada invoice unpaid, update status customer
@@ -264,7 +264,7 @@ public function update_tripay(Request $request)
 
         // Tentukan siapa yang mengubah status (karena ini job, kita anggap "System Job")
         $updatedBy ='TRIPAY' ;
-        $msg='diaktifkan kembali karena tidak ada invoice unpaid.';
+        $msg='Diaktifkan kembali karena tidak ada invoice unpaid.';
 
     }
 }
@@ -310,7 +310,7 @@ elseif ($customers->id_status == 4 && \App\Suminvoice::where('payment_status', 0
 
 
 
-        $msg ="diaktifkan kembali karena invoice unpaid masih dalam masa jatuh tempo.";
+        $msg ="Diaktifkan kembali karena invoice unpaid masih dalam masa jatuh tempo.";
 
     }
 }
@@ -345,17 +345,18 @@ if (!empty($changes)) {
         'updates' => json_encode($changes),
     ]);
 
-    Log::channel('payment')->info("Pelanggan ID: {$customers->customer_id}  | ".$msg." |".$logMessage);
+    \Log::channel('payment')->info("[ONLINE PAYMENT ] Pelanggan ID: {$customers->customer_id}  | INV no: ".$number." | ".$msg." |".$logMessage);
 }
 else
 {
     $changes = [];
+    \Log::channel('payment')->info("[ONLINE PAYMENT ] Pelanggan ID: {$customers->customer_id}  | INV no: ".$number." | ".$msg." |".$logMessage);
 }
 
 return(json_encode(['success' => true]));
 } catch (\Exception $e) {
     DB::rollBack();
-    Log::channel('payment')->error("Error in update_tripay: " . $e->getMessage());
+    \Log::channel('payment')->error("Error in update_tripay: " . $e->getMessage());
     return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
 }
 }
@@ -367,6 +368,24 @@ return(json_encode(['success' => true]));
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+
+
+
+
+    public function update_winpay(Request $request)
+    {
+        $date = now()->toDateTimeString();
+        $number = $request->merchant_ref;
+        $updatedBy ='TRIPAY' ;
+        $msg='';
+        $changes = [];
+    // 
+
+        \Log::channel('payment')->info("=== Callback received from winpay | STATUS : ".$request);
+    }
+
+
     public function destroy($id)
     {
         //

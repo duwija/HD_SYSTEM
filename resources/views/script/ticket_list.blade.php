@@ -33,11 +33,11 @@
       <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
       </span>&emsp;Processing ..."
     },
-    dom: 'lBfrtip',
+    dom: 'Bfrtip',
     buttons: [
-      'copy', 'excel', 'pdf', 'csv', 'print'
+      'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
       ],
-    "lengthMenu": [[200, 500, 1000], [200, 500, 1000]],
+    "lengthMenu": [[100, 200, 500, 1000], [100, 200, 500, 1000]],
     processing: true,
     serverSide: true,
     ajax: {
@@ -112,6 +112,7 @@
     {data: 'id', name: 'id'},
 
     {data: 'id_customer', name: 'id_customer'},
+    {data: 'address', name: 'address'},
     {data: 'merchant', name: 'merchant'},
     {data: 'status', name: 'status'},
     {data: 'id_categori', name: 'id_categori'},

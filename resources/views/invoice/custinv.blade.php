@@ -27,8 +27,8 @@
             <div class="col-lg-12">
               <div class="container">
                 <!-- <img style="width:150px; height: auto;" src="https://billing.alus.co.id/img/trikamedia.png"> -->
-                <span class="text-center"><h3 class=""><img style="width:150px; height: auto;" src="https://billing.alus.co.id/img/trikamedia.png"> </h3></span>
-                <span class="text-center"><h6>PT ADI SOLUSINDO TEKNOLOGI </h6></span>
+                <span class="text-center"><h3 class=""><img style="width:150px; height: auto;" src="https://{{env('DOMAIN_NAME')}}/img/trikamedia.png"> </h3></span>
+                <span class="text-center"><h6>{{ env('COMPANY') }}</h6></span>
 
                 <span class="text-center"><h6>Customer Invoice </h6></span>
             </div>
@@ -55,8 +55,8 @@
                         <td><strong>{{ $customer->status_name }}</strong></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><h6><strong>Agar transaksi pembayaran transfer lebih cepat dan efisien dalam proses verfikasi, mohon melakukan pembayaran dengan menggunakan fasilitas online payment yang sudah kami sediakan </strong>( dengan mengklik tombol "show" di status invoice unpaid, kemudian pilih metode pembayaran "Bank Transfer / Retail Outlet / E-Wallet")
-                        </h6>
+                        <td colspan="2"><!-- <h6><strong>Agar transaksi pembayaran transfer lebih cepat dan efisien dalam proses verfikasi, mohon melakukan pembayaran dengan menggunakan fasilitas online payment yang sudah kami sediakan </strong>( dengan mengklik tombol "show" di status invoice unpaid, kemudian pilih metode pembayaran "Bank Transfer / Retail Outlet / E-Wallet")
+                        </h6> -->
                         
                     </td>
                 </tr>
@@ -104,9 +104,9 @@
             </tbody>
         </table>
         <span>
-         <strong><a style="color: red;"> CATATAN PENTING: Pembayaran transfer langsung ke rekening perusahaan PT. Adi Solusindo Teknologi akan kami tutup per 01 Juni 2025</a></strong>
-     </span>
- </div>
+           <!-- <strong><a style="color: red;"> CATATAN PENTING: Pembayaran transfer langsung ke rekening perusahaan PT. Adi Solusindo Teknologi akan kami tutup per 01 Juni 2025</a></strong> -->
+       </span>
+   </div>
 
 </div>
 </div>
@@ -114,7 +114,7 @@
 <!-- Footer -->
 <footer class="footer">
     <div class="container">
-        <span class="text-muted">Jalan Raya Tanah Lot, Br. batugaing, Desa Beraban, Kec. Kediri, Kab. Tabanan, Bali| +62 881-0372-49549</span>
+        <span class="text-muted">{{env("COMPANY_ADDRESS1") }} <br> {{env("COMPANY_ADDRESS2") }} </span>
         <span class="text-muted"><i class="fa fa-whatsapp" aria-hidden="true"></i></span> 
     </div>
 </footer>

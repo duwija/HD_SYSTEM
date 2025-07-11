@@ -25,6 +25,7 @@
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-image-optimizer": "^1.8",
         "symfony/mailer": "*",
+        "vinkla/hashids": "*",
         "xendit/xendit-php": "^2.11",
         "yajra/laravel-datatables-oracle": "^9.19"
     },

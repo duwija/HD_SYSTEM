@@ -118,6 +118,11 @@
                             { title: "Uptime" },
                             { title: "Status" }
                             ],
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
+                            ],
+                        "lengthMenu": [[50, 100, 200, 500, 1000], [50, 100, 200, 500, 1000]],
                         destroy: true,
                         paging: true,
                         searching: true,
@@ -163,7 +168,13 @@
                     $('#logTable').DataTable({
                         ordering: true,
                         pageLength: 10,
-                        order: [[0, 'desc']], // Urutkan berdasarkan waktu terbaru
+                        order: [[0, 'desc']],
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
+                            ],
+                        "lengthMenu": [[200, 500, 1000], [200, 500, 1000]],
+                         // Urutkan berdasarkan waktu terbaru
                     });
                 } else {
                     logTableBody.html(`<tr><td colspan="3">No logs available.</td></tr>`);
@@ -289,7 +300,13 @@
                     $('#commandOutput').html(table);
 
                     // Inisialisasi DataTables setelah tabel dibuat
-                    $('#outputTable').DataTable();
+                    $('#outputTable').DataTable({
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'pageLength', 'copy', 'excel', 'pdf', 'csv', 'print'
+                            ],
+                        lengthMenu: [[50, 100, 200, 500, 1000], [50, 100, 200, 500, 1000]]
+                    });
                 } else {
                     $('#commandOutput').html('<h5>Command Output:</h5><pre>No data received</pre>');
                 }

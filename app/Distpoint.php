@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\softDeletes;
 class Distpoint extends Model
 {
 
-   use softDeletes;
-   protected $fillable =['name','id_site', 'ip', 'security','parrent','coordinate','created_at','monitoring','status','description','deleted_at'];
-   public function distpoint_name()
-   {
+ use softDeletes;
+ protected $fillable =['name','dispointgroup_id','id_site', 'ip', 'security','parrent','coordinate','created_at','monitoring','status','description','deleted_at'];
+ public function distpoint_name()
+ {
     return $this->belongsTo('\App\Distpoint', 'parrent')->withTrashed();
 }
 public function olt_name()
@@ -33,5 +33,13 @@ public function distpoint($id)
     ->first();
     return $distpoint;
 
+}
+public function group()
+{
+    return $this->belongsTo(\App\Distpointgroup::class, 'distpointgroup_id');
+}
+public function parentDistPoint()
+{
+    return $this->belongsTo(Distpoint::class, 'parrent');
 }
 }

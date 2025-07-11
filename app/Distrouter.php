@@ -42,77 +42,141 @@ class Distrouter extends Model
 		}
 	}
 
-	public static function mikrotik_addsecreate($host,$user,$pass,$port,$cid,$cidpass,$profile,$comment)
+// 	public static function mikrotik_addsecreate($host,$user,$pass,$port,$cid,$cidpass,$profile,$comment)
 	
+// 	{
+
+// 		try {
+
+// 			$client = new Client([
+//             //to login to api
+// 				'host' => $host,
+// 				'user' => $user,
+// 				'pass' => $pass,
+// 				'port' => $port,
+//             //data
+	
+
+// 			]);
+	
+
+
+
+
+// // check user exist 
+// 			$query_check =
+
+// 			(new Query('/ppp/secret/print'))
+
+// 			->where('name',$cid);
+
+// 			$users = $client->query($query_check)->read();
+
+
+// //var_dump($users);
+//             // if user exist
+// 			if (!empty($users[0]['.id'])) {
+//             // set the user enable
+// 				foreach ($users as $user) {
+
+//     // enable
+// 					$query_enable = (new Query('/ppp/secret/set'))
+// 					->equal('.id', $user['.id'])
+// 					->equal('disabled', 'false');
+	
+
+
+// 					$result = $client->query($query_enable)->read();
+
+// // echo $result;
+
+// 				}
+// 			}
+
+// 			else
+// 			{
+
+// 				$query_add =
+
+// 				(new Query('/ppp/secret/add '))
+// 				->equal('name', $cid)
+// 				->equal('password', $cidpass)
+// 				->equal('comment', $comment)
+// 				->equal('profile', $profile);
+
+
+// 				$response = $client->query($query_add)->read();
+
+// 			}
+
+// 		} catch (Exception $ex) {
+// 			return('field connecting to router');
+// 		}
+// 	}
+
+
+
+	public static function mikrotik_addsecreate($host, $user, $pass, $port, $cid, $cidpass, $profile, $comment, $ip = null)
 	{
-
 		try {
-
 			$client = new Client([
-            //to login to api
 				'host' => $host,
 				'user' => $user,
 				'pass' => $pass,
 				'port' => $port,
-            //data
-				
-
 			]);
-			
 
-
-
-
-// check user exist 
-			$query_check =
-
-			(new Query('/ppp/secret/print'))
-
-			->where('name',$cid);
+        // Cek apakah user PPPoE sudah ada
+			$query_check = (new Query('/ppp/secret/print'))
+			->where('name', $cid);
 
 			$users = $client->query($query_check)->read();
 
-
-//var_dump($users);
-            // if user exist
 			if (!empty($users[0]['.id'])) {
-            // set the user enable
 				foreach ($users as $user) {
-
-    // enable
 					$query_enable = (new Query('/ppp/secret/set'))
 					->equal('.id', $user['.id'])
 					->equal('disabled', 'false');
-					
-
-
-					$result = $client->query($query_enable)->read();
-
-// echo $result;
-
+					$client->query($query_enable)->read();
 				}
-			}
-
-			else
-			{
-
-				$query_add =
-
-				(new Query('/ppp/secret/add '))
+			} else {
+				$query_add = (new Query('/ppp/secret/add'))
 				->equal('name', $cid)
 				->equal('password', $cidpass)
 				->equal('comment', $comment)
 				->equal('profile', $profile);
 
+            // Tambahkan remote-address hanya jika IP tersedia
+				if (!empty($ip)) {
+					$query_add->equal('remote-address', $ip);
+				}
 
-				$response = $client->query($query_add)->read();
-
+				$client->query($query_add)->read();
 			}
 
 		} catch (Exception $ex) {
-			return('field connecting to router');
+			return 'failed connecting to router';
 		}
 	}
+
+
+	public static function mikrotik_is_secret_disabled($ip, $user, $pass, $port, $pppoe)
+	{
+		$client = new \RouterOS\Client([
+			'host' => $ip,
+			'user' => $user,
+			'pass' => $pass,
+			'port' => $port,
+		]);
+
+		$query = (new \RouterOS\Query('/ppp/secret/print'))
+		->where('name', $pppoe);
+
+		$secrets = $client->query($query)->read();
+
+		return isset($secrets[0]['disabled']) && $secrets[0]['disabled'] === 'true';
+	}
+
 
 
 	public static function mikrotik_addprofile($host,$user,$pass,$port,$name,$limit,$comment)

@@ -12,7 +12,10 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function show(Request $request)
     {
         $filter ='customers.'.$request->filter;

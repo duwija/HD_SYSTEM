@@ -40,16 +40,29 @@
         <div class="col-md-3">
           <label for="kas" class="form-label">Bertransaksi dengan</label>
           <select name="category" id="category" class="form-control select2" required>
-            <option value="">-- Pilih Kategori --</option>
+            <option value="" selected disabled>-- Pilih Kategori --</option>
+            <option value="none">None</option>
             <option value="contact">Contact</option>
             <option value="customer">Customer</option>
             <option value="employee">Employee</option>
+            
           </select>
         </div>
         <div class="col-md-3">
           <label for="yangMembayar" class="form-label">Name</label>
           <input type="hidden" name="contact_id" class="form-control" placeholder="ID">
-          <input type="text" name="name" class="form-control" placeholder="name" readonly>
+          <input
+          type="text"
+          class="form-control @error('name') is-invalid @enderror"
+          name="name"
+          id="name"
+          placeholder="Name"
+          value="{{ old('name') }}"
+          readonly
+          >
+          @error('name')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
         </div>
       </div>
 
@@ -307,7 +320,17 @@ function generateAkunOptions() {
     $('#category').change(function () {
       $('input[name="name"]').val('');      // Kosongkan input name
       $('input[name="contact"]').val('');  // Kosongkan input contact
-      if ($(this).val() === 'customer') {
+      if ($(this).val() === 'none') {
+    // Set value contact_id jadi kosong/null
+        $('input[name="contact_id"]').val('').prop('readonly', true);
+    // Set name jadi "none"
+        $('input[name="name"]').val('none').prop('readonly', true);
+    // Sembunyikan semua modal pencarian
+        $('#customerModal').modal('hide');
+        $('#contactModal').modal('hide');
+        $('#employeeModal').modal('hide');
+      }
+      else if ($(this).val() === 'customer') {
         $('#customerModal').modal('show');
       }
       else if ($(this).val() === 'contact') {

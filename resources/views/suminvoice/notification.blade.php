@@ -130,89 +130,94 @@
       <div class="card-body text-center">
         <h3><div  id="customerinvcount" nama="customerinvcount">{{ $customerinv }} Customer</div></h3>
         <p><h4> Customers</h4></p>
+
         <div  id="month" nama="month">{{ $customerinv }} </div>
 
         <p>Ready to Create Invoice</p>
         <i class="fas fa-file-invoice fa-3x text-success my-2"></i>
+        <p>
+          <a href="/invoice/createinv" class="btn btn-success">
+            <i class="fas fa-file-invoice"></i> Show Invoice Page
+          </a></p>
+        </div>
+
+        <form action="/jobs/customerinvjob" method="POST" class="mt-auto p-3 d-inline createmonthlyinv-send1">
+          @method('post')
+          @csrf
+
+          <div class="form-group">
+            <label for="date" class="fw-bold">Invoice Date</label>
+            <input class="form-control" id="inv_date" onchange="getSelectedcustomermerchant()" name="inv_date" type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+
+          </div>
+
+          <div class="form-group">
+            <label for="id_merchant" class="fw-bold">Merchant</label>
+            <select name="id_merchant" id="id_merchant" onchange="getSelectedcustomermerchant()" class="form-control select2">
+              <option value="">All</option> <!-- Tambahkan opsi All -->
+              @foreach ($merchant as $id => $name)
+              <option value="{{ $id }}">{{ $name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+          <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success btn-sm px-4">
+              CREATE <i class="fas fa-arrow-circle-right"></i>
+            </button>
+          </div>
+        </form>
       </div>
-
-      <form action="/jobs/customerinvjob" method="POST" class="mt-auto p-3 d-inline createmonthlyinv-send1">
-        @method('post')
-        @csrf
-
-        <div class="form-group">
-          <label for="date" class="fw-bold">Invoice Date</label>
-          <input class="form-control" id="inv_date" onchange="getSelectedcustomermerchant()" name="inv_date" type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
-
-        </div>
-
-        <div class="form-group">
-          <label for="id_merchant" class="fw-bold">Merchant</label>
-          <select name="id_merchant" id="id_merchant" onchange="getSelectedcustomermerchant()" class="form-control select2">
-            <option value="">All</option> <!-- Tambahkan opsi All -->
-            @foreach ($merchant as $id => $name)
-            <option value="{{ $id }}">{{ $name }}</option>
-            @endforeach
-          </select>
-        </div>
-
-        <div class="text-center mt-3">
-          <button type="submit" class="btn btn-success btn-sm px-4">
-            CREATE <i class="fas fa-arrow-circle-right"></i>
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
 
 
-  <div class="col-lg-3 col-6">
+    <div class="col-lg-3 col-6">
 
-    <div class="small-box card card-danger card-outline flex-fill d-flex flex-column">
-     <div class="card-header">
-      <h5 class="card-title m-0"><strong>Customer Isolir</strong></h5>
-    </div>
-    <div class="card-body text-center">
-      <h3> <div id="customercount" name="customercount"></div>
-      </h3>
+      <div class="small-box card card-danger card-outline flex-fill d-flex flex-column">
+       <div class="card-header">
+        <h5 class="card-title m-0"><strong>Customer Isolir</strong></h5>
+      </div>
+      <div class="card-body text-center">
+        <h3> <div id="customercount" name="customercount"></div>
+        </h3>
 
-      <div id="result" name="result"></div>
-      <i class="ion ion-locked fa-3x text-danger my-2"></i>
-    </div>
-    <form  action="/jobs/customerisolirjob" method="POST" class="mt-auto p-3 d-inline blocked-customer1" >
-     @method('post')
-     @csrf
-     <div class="form-group">
-       <label for="id_merchant" class="fw-bold">Select Isolir Date</label>
+        <div id="result" name="result"></div>
+        <i class="ion ion-locked fa-3x text-danger my-2"></i>
+      </div>
+      <form  action="/jobs/customerisolirjob" method="POST" class="mt-auto p-3 d-inline blocked-customer1" >
+       @method('post')
+       @csrf
+       <div class="form-group">
+         <label for="id_merchant" class="fw-bold">Select Isolir Date</label>
 
-       <select name="isolir_date" id="isolir_date" onchange="getSelectedisolirdate()" class="form-control select2">
-        @php
-        $numbers = [];
-        for ($i = 1; $i <= 29; $i++) {
-          $numbers[] = sprintf('%02d', $i);
+         <select name="isolir_date" id="isolir_date" onchange="getSelectedisolirdate()" class="form-control select2">
+          @php
+          $numbers = [];
+          for ($i = 1; $i <= 29; $i++) {
+            $numbers[] = sprintf('%02d', $i);
 
-        }
+          }
+          @endphp
+          @foreach ($numbers as $numbers)
+          @if ($numbers == date('d'))
+          <option selected value="{{$numbers}}">{{ $numbers }}</option>
+
+
+          @else
+
+
+          <option value="{{ $numbers}}">{{ $numbers }}</option>
+
+          @endif
+
+          @endforeach
+          @php
+          echo '<script type="text/javascript">';
+          echo   'getSelectedisolirdate();';
+        echo '</script>';
         @endphp
-        @foreach ($numbers as $numbers)
-        @if ($numbers == date('d'))
-        <option selected value="{{$numbers}}">{{ $numbers }}</option>
-
-
-        @else
-
-
-        <option value="{{ $numbers}}">{{ $numbers }}</option>
-
-        @endif
-
-        @endforeach
-        @php
-        echo '<script type="text/javascript">';
-        echo   'getSelectedisolirdate();';
-      echo '</script>';
-      @endphp
-    </select>
-  </div>
+      </select>
+    </div>
 <!-- 
 <div class="icon">
   <i class="ion ion-locked"></i>

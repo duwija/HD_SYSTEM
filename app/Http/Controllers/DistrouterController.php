@@ -402,6 +402,15 @@ $filteredUsers = match ($status) {
 
 public function getRouterInfo($id)
 {
+    $routerInfo = [];
+    $online = [];
+    $offline = [];
+    $disabled = [];
+    $pppActiveCount = 0;
+    $pppUserCount = 0;
+    $pppOfflineCount = 0;
+    $pppDisabledCount = 0;
+
     try {
         $distrouter = \App\Distrouter::findOrFail($id);
 
@@ -410,68 +419,77 @@ public function getRouterInfo($id)
             'user' => $distrouter->user,
             'pass' => $distrouter->password,
             'port' => $distrouter->port,
-            'timeout' => 5, // Tambahkan timeout agar tidak menunggu lama jika gagal
+            'timeout' => 5, // Timeout agar tidak menggantung
         ]);
-
-        // Cek apakah koneksi berhasil
-        if (!$client) {
-            return response()->json(['success' => false, 'message' => 'Failed to connect to RouterOS'], 500);
-        }
 
         // Ambil informasi sistem
-        $query = new Query('/system/resource/print');
-        $routerInfo = $client->query($query)->read();
+        try {
+            $query = new Query('/system/resource/print');
+            $routerInfo = $client->query($query)->read();
+        } catch (\Exception $e) {
+            \Log::warning("Gagal ambil informasi router: " . $e->getMessage());
+            $routerInfo = [['error' => 'Router info not available']];
+        }
 
-        // Ambil daftar pengguna yang sedang aktif (hanya yang online)
-        $pppActiveQuery = new Query('/ppp/active/print');
-        $pppActive = $client->query($pppActiveQuery)->read();
-        $onlineUsers = collect($pppActive)->pluck('name')->toArray();
-        $pppActiveCount = count($pppActive); // Hitung jumlah yang aktif
+        // Ambil daftar pengguna aktif (online)
+        try {
+            $pppActiveQuery = new Query('/ppp/active/print');
+            $pppActive = $client->query($pppActiveQuery)->read();
+            $onlineUsers = collect($pppActive)->pluck('name')->toArray();
+            $pppActiveCount = count($pppActive);
+        } catch (\Exception $e) {
+            \Log::warning("Gagal ambil ppp active: " . $e->getMessage());
+            $onlineUsers = [];
+            $pppActiveCount = 0;
+        }
 
-        // Ambil daftar semua pengguna PPPOE (bisa online, offline, atau disabled)
-        $pppUserQuery = new Query('/ppp/secret/print');
-        $pppUsers = $client->query($pppUserQuery)->read();
-        $pppUserCount = count($pppUsers); // Hitung jumlah total user
+        // Ambil semua user PPPoE
+        try {
+            $pppUserQuery = new Query('/ppp/secret/print');
+            $pppUsers = $client->query($pppUserQuery)->read();
+            $pppUserCount = count($pppUsers);
 
-        // Pisahkan pengguna berdasarkan status
-        $online = [];
-        $offline = [];
-        $disabled = [];
+            foreach ($pppUsers as $user) {
+                $userInfo = $user['name'] . ' - ' . ($user['comment'] ?? 'No Description');
 
-        foreach ($pppUsers as $user) {
-    $userInfo = $user['name'] . ' - ' . ($user['comment'] ?? 'No Description'); // Gunakan 'comment' sebagai deskripsi, default jika kosong
+                if (isset($user['disabled']) && $user['disabled'] == 'true') {
+                    $disabled[] = $userInfo;
+                } elseif (in_array($user['name'], $onlineUsers)) {
+                    $online[] = $userInfo;
+                } else {
+                    $offline[] = $userInfo;
+                }
+            }
 
-    if (isset($user['disabled']) && $user['disabled'] == 'true') {
-        $disabled[] = $userInfo;
-    } elseif (in_array($user['name'], $onlineUsers)) {
-        $online[] = $userInfo;
-    } else {
-        $offline[] = $userInfo;
-    }
-}
-$pppOfflineCount = count($offline);
-$pppDisabledCount = count($disabled);
+            $pppOfflineCount = count($offline);
+            $pppDisabledCount = count($disabled);
+        } catch (\Exception $e) {
+            \Log::warning("Gagal ambil daftar user PPPoE: " . $e->getMessage());
+        }
 
-return response()->json([
-    'success' => true,
-    'routerInfo' => $routerInfo,
-    'pppActiveCount' => $pppActiveCount,
-    'pppUserCount' => $pppUserCount,
-    'onlineUsers' => $online,
-    'offlineUsers' => $offline,
-    'disabledUsers' => $disabled,
-            'pppOfflineCount' => $pppOfflineCount, // Offline
-            'pppDisabledCount' => $pppDisabledCount // Disabled
+        // Kembalikan semua data meskipun sebagian error
+        return response()->json([
+            'success' => true,
+            'routerInfo' => $routerInfo,
+            'pppActiveCount' => $pppActiveCount,
+            'pppUserCount' => $pppUserCount,
+            'onlineUsers' => $online,
+            'offlineUsers' => $offline,
+            'disabledUsers' => $disabled,
+            'pppOfflineCount' => $pppOfflineCount,
+            'pppDisabledCount' => $pppDisabledCount,
         ]);
-} catch (\Exception $ex) {
-    \Log::error("MikroTik API Error: " . $ex->getMessage());
 
-    return response()->json([
-        'success' => false,
-        'message' => 'Error fetching data from RouterOS',
-        'error' => $ex->getMessage()
-    ], 500);
-}
+    } catch (\Exception $ex) {
+        // Hanya jika gagal total, misal router tidak bisa dikoneksikan sama sekali
+        \Log::error("MikroTik API Error: " . $ex->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Router tidak bisa diakses',
+            'error' => $ex->getMessage()
+        ], 500);
+    }
 }
 
 
@@ -570,7 +588,8 @@ public function show($id)
                 'host' => $request->ip,
                 'user' => $request->user,
                 'pass' => $request->password,
-                'port' => intval($request->port)
+                // 'port' => intval($request->port)
+                'port' => $request->filled('port') ? intval($request->port) : 8728,
             ]);
 
 
@@ -601,9 +620,20 @@ public function show($id)
         }
 
 
-        catch (Exception $ex) {
-            $result = 'Unknow';
-        }
+        // catch (Exception $ex) {
+        //     $result = 'Unknow';
+        // }
+
+catch (\RouterOS\Exceptions\ConnectException $ex) {
+    $result = 'Connection Timeout';
+} catch (\Exception $ex) {
+    $result = 'Unknown Error';
+}
+
+
+
+
+        
 
     }
 
@@ -643,53 +673,55 @@ public function show($id)
 
     public function interfacemonitor($id, Request $request)
     {
-        $result = 'unknow';
         $interface = $request->get('interface');
 
         try {
+            $distrouter = \App\Distrouter::findOrFail($id);
 
-         $distrouter = \App\Distrouter::findOrFail($id);
-         $client = new Client([
+            $client = new Client([
+                'host' => $distrouter->ip,
+                'user' => $distrouter->user,
+                'pass' => $distrouter->password,
+                'port' => $distrouter->port,
+            ]);
 
-            //to login to api
-            'host' => $distrouter->ip,
-            'user' => $distrouter->user,
-            'pass' => $distrouter->password,
-            'port' => $distrouter->port,
-            //data
+        // Coba koneksi dulu, supaya kalau gagal langsung tertangkap
+            $client->connect();
 
+            $query = (new Query('/interface/monitor-traffic'))
+            ->equal('interface', $interface)
+            ->equal('.proplist', 'rx-bits-per-second,tx-bits-per-second')
+            ->equal('once', '');
 
-        ]);
+            $response = $client->query($query)->read();
 
+            if (isset($response[0])) {
+                $ftx = $response[0]['tx-bits-per-second'] ?? 0;
+                $frx = $response[0]['rx-bits-per-second'] ?? 0;
 
+                return response()->json([
+                    ['name' => 'Tx', 'data' => [$ftx]],
+                    ['name' => 'Rx', 'data' => [$frx]]
+                ]);
+            }
 
-         $query =
-         (new Query('/interface/monitor-traffic'))
-         ->equal('interface',$interface)
-         ->equal('once');
-         $rows = array(); $rows2 = array();
+            return response()->json([
+                'success' => false,
+                'message' => 'No data received from RouterOS',
+            ]);
 
-         $getinterfacetraffic= $client->query($query)->read();
-         $ftx = $getinterfacetraffic[0]['tx-bits-per-second'];
-         $frx = $getinterfacetraffic[0]['rx-bits-per-second'];
-         $result = [
-            ['name' => 'Tx', 'data' => [$ftx]],
-            ['name' => 'Rx', 'data' => [$frx]]
-        ];
+        } catch (\Exception $e) {
+        // Tangani error agar tidak membuat crash
+            \Log::channel('mikrotik')->error('Gagal ambil traffic: '.$e->getMessage());
 
-            // Kembalikan data Tx dan Rx sebagai JSON
-        return response()->json($result);
-
-
-
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat mengambil data Mikrotik',
+                'tx' => 0,
+                'rx' => 0
+            ]);
+        }
     }
-
-
-    catch (Exception $ex) {
-        $result = 'Unknow';
-    }
-
-}
 
 
 

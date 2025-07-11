@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="https://billing.alus.co.id/favicon.png">
-    <title>ALUSNET JOB SCHEDULE</title>
+    <title>{{env('APP_NAME')}}</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -100,15 +100,15 @@ align-items: center;
             @endphp
 
             <div class="grid-item {{ $size }} {{ $color }}" style="display: flex; flex-direction: column; height: 100%;"> 
-             <a href="/ticket/{{ $ticket->id }}"> <div class="time badge badge-light">{{ $ticket->time }} | CID: {{$ticket->customer->customer_id}} </div></a>
-             <p><strong>  {{ $ticket->customer->name }}</strong></p>
-             <p> {{ $ticket->tittle }}</p> 
-             <div valign="bottom" class="badge badge-light" style="margin-top: auto;"> {{ $ticket->user->name }}</div>
-         </div>
-         @endforeach
-     </div>
- </div>
- <div style="background-color:#a3301c" class="fixed-bottom  p-2">
+               <a href="/ticket/{{ $ticket->id }}"> <div class="time badge badge-light">{{ $ticket->time }} | CID: {{$ticket->customer->customer_id}} </div></a>
+               <p><strong>  {{ $ticket->customer->name }}</strong></p>
+               <p> {{ $ticket->tittle }}</p> 
+               <div valign="bottom" class="badge badge-light" style="margin-top: auto;"> {{ $ticket->user->name }}</div>
+           </div>
+           @endforeach
+       </div>
+   </div>
+   <div style="background-color:#a3301c" class="fixed-bottom  p-2">
     <span class="badge badge-danger p-2">OPEN TICKET :  {{$open}}</span>
     <span class="badge badge-secondary p-2">CLOSED TICKET :  {{$close}}</span>
     <span class="badge badge-warning p-2">PENDING TICKET :  {{$pending}}</span>
@@ -149,8 +149,8 @@ align-items: center;
 </script>
 <script language="javascript">
     setTimeout(function(){
-     window.location.reload(1);
- }, 60000);
+       window.location.reload(1);
+   }, 60000);
 </script>
 
 </body>

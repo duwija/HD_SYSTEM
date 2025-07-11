@@ -32,9 +32,9 @@
       <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
       </span>&emsp;Processing ..."
     },
-    dom: 'lBfrtip',
+    dom: 'Bfrtip',
     buttons: [
-      'copy', 'excel', 'pdf', 'csv', 'print'
+      'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
       ],
     "lengthMenu": [[25, 50, 100, 200, 500], [25, 50, 100, 200, 500]],
     processing: true,
@@ -86,13 +86,23 @@
       "targets": 7, // your case first columnzZxZ
       "className": "text-center",
 
-    }
-    ,
+    },
     {
       "targets": 8, // your case first columnzZxZ
       "className": "text-center",
 
+    },
+    {
+      "targets": 9, // your case first columnzZxZ
+      "className": "text-center",
+
+    },
+    {
+      "targets": 10, // your case first columnzZxZ
+      "className": "text-center",
+
     }
+
     ],
    columns: [
     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -104,8 +114,9 @@
     {data: 'billing_start', name: 'billing_start'},
     {data: 'isolir_date', name: 'isolir_date'},
     {data: 'status_cust', name: 'status_cust'},
-    // {data: 'select', name: 'select'},
+
     {data: 'invoice', name: 'invoice'},
+    {data: 'notification', name: 'notification'},
     {data: 'action', name: 'action'}
 
 
@@ -122,10 +133,10 @@
       <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
       </span>&emsp;Processing ..."
     },
-    // dom: 'lBfrtip',
-    // buttons: [
-    //  'copy', 'excel', 'pdf', 'csv', 'print'
-    //  ],
+    dom: 'Bfrtip',
+    buttons: [
+     'pageLength',
+     ],
     "lengthMenu": [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
     processing: true,
     serverSide: true,
@@ -210,11 +221,11 @@
           }]
         },
         options: {
-            indexAxis: 'y', // Membuat chart horizontal
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
+           // indexAxis: 'y', // Membuat chart horizontal
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
                     display: false, // Menyembunyikan legend karena label sudah ada
                   },
                   tooltip: {
@@ -242,4 +253,30 @@
     }
 
 
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const dailyNewCustomers = @json($dailyNewCustomers);
+    const ncLabels = dailyNewCustomers.map(i => i.date);
+    const ncCount = dailyNewCustomers.map(i => i.new_count);
+
+    const ctxNc = document.getElementById('dailyNewCustomersChart').getContext('2d');
+    new Chart(ctxNc, {
+      type: 'line',
+      data: {
+        labels: ncLabels,
+        datasets: [{
+          label: 'New Customers',
+          data: ncCount,
+          fill: false,
+          tension: 0.1
+        }]
+      },
+      options: {
+        scales: {
+          x: { title: { display: true, text: 'Date' } },
+          y: { beginAtZero: true, title: { display: true, text: 'Count' } }
+        }
+      }
+    });
   </script>

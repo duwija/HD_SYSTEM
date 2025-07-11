@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WhatsappController;
+use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 //     return view('/home');
 // });
 
+Route::get('/winpay','SuminvoiceController@winpay');
+Route::post('/create-winpay-va','SuminvoiceController@createWinpayVA');
+
+
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/warestart', 'HomeController@warestart');
@@ -31,7 +37,7 @@ Route::get('/homez', 'HomeController@mikrotik_status');
 Route::get('/homexy', 'HomeController@wa');
 Route::get('/xendit', 'HomeController@xendit');
 Route::get('/halo', 'PagesController@halo');
-
+Route::get('/customer/mapdata', 'CustomerController@mapData');
 Route::patch('/customer/restore/{id}','CustomerController@restore');
 Route::post('/customer/table_customer','CustomerController@table_customer');
 Route::post('/customer/table_customermerchant','CustomerController@table_customermerchant');
@@ -58,8 +64,12 @@ Route::delete('/customer/{id}','CustomerController@destroy');
 Route::post('/customer/searchforjurnal', 'CustomerController@searchforjurnal');
 Route::get('/customermerchant','CustomerController@customermerchant');
 Route::post('/customer/createtunnel', 'CustomerController@createtunnel');
+Route::get('/subscribe/{customerId}', 'CustomerController@subscribeform');
+Route::get('/pendaftaran/pdf/{id}', 'ustomerController@cetakPDF');
+Route::post('/pendaftaran', 'CustomerController@generatePDF');
 
 
+Route::get('/ticket/datamap', 'TicketController@datamap');
 
 Route::get('/vendorticket','VendorController@vendorticket');
 Route::post('/ticket/table_vendorticket_list','VendorController@table_vendorticket_list');
@@ -164,6 +174,8 @@ Route::post('/xenditcallback/invoice','XenditCallbackController@update')->middle
 Route::post('/tripay/callback','XenditCallbackController@update_tripay');
 Route::post('/tripay/create','SuminvoiceController@tripay');
 
+Route::post('/winpay/callback','XenditCallbackController@update_winpay');
+
 
 //Jobs
 Route::post('/jobs/notifinv','SuminvoiceController@notifinvJob');
@@ -241,6 +253,9 @@ Route::post('/plan','PlanController@store');
 Route::delete('/plan/{id}','PlanController@destroy');
 Route::patch('/plan/{id}','PlanController@update');
 
+Route::get('/distpoint/map', 'DistpointController@showMap');
+Route::get('/distpoint/data', 'DistpointController@getODPData');
+
 Route::post('/distpoint/table_distpoint_list','DistpointController@table_distpoint_list');
 Route::get('/distpoint','DistpointController@index');
 Route::get('/distpoint/create','DistpointController@create');
@@ -249,6 +264,16 @@ Route::get('/distpoint/{id}/edit','DistpointController@edit');
 Route::patch('/distpoint/{id}','DistpointController@update');
 Route::get('/distpoint/{id}','DistpointController@show');
 Route::delete('/distpoint/{id}','DistpointController@destroy');
+
+Route::post('/distpointgroup/table_distpointgroup_list','DistpointgroupController@table_distpointgroup_list');
+Route::get('/distpointgroup','DistpointgroupController@index');
+Route::get('/distpointgroup/create','DistpointgroupController@create');
+Route::post('/distpointgroup','DistpointgroupController@store');
+Route::get('/distpointgroup/{id}/edit','DistpointgroupController@edit');
+Route::patch('/distpointgroup/{id}','DistpointgroupController@update');
+Route::get('/distpointgroup/{id}','DistpointgroupController@show');
+Route::delete('/distpointgroup/{id}','DistpointgroupController@destroy');
+
 
 Route::get('/distrouter','DistrouterController@index');
 Route::post('/distrouter/executeCommand','DistrouterController@executeCommand');
@@ -405,8 +430,71 @@ Route::delete('/file/customer/{id}','FileController@destroy');
 
 Route::post('/whatsapp/wa_ticket','WhatsappController@wa_ticket');
 
-Route::get('/whatsapp/qrcode','WhatsappController@scan_qrcode');
+// Route::get('/whatsapp/qrcode','WhatsappController@scan_qrcode');
+// Route::get('/whatsapp/qrcode','WhatsappController@showQr');
+// Route::post('/whatsapp/logout','WhatsappController@logout');
+// Route::post('/whatsapp/restart','WhatsappController@restart');
+// Route::get('/whatsapp/groups','WhatsappController@getGroups');
 
+
+Route::prefix('wa')->group(function () {
+     // Inbound webhook dari Node
+    Route::post('webhook',          [WhatsappController::class, 'webhook']);
+
+    // Outbound: kirim pesan & terima messageId
+    Route::post('{session}/send',   [WhatsappController::class, 'send']);
+    
+    // Ack update dari Node
+    Route::post('{session}/ack',    [WhatsappController::class, 'ack']);
+    Route::get('{session}/qr', [WhatsappController::class, 'showQr']);
+    Route::post('{session}/send', [WhatsappController::class, 'send']);
+    Route::post('{session}/logout', [WhatsappController::class, 'logout']);
+    Route::post('{session}/restart', [WhatsappController::class, 'restart']);
+    Route::get('{session}/groups', [WhatsappController::class, 'getGroups']);   
+    Route::post('webhook', [WhatsappController::class, 'webhook']);
+});
+
+// Route::get('/wa/start', function () {
+//     return view('wa.start'); // halaman input session baru
+// });
+
+Route::post('/wa/start', function (\Illuminate\Http\Request $request) {
+    $session = $request->input('session');
+    $response = Http::post('http://127.0.0.1:3001/api/start', [ 'session' => $session ]);
+    return response()->json($response->json());
+});
+Route::get('/wa/dashboard', function () {
+    return view('wa.dashboard');
+});
+
+Route::get('/wa/status', function () {
+    $response = Http::get('http://127.0.0.1:3001/api/health');
+    return response()->json($response->json());
+});
+
+Route::get('/wa/{session}/status', function ($session) {
+    $response = Http::get("http://127.0.0.1:3001/api/{$session}/qr");
+    return response()->json($response->json());
+});
+Route::get('/wa/{session}/stats', function ($session) {
+    return response()->json([
+        'count' => \App\Helpers\WaGatewayHelper::countSentMessagesBySession($session)
+    ]);
+});
+Route::get('/wa/{session}/chats', [WhatsappController::class, 'chats'])->name('wa.chats');
+
+
+Route::get('/wa/logs', [WhatsappController::class, 'logs']);
+Route::post('/wa/logs/table', [WhatsappController::class, 'logsTable']);
+
+Route::get('/wa/chat', [WhatsappController::class, 'chat'])->name('wa.chat');
+Route::get('/wa/chat-data', [WhatsappController::class, 'chatTable'])->name('wa.chatTable');
+// routes/web.php
+Route::get('/wa/{session}/chats', [WhatsappController::class, 'chats'])
+->name('wa.chats');
+
+
+//Route::post('/wa/{session}/send', [WhatsappController::class, 'send']);
 
 //Site
 
@@ -454,7 +542,8 @@ Route::get('/site/{id}/edit','SiteController@edit');
 Route::get('/site/{id}','SiteController@null');
 Route::post('/site','SiteController@store');
 Route::delete('/site/{id}','SiteController@destroy');
-Route::patch('/site/{id}','siteController@update');
+Route::patch('/site/{id}','SiteController@update');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/jobschedule-ajax', [\App\Http\Controllers\HomeController::class, 'jobScheduleAjax'])->name('jobschedule.ajax');

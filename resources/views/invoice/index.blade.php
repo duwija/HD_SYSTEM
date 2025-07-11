@@ -10,7 +10,7 @@
 
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">Create Monthly Invoice  </h3>
+      <h3 class="card-title">Monthly Invoice  </h3>
 
       
     </div>
@@ -64,6 +64,16 @@
      </div>
    </div>
    <div class="form-group col-md-2">
+    <label for="has_invoice"> Invoice Status </label>
+    <div class="input-group mb-3">
+      <select name="has_invoice" id="has_invoice" class="form-control">
+        <option value="">All</option>
+        <option value="yes">Has Invoice</option>
+        <option value="no">No Invoice</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group col-md-2">
     <label for="site location">   </label>
 
     <div class="input-group p-1 col-md-3">

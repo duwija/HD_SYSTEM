@@ -393,12 +393,12 @@
               Cancel
             </button>
             @endif
-            <button disabled="" type="button" class="float-right btn p-2 btn-sm btn-secondary mb-2" data-toggle="modal" data-target="#modal-payment">  + Make Payment y</button>
+            <button disabled="" type="button" class="float-right btn p-2 btn-sm btn-secondary mb-2" data-toggle="modal" data-target="#modal-payment">  + Make Payment </button>
             @else
 <!--             <button type="button" class="float-left btn p-2 bg-gradient-warning btn-sm btn-warning mr-2 mb-2" data-toggle="modal" data-target="#cancelModal">
               Cancel
             </button> -->
-            <button disabled="" type="button" class="float-right btn p-2 btn-sm btn-secondary mb-2" data-toggle="modal" data-target="#modal-payment">  + Make Payment x </button>
+            <button disabled="" type="button" class="float-right btn p-2 btn-sm btn-secondary mb-2" data-toggle="modal" data-target="#modal-payment">  + Make Payment </button>
 
 
             @endif 
@@ -410,15 +410,20 @@
             <a href="{{url('suminvoice').'/' .$invoice->tempcode. '/print'}}" target="_blank" class="btn btn-primary float-left mr-2 ">Print</a>
             <a href="{{url('suminvoice').'/' .$invoice->tempcode. '/dotmatrix'}}" target="_blank" class="btn btn-primary float-left mr-2">Print Thermal</a>
 
-            @if (Auth::user()->privilege == 'admin' OR Auth::user()->privilege =='accounting' )
-            <!-- <button type="button" class="{{-- float-right  --}}btn btn-success " data-toggle="modal" data-target="#modal-wa_invoice"> <i class="fab fa-whatsapp">  </i> WA</button> -->
+          <!--   @if (Auth::user()->privilege == 'admin' OR Auth::user()->privilege =='accounting' )
+           
             <form action="/suminvoice/remainderinv/{{$suminvoice_number->id}}" method="POST" class="d-inline">
               @method('post')
               @csrf
-              <!-- <input type="text" name="id" value="{{ $suminvoice_number->id }}"> -->
               <button type="submit" class="btn btn-success float-left mr-2"><i class="fab fa-whatsapp">   </i> Sent Remainder</button>
             </form>
-            @endif
+            @endif -->
+
+            @if (Auth::user()->privilege == 'admin' || Auth::user()->privilege == 'accounting')
+    <button type="button" class="btn btn-success float-left mr-2" onclick="showNotificationOptions('{{ $suminvoice_number->id }}')">
+        <i class="fab fa-whatsapp"></i> Send Remainder
+    </button>
+@endif
           </div>
         </div>
 
@@ -729,6 +734,52 @@
   @endsection
 
   @section('footer-scripts')
+
+
+<script>
+function showNotificationOptions(id) {
+    Swal.fire({
+        title: 'Send Reminder',
+        text: "Select how you'd like to send the notification:",
+        icon: 'question',
+        showCancelButton: true,
+       confirmButtonText: '<i class="fab fa-whatsapp"></i> WhatsApp',
+        cancelButtonText: '<i class="fas fa-envelope"></i> Email',
+        reverseButtons: true,
+        customClass: {
+            cancelButton: 'm-2 btn btn-success',
+            confirmButton: 'm-2 btn btn-primary'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            sendNotification('wa', id);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            sendNotification('email', id);
+        }
+    });
+}
+
+
+function sendNotification(type, id) {
+    fetch(`/suminvoice/remainderinv/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ type: type })
+    })
+    .then(response => response.json())
+    .then(data => {
+        Swal.fire('Berhasil!', data.message, 'success');
+    })
+    .catch(error => {
+        Swal.fire('Gagal!', 'Terjadi kesalahan saat mengirim notifikasi.', 'error');
+        console.error(error);
+    });
+}
+</script>
 
 
   @endsection

@@ -83,7 +83,7 @@
         </div>
         <div class="form-group col-md-2">
           <label for="nama">PPPOE Password</label>
-          <input type="text" class="form-control @error('password') is-invalid @enderror " name="password" id="password"  placeholder="CID Password" value="{{$rescode.$year.$md.$ran}}">
+          <input type="text" class="form-control @error('password') is-invalid @enderror " name="password" id="password"  placeholder="CID Password" value='{{env("PPPOE_PASSWORD")}}'>
           @error('password')
           <div class="error invalid-feedback">{{ $message }}</div>
           @enderror
@@ -326,46 +326,120 @@
 
 
 
-<div class="modal fade" id="modal-maps">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-            <!-- <div class="modal-header">
-             <h5 class="modal-title">drap Marker to Right Posision</h5> 
-              
-              
-           </div>-->
-           <div class="modal-body">
-            
-           </div>
-           <div class="modal-footer justify-content-between float-right">
-            <button type="button" class="btn btn-primary float-right " data-dismiss="modal">Apply</button>
 
-          </div>
-        </div>
-        <!-- /.modal-content -->
+<!-- Modal -->
+<div class="modal fade" id="modal-maps" tabindex="-1" role="dialog" aria-labelledby="modal-mapsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Select Location from Map</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <!-- /.modal-dialog -->
+      
+      <div class="modal-body">
+        <div id="map" style="height: 400px;"></div>
+      </div>
+
+      <div class="modal-footer justify-content-end">
+       <button type="button" class="btn btn-secondary" id="btn-current-location">
+        <i class="fas fa-location-arrow"></i> Current Location
+      </button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Set</button>
     </div>
-    <!-- /.modal -->
-  </section>
-  @endsection
-  @section('footer-scripts')
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const pppoeInput = document.getElementById("pppoe");
-      const passwordInput = document.getElementById("password");
+
+  </div>
+</div>
+</div>
+<!-- /.modal -->
+</section>
+@endsection
+@section('footer-scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Leaflet Geocoder -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const pppoeInput = document.getElementById("pppoe");
+    const passwordInput = document.getElementById("password");
 
         // Sinkronisasi nilai dari pppoe ke password
-      pppoeInput.addEventListener("input", function () {
-        passwordInput.value = this.value;
-      });
+    pppoeInput.addEventListener("input", function () {
+      passwordInput.value = this.value;
+    });
 
         // Opsional: Jika ingin sinkronisasi dua arah (password ke pppoe)
       // passwordInput.addEventListener("input", function () {
       //   pppoeInput.value = this.value;
       // });
+  });
+</script>
+<script>
+  let map;
+  let marker;
+  let isMapInitialized = false;
+
+  $('#modal-maps').on('shown.bs.modal', function () {
+    if (!isMapInitialized) {
+      const defaultLatLng = "{{ env('COORDINATE_CENTER', '-6.200000,106.816666') }}".split(',');
+      const lat = parseFloat(defaultLatLng[0]);
+      const lng = parseFloat(defaultLatLng[1]);
+
+      map = L.map('map').setView([lat, lng], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // 📌 Marker draggable
+      marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+      marker.on('dragend', function (e) {
+        const latlng = e.target.getLatLng();
+        document.getElementById('coordinate').value = `${latlng.lat.toFixed(6)},${latlng.lng.toFixed(6)}`;
+      });
+
+      // 🔍 Search bar
+      L.Control.geocoder({
+        defaultMarkGeocode: false
+      })
+      .on('markgeocode', function(e) {
+        const latlng = e.geocode.center;
+        map.setView(latlng, 16);
+        marker.setLatLng(latlng);
+        document.getElementById('coordinate').value = `${latlng.lat.toFixed(6)},${latlng.lng.toFixed(6)}`;
+      })
+      .addTo(map);
+
+      // Tandai bahwa peta sudah di-inisialisasi
+      isMapInitialized = true;
+    }
+
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 300);
+  });
+
+  // 🌍 Gunakan Lokasi Saya
+  document.getElementById('btn-current-location').addEventListener('click', function () {
+    if (!map) return;
+
+    map.locate({ setView: true, maxZoom: 18 });
+
+    map.once('locationfound', function (e) {
+      const { lat, lng } = e.latlng;
+      marker.setLatLng(e.latlng);
+      document.getElementById('coordinate').value = `${lat.toFixed(6)},${lng.toFixed(6)}`;
     });
-  </script>
 
+    map.once('locationerror', function () {
+      alert('Tidak dapat menemukan lokasi Anda. Pastikan izin lokasi aktif di browser.');
+    });
+  });
+</script>
 
-  @endsection
+@endsection

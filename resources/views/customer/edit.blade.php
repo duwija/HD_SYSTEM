@@ -1,8 +1,6 @@
 @extends('layout.main')
 @section('title','Edit Customer')
-@section('maps')
-{!! $map['js'] !!}
-@endsection
+
 <script type="text/javascript">
   function copy_name()
   {
@@ -43,7 +41,7 @@
             @enderror
           </div>
 
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-1">
             <label for="site location">  Status </label>
             <div class="input-group mb-3">
               <select name="id_status" id="id_status" class="form-control">
@@ -64,7 +62,7 @@
           </div>
         </div>
 
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-1">
           <label for="customer_id"> Customer Id (CID) </label>
 
           <div class="input-group mb-2">
@@ -92,6 +90,23 @@
         <div class="error invalid-feedback">{{ $message }}</div>
         @enderror
       </div>
+      <div class="form-group col-md-2">
+        <label for="ip">IP Address</label>
+        <input 
+        type="text" 
+        class="form-control @error('ip') is-invalid @enderror" 
+        name="ip" 
+        id="ip" 
+        placeholder="Leave blank for dynamic IP" 
+        value="{{ old('ip', $customer->ip ?? '') }}" 
+        pattern="^(\d{1,3}\.){3}\d{1,3}$" 
+        title="Please enter a valid IPv4 address (e.g., 192.168.1.10)">
+
+        @error('ip')
+        <div class="error invalid-feedback">{{ $message }}</div>
+        @enderror
+      </div>
+
 
       <div class="form-group col-md-4">
         <label for="nama">Contact Name</label>
@@ -187,6 +202,17 @@
 
 </div>
 
+<div class="form-group col-md-2">
+  <label for="notification">Sent Notif</label>
+  <div class="input-group mb-3">
+    <select name="notification" id="notification" class="form-control select2">
+
+      <option value="0" {{ $customer->notification == 0 ? 'selected' : '' }}>None</option>
+      <option value="1" {{ $customer->notification == 1 ? 'selected' : '' }}>Whatsapp</option>
+      <option value="2" {{ $customer->notification == 2 ? 'selected' : '' }}>Email</option>
+    </select>
+  </div>
+</div>
 
 <div class="form-group col-sm-4">
  <label for="coordinate"> Coordinate </label>
@@ -397,7 +423,6 @@
 </div>
 
 
-</div>
 <!-- /.card-body -->
 
 <div class="card-footer">
@@ -412,48 +437,106 @@
 
 
 
-<div class="modal fade" id="modal-maps">
-  <div class="modal-dialog modal-lg">
+
+<!-- Modal -->
+<div class="modal fade" id="modal-maps" tabindex="-1" role="dialog" aria-labelledby="modal-mapsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-            <!-- <div class="modal-header">
-             <h5 class="modal-title">drap Marker to Right Posision</h5> 
-              
-              
-           </div>-->
-           <div class="modal-body">
-            {!! $map['html'] !!}
-          </div>
-          <div class="modal-footer justify-content-between float-right">
-            <button type="button" class="btn btn-primary float-right " data-dismiss="modal">Apply</button>
 
-          </div>
-        </div>
-        <!-- /.modal-content -->
+      <div class="modal-header">
+        <h5 class="modal-title">Select Location from Map</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <!-- /.modal-dialog -->
+      
+      <div class="modal-body">
+        <div id="map" style="height: 400px;"></div>
+      </div>
+
+      <div class="modal-footer justify-content-end">
+       <button type="button" class="btn btn-secondary" id="btn-current-location">
+        <i class="fas fa-location-arrow"></i> Current Location
+      </button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Set</button>
     </div>
-    <!-- /.modal -->
 
-    {{--     <div class="modal fade" id="modal-topology">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <!-- <div class="modal-header">
-             <h5 class="modal-title">drap Marker to Right Posision</h5> 
-              
-              
-           </div>-->
-           <div class="modal-body">
-            {!! $map['html'] !!}
-          </div>
-          <div class="modal-footer justify-content-between float-right">
-            <button type="button" class="btn btn-primary float-right " data-dismiss="modal">Apply</button>
+  </div>
+</div>
+</div>
+</section>
 
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div> --}}
-  </section>
+@endsection
 
-  @endsection
+@section('footer-scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Leaflet Geocoder -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script>
+  let map;
+  let marker;
+  let isMapInitialized = false;
+
+  $('#modal-maps').on('shown.bs.modal', function () {
+    if (!isMapInitialized) {
+      const defaultLatLng = "{{ env('COORDINATE_CENTER', '-6.200000,106.816666') }}".split(',');
+      const lat = parseFloat(defaultLatLng[0]);
+      const lng = parseFloat(defaultLatLng[1]);
+
+      map = L.map('map').setView([lat, lng], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // 📌 Marker draggable
+      marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+      marker.on('dragend', function (e) {
+        const latlng = e.target.getLatLng();
+        document.getElementById('coordinate').value = `${latlng.lat.toFixed(6)},${latlng.lng.toFixed(6)}`;
+      });
+
+      // 🔍 Search bar
+      L.Control.geocoder({
+        defaultMarkGeocode: false
+      })
+      .on('markgeocode', function(e) {
+        const latlng = e.geocode.center;
+        map.setView(latlng, 16);
+        marker.setLatLng(latlng);
+        document.getElementById('coordinate').value = `${latlng.lat.toFixed(6)},${latlng.lng.toFixed(6)}`;
+      })
+      .addTo(map);
+
+      // Tandai bahwa peta sudah di-inisialisasi
+      isMapInitialized = true;
+    }
+
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 300);
+  });
+
+  // 🌍 Gunakan Lokasi Saya
+  document.getElementById('btn-current-location').addEventListener('click', function () {
+    if (!map) return;
+
+    map.locate({ setView: true, maxZoom: 18 });
+
+    map.once('locationfound', function (e) {
+      const { lat, lng } = e.latlng;
+      marker.setLatLng(e.latlng);
+      document.getElementById('coordinate').value = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+    });
+
+    map.once('locationerror', function () {
+      alert('Tidak dapat menemukan lokasi Anda. Pastikan izin lokasi aktif di browser.');
+    });
+  });
+</script>
+
+@endsection

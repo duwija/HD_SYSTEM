@@ -45,38 +45,38 @@
             <label for="site location">  Category </label>
             <div class="input-group mb-3 p-1">
                 <select name="id_categori" id="id_categori" class="form-control">
-                 <option value="">All</option> 
-                 @foreach ($ticketcategorie as $id => $name)
-                 <option value="{{ $id }}">{{ $name }}</option>
-                 @endforeach
-             </select>
-         </div>
-     </div>
+                   <option value="">All</option> 
+                   @foreach ($ticketcategorie as $id => $name)
+                   <option value="{{ $id }}">{{ $name }}</option>
+                   @endforeach
+               </select>
+           </div>
+       </div>
 
-     <div class="form-group col-md-1">
+       <div class="form-group col-md-1">
         <label for="site location">  Assign to </label>
         <div class="input-group p-1">
           <select name="assign_to" id="assign_to" class="form-control">
-             <option value="">All</option> 
-             @foreach ($user as $id => $name)
-             <option value="{{ $id }}">{{ $name }}</option>
-             @endforeach
-         </select>
-     </div>
- </div>
- <div class="form-group col-md-1">
+           <option value="">All</option> 
+           @foreach ($user as $id => $name)
+           <option value="{{ $id }}">{{ $name }}</option>
+           @endforeach
+       </select>
+   </div>
+</div>
+<div class="form-group col-md-1">
     <label for="site location">  Status </label>
     <div class="input-group p-1">
       <select name="id_status" id="id_status" class="form-control">
-         <option value="">All</option> 
-         <option value="Open">Open</option>
-         <option value="Inprogress">Inprogress</option>
-         <option value="Pending">Pending</option>
-         <option value="Solve">Solve</option>
-         <option value="Close">Close</option>
+       <option value="">All</option> 
+       <option value="Open">Open</option>
+       <option value="Inprogress">Inprogress</option>
+       <option value="Pending">Pending</option>
+       <option value="Solve">Solve</option>
+       <option value="Close">Close</option>
 
-     </select>
- </div>
+   </select>
+</div>
 </div>
 
 <div class="form-group col-md-2">
@@ -139,10 +139,11 @@
 
 <!-- /.card-header -->
 <div class="card-body">
-  <table id="table-groupticket-list" class="table table-bordered table-striped">
+    <div class="table-responsive">
+      <table id="table-groupticket-list" class="table table-bordered table-striped">
 
-    <thead >
-       <tr>
+        <thead >
+         <tr>
 
           <th colspan="12"class="text-right border-0" >
             <div class="row float-right">
@@ -192,6 +193,7 @@
 </thead>
 
 </table>
+</div>
 </div>
 </div>
 

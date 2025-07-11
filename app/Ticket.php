@@ -42,12 +42,13 @@ class Ticket extends Model
     }
     public function my_ticket()
     {
-        $id = Auth::user()->id;
-
-        $my_ticket = $this->where('assign_to' , '=', $id)
-        ->where('status','!=','Close')
+        if (!Auth::check()) {
+            return 0;
+        }
+        $userId = Auth::id();
+        return self::where('assign_to', $userId)
+        ->where('status', '!=', 'Close')
         ->count();
-        return $my_ticket;
     }
 
     public function assignToUser()

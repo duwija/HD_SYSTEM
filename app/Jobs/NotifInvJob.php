@@ -7,6 +7,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use App\Mail\EmailReminderInvJob;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Exception;
+use App\Helpers\WaGatewayHelper;
 
 class NotifInvJob implements ShouldQueue
 {
@@ -42,15 +47,72 @@ class NotifInvJob implements ShouldQueue
     public function handle()
     {
         //
+       $response = null;
+       $customer = \App\Customer::where('customer_id', $this->cid)->first();
 
-
-        $response = qontak_whatsapp_helper_job_remainder_inv(
-            $this->phone,
-            $this->name,
-            $this->cid,
-            $this->encryptedurl
-        );
-        \Log::channel('notif')->info('Sent Remainder message to  CID '.$this->cid. ' | ' .$this->name . ' | '. $response); 
-       // $result=\App\Suminvoice::wa_payment($this->phone, $this->message);
+       if (!$customer) {
+        Log::channel('notif')->warning("Customer not found with CID: {$this->cid}");
+        return;
     }
+
+    if ($customer->notification == 1) {
+
+
+        // WhatsApp Notification
+     $message = "*[Pengingat Pembayaran Internet]*";
+     $message .= "\n\n";
+     $message .= "\nPelanggan Yth. ";
+     $message .= "\n\n";
+     $message .= "\nNama : " . $customer->name;
+     $message .= "\nCID : " . $customer->customer_id ;
+     $message .= "\nKami ingin mengingatkan bahwa tagihan Anda sudah tersedia";
+     $message .= "\nAgar tetap bisa menikmati Layanan kami, mohon untuk menyelesaikan pembayaran tepat waktu.";
+     $message .= "\n\n";
+     $message .= "Untuk informasi lebih lanjut, silakan klik link berikut:";
+     $message .= "\n" . "http://" . env("DOMAIN_NAME") . "/invoice/cst/" . $this->encryptedurl;
+     $message .= "\n\n";
+     $message .= "Jika sudah melakukan pembayaran, abaikan pesan ini.";
+     $message .= "\nJika ada pertanyaan, hubungi CS kami di ".env("PAYMENT_WA");
+     $message .= "\n\n";
+     $message .= "".env("SIGNATURE")."";
+
+    // $msgresult = \App\Helpers\::wa_payment($customer->phone, $message);
+     $msgresult = WaGatewayHelper::wa_payment($customer->phone, $message);
+        // $response = qontak_whatsapp_helper_job_remainder_inv(
+        //     $this->phone,
+        //     $this->name,
+        //     $this->cid,
+        //     $this->encryptedurl
+        // );
+
+ } elseif ($customer->notification == 2) {
+        // Email Notification
+    if (!empty($customer->email)) {
+        $data = [
+            'phone' => $this->phone,
+            'name' => $this->name,
+            'cid' => $this->cid,
+            'url' => $this->encryptedurl,
+        ];
+
+        try {
+            Mail::to($customer->email)->send(new EmailReminderInvJob($data));
+            $response = 'Email sent';
+        } catch (\Exception $e) {
+            \Log::channel('notif')->error("Gagal kirim email ke {$customer->email}: " . $e->getMessage());
+        }
+        
+    } else {
+        Log::channel('notif')->warning("Email kosong untuk customer {$this->name}");
+    }
+}
+
+
+
+
+
+
+\Log::channel('notif')->info('Sent Remainder message to  CID '.$this->cid. ' | ' .$this->name . ' | '. $response); 
+
+}
 }

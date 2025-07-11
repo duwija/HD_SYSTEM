@@ -339,7 +339,7 @@ a button {
   <table style="border: none">
     <tr style="border: none">
       <td align="left" colspan="3">
-        <img width="120px" src="/dashboard/dist/img/logoinv.png">
+        <img width="120px" src="/dashboard/dist/img/logo.jpg">
     </td>
     <td align="right">
 
@@ -567,80 +567,80 @@ $url_payment ="https://checkout.xendit.co/web/".$suminvoice_number->payment_id;
 </div>
 
 
-                <!--  <p><strong>Informasi Perpajakan / Tax Receipt Information <br>PT TRIKA GLOBAL MEDIA</strong></p>
-                <p>NPWP / Tax ID: 95.733.946.8-907.000 / 0957339468907000  </p>
-                <p> Alamat / Tax ID Address :  Br. Guliang, Pejeng, Tampaksiring</p> -->
+<p><strong>Informasi Perpajakan / Tax Receipt Information <br>PT TRIKA GLOBAL MEDIA</strong></p>
+<p>NPWP / Tax ID: 95.733.946.8-907.000 / 0957339468907000  </p>
+<p> Alamat / Tax ID Address :  Br. Guliang, Pejeng, Tampaksiring</p> 
 
-                <!-- <div class="container"> -->
-                <!--  <div class="row">
-                <div class="box1">
-                <ul style="padding-left:20px " >
+<div class="container"> 
+    <div class="row">
+        <div class="box1">
+            <ul style="padding-left:20px " >
                 <li >Setiap harga yang tertera pada invoice sudah termasuk PPN</li>
                 <li>Untuk permintaan Faktur Pajak (khusus pelanggan  PKP, dan pihak   berkepentingan   lain)   silahkan   email   ke: acct@trikamedia.net.id</li>
                 <li>Jasa internet dikenakan PPh 23 sebesar 2% berdasarkan Peraturan Menteri Keuangan nomor 141/PMK 03/2015. Jika Anda terdaftar sebagai pelanggan Perusahaan, pastikan nilai pembayaran Anda sudah dipotong PPh 23 dan mengirimkan bukti pemotongan PPh Pasal 23 dengan tempo sampai akhir bulan tagihan. Jika terlewat, pemotongan akan tidak diakui dan menambah tagihan bulan berikutnya. Bukti pemotongan dapat di email ke: acct@trikamedia.net.id</li>
-                </ul>
-                </div>
+            </ul>
+        </div>
 
-                <div class="box1">
-                <ul style="padding-left:20px">
+        <div class="box1">
+            <ul style="padding-left:20px">
                 <li>Each price stated on the invoice includes VAT / GST </li>
                 <li>For requests for tax invoices (particularly for PKP customers and   other   interested   parties),   please   email: acct@trikamedia.net.id</li>
                 <li>Internet services are subject to PPh 23 of 2% based on Minister of Finance Regulation number 141/PMK 03/2015. If you are Company or choose the Business Package, make sure your payment value has been deducted with PPh Article  23 and send proof of withholding PPh Article 23 with a due date until the end of the billing month. If missed, the deduction will not be recognized and added to the next month's bill. Proof of withholding can be emailed to: acct@trikamedia.net.id </li>
-                </ul>
-                </div>
+            </ul>
+        </div>
 
 
 
-            </div> -->
+    </div> 
 
 
 
-            <!-- </div> -->
+</div> 
 
 
 
-            @if ( $suminvoice_number->payment_status == 1)
+@if ( $suminvoice_number->payment_status == 1)
 
-            <div>
-                <p>Tabanan , {{$suminvoice_number->payment_date}} </p>
-                <p>Terima Kasih,</p>
+<div>
+    <p>Gianyar , {{$suminvoice_number->payment_date}} </p>
+    <p>Terima Kasih,</p>
 
-                <br>
-                <p>{{ $suminvoice_number->user->name ?? $suminvoice_number->updated_by }}</p>
+    <br>
+    <p>{{ $suminvoice_number->user->name ?? $suminvoice_number->updated_by }}</p>
 
 
-            </div>
+</div>
 
-            @elseif ( $suminvoice_number->payment_status == 2)
+@elseif ( $suminvoice_number->payment_status == 2)
 
-            <div>
-                <p>Tabanan  </p>
-                <p>Terima Kasih,</p>
-
-                
-
-            </div>
+<div>
+    <p>Tabanan  </p>
+    <p>Terima Kasih,</p>
 
 
 
-            @else
-
-            @if ( $current_inv_status == 1)
-            <tr>
-                <td colspan="2" align="center"></br>
-                    <p><a style='font-size: 14px; color: #c40205; text-decoration: none;'>
-                    Anda masih memiliki tagihan yang belum terbayar (UNPAID) pada periode sebelumnya, silahkan melakukan pelunasan pembayaran Tagihan tersebut terlebih dahulu. Untuk info lebih lanjut silahkan menghubungi team Payment kami </a>
-                </p>
-            </td>
-            <a href="{{ url('/invoice/cst/' . $encryptedurl) }}"><button class="btn">Lihat Data Tagihan</button></a>
-
-            @else
+</div>
 
 
 
+@else
+
+@if ( $current_inv_status == 1)
+<tr>
+    <td colspan="2" align="center"></br>
+        <p><a style='font-size: 14px; color: #c40205; text-decoration: none;'>
+        Anda masih memiliki tagihan yang belum terbayar (UNPAID) pada periode sebelumnya, silahkan melakukan pelunasan pembayaran Tagihan tersebut terlebih dahulu. Untuk info lebih lanjut silahkan menghubungi team Payment kami </a>
+    </p>
+</td>
+<a href="{{ url('/invoice/cst/' . $encryptedurl) }}"><button class="btn">Lihat Data Tagihan</button></a>
+
+@else
 
 
-            <br>
+
+
+
+<br>
 
                 <!--   
                 <div class="container">
@@ -710,11 +710,20 @@ $url_payment ="https://checkout.xendit.co/web/".$suminvoice_number->payment_id;
 
                                   <div class="box2">
                                       <p align="center">
-                                       <button type="button" class="btn1" style="padding:4px; background-color: #007bff;  font-size: 12px;" data-toggle="modal" data-target="#online">Bank Transfer / Retail Outlet / E-Wallet</button></p>
-                                   </div>
+                                        <button type="button" class="btn1" style="padding:4px; background-color: #007bff;  font-size: 12px;" data-toggle="modal" data-target="#online">Bank Transfer / Retail Outlet / E-Wallet.</button></p>
+                                    </div>
 
-                               </div> 
-                           </div>
+                           <!--         <div class="box2">
+                                      <p align="center">
+                                        <button type="button" class="btn1" style="padding:4px; background-color: #007bff; font-size: 12px;" disabled>
+                                          Bank Transfer / Retail Outlet / E-Wallet
+                                      </button>
+                                  </p>
+                              </div> -->
+
+
+                          </div> 
+                      </div>
 
                  <!--       <p align="center" style="padding-top:40px;"><strong><a style='font-size: 12px; color: #000; text-decoration: none;'>
                  RUBAH METODE PEMBAYARAN</a></strong>
@@ -742,199 +751,229 @@ $url_payment ="https://checkout.xendit.co/web/".$suminvoice_number->payment_id;
                       <div class="box2">
                           <p align="center">
                            <button type="button" class="btn1" style="padding:4px" data-toggle="modal" data-target="#online">Bank Transfer / Retail Outlet / E-Wallet</button></p>
+                         <!--   <button type="button" class="btn1" style="padding:4px; background-color: #bcbcbc; font-size: 12px;">
+                              Bank Transfer / Retail Outlet / E-Wallet
+                          </button> -->
+                      </div>
+
+                  </div> 
+              </p>
+          </td>
+
+          @endif
+
+
+
+      </tr>
+      <div class="container">
+
+
+
+
+
+       @endif
+
+       @endif
+
+
+
+
+       <hr>
+
+       <p align="right">
+           <!-- <strong> PT ADI SOLUSINDO TEKNOLOGI </strong> <br> -->
+           <!-- <b>Main Office (Mailing Address):</b>  -->
+           {{ env('COMPANY_ADDRESS1') }} <br>
+           {{ env('COMPANY_ADDRESS2') }}
+           <!-- <b>www.alus.co.id</b> -->
+       </p>
+
+
+       <div class="containers">
+
+           <!-- Trigger the modal with a button -->
+
+           <div class="modal fade" id="online" role="dialog">
+               <div class="modal-dialog">
+
+                   <!-- Modal content-->
+                   <div class="modal-content">
+                       <div class="modal-header" align="center">
+                           <button type="button" class="close" data-dismiss="modal">&times;</button>
+                           <h4 class="modal-title">Pembayaran  Transfer Bank / Outlet Ritel / E-Wallet</h4>
+                           <p>* Pembayaran melalui Transfer Bank / Outlet Ritel / E-Wallet akan dikenakan biaya Transaksi </p>
+
                        </div>
+                       <div class="modal-body">
 
-                   </div> 
-               </p>
-           </td>
+                           <div class="container">
+                               <div class="row1"></h4></div>
+                               <div class="row1">
 
-           @endif
 
 
 
-       </tr>
-       <div class="container">
+                                   <form class="btn2" role="form" method="post" action="/tripay/create">
+                                       @csrf
 
+                                       <input type="hidden" name="name" value="{{ $customer->name}}">
+                                       <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                       <input type="hidden" name="email" value="{{ $customer->email}}">
+                                       <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                       <input type="hidden" name="method" value="BNIVA">
+                                       <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                       <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                       <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                       <input type="hidden" name="amount" value="{{ $subtotal }}">
 
+                                       <button><div class="virtual-account">
+                                           <h6>BNI Virtual Account</h6>
+                                           <img style="width:200px" src="{{ url('img/bank/BNIVA.webp') }}" alt="BNI">
+                                       </div></button>
+                                   </form>
 
+                                   <form class="btn2" role="form" method="post" action="/tripay/create">
+                                       @csrf
 
+                                       <input type="hidden" name="name" value="{{ $customer->name}}">
+                                       <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                       <input type="hidden" name="email" value="{{ $customer->email}}">
+                                       <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                       <input type="hidden" name="method" value="BRIVA">
+                                       <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                       <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                       <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                       <input type="hidden" name="amount" value="{{ $subtotal }}">
 
-           @endif
 
-           @endif
 
 
 
+                                       <button><div class="virtual-account">
+                                           <h6>BRI Virtual Account</h6>
+                                           <img style="width:200px" src="{{ url('img/bank/BRIVA.webp') }}" alt="BRI">
+                                       </div></button>
+                                   </form>
 
-           <hr>
 
-           <p align="right">
-               <!-- <strong> PT ADI SOLUSINDO TEKNOLOGI </strong> <br> -->
-               <!-- <b>Main Office (Mailing Address):</b>  -->
-               Jalan Raya Tanah Lot, Br. batugaing, Desa Beraban, Kec. Kediri, Kab. Tabanan, Bali. <br>
-               sales@alus.co.id | +62-87740561831 (Marketing)
-               <!-- <b>www.alus.co.id</b> -->
-           </p>
 
+                                   <form class="btn2" role="form" method="post" action="/tripay/create">
+                                       @csrf
 
-           <div class="containers">
+                                       <input type="hidden" name="name" value="{{ $customer->name}}">
+                                       <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                       <input type="hidden" name="email" value="{{ $customer->email}}">
+                                       <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                       <input type="hidden" name="method" value="PERMATAVA">
+                                       <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                       <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                       <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                       <input type="hidden" name="amount" value="{{ $subtotal }}">
 
-               <!-- Trigger the modal with a button -->
 
-               <div class="modal fade" id="online" role="dialog">
-                   <div class="modal-dialog">
 
-                       <!-- Modal content-->
-                       <div class="modal-content">
-                           <div class="modal-header" align="center">
-                               <button type="button" class="close" data-dismiss="modal">&times;</button>
-                               <h4 class="modal-title">Pembayaran  Transfer Bank / Outlet Ritel / E-Wallet</h4>
-                               <p>* Pembayaran melalui Transfer Bank / Outlet Ritel / E-Wallet akan dikenakan biaya Transaksi </p>
 
-                           </div>
-                           <div class="modal-body">
 
-                               <div class="container">
-                                   <div class="row1"></h4></div>
-                                   <div class="row1">
+                                       <button><div class="virtual-account">
+                                           <h6>PERMATA VA</h6>
+                                           <img style="width:200px" src="{{ url('img/bank/PERMATAVA.webp') }}" alt="PERMATA">
+                                       </div></button>
 
 
+                                   </form>
+                                   <form class="btn2" role="form" method="post" action="/tripay/create">
+                                       @csrf
 
+                                       <input type="hidden" name="name" value="{{ $customer->name}}">
+                                       <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                       <input type="hidden" name="email" value="{{ $customer->email}}">
+                                       <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                       <input type="hidden" name="method" value="BCAVA">
+                                       <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                       <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                       <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                       <input type="hidden" name="amount" value="{{ $subtotal }}">
 
-                                       <form class="btn2" role="form" method="post" action="/tripay/create">
-                                           @csrf
 
-                                           <input type="hidden" name="name" value="{{ $customer->name}}">
-                                           <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                           <input type="hidden" name="email" value="{{ $customer->email}}">
-                                           <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                           <input type="hidden" name="method" value="BNIVA">
-                                           <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                           <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                           <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                           <input type="hidden" name="amount" value="{{ $subtotal }}">
 
-                                           <button><div class="virtual-account">
-                                               <h6>BNI Virtual Account</h6>
-                                               <img style="width:200px" src="{{ url('img/bank/BNIVA.webp') }}" alt="BNI">
-                                           </div></button>
-                                       </form>
 
-                                       <form class="btn2" role="form" method="post" action="/tripay/create">
-                                           @csrf
 
-                                           <input type="hidden" name="name" value="{{ $customer->name}}">
-                                           <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                           <input type="hidden" name="email" value="{{ $customer->email}}">
-                                           <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                           <input type="hidden" name="method" value="BRIVA">
-                                           <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                           <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                           <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                           <input type="hidden" name="amount" value="{{ $subtotal }}">
+                                       <button><div class="virtual-account">
+                                           <h6>BCA Virtual Account</h6>
+                                           <img style="width:200px" src="{{ url('img/bank/BCAVA.webp') }}" alt="BCA">
+                                       </div></button>
 
 
+                                   </form>
+                               </div>
 
 
+                               <div class="row1">
 
-                                           <button><div class="virtual-account">
-                                               <h6>BRI Virtual Account</h6>
-                                               <img style="width:200px" src="{{ url('img/bank/BRIVA.webp') }}" alt="BRI">
-                                           </div></button>
-                                       </form>
 
+                                   <form class="btn2" role="form" method="post" action="/tripay/create">
+                                       @csrf
 
+                                       <input type="hidden" name="name" value="{{ $customer->name}}">
+                                       <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                       <input type="hidden" name="email" value="{{ $customer->email}}">
+                                       <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                       <input type="hidden" name="method" value="CIMBVA">
+                                       <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                       <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                       <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                       <input type="hidden" name="amount" value="{{ $subtotal }}">
 
-                                       <form class="btn2" role="form" method="post" action="/tripay/create">
-                                           @csrf
 
-                                           <input type="hidden" name="name" value="{{ $customer->name}}">
-                                           <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                           <input type="hidden" name="email" value="{{ $customer->email}}">
-                                           <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                           <input type="hidden" name="method" value="PERMATAVA">
-                                           <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                           <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                           <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                           <input type="hidden" name="amount" value="{{ $subtotal }}">
 
+                                       <button><div class="virtual-account">
+                                           <h6>CIMB Niaga VA</h6>
+                                           <img style="width:200px" src="{{ url('img/bank/CIMBVA.webp') }}" alt="CIMB Niaga">
+                                       </div></button>
 
 
 
+                                   </form>
 
-                                           <button><div class="virtual-account">
-                                               <h6>PERMATA VA</h6>
-                                               <img style="width:200px" src="{{ url('img/bank/PERMATAVA.webp') }}" alt="PERMATA">
-                                           </div></button>
 
 
-                                       </form>
-                                       <form class="btn2" role="form" method="post" action="/tripay/create">
-                                           @csrf
 
-                                           <input type="hidden" name="name" value="{{ $customer->name}}">
-                                           <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                           <input type="hidden" name="email" value="{{ $customer->email}}">
-                                           <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                           <input type="hidden" name="method" value="BCAVA">
-                                           <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                           <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                           <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                           <input type="hidden" name="amount" value="{{ $subtotal }}">
 
+                                   <form class="btn2" role="form" method="post" action="/tripay/create">
+                                    @csrf
 
+                                    <input type="hidden" name="name" value="{{ $customer->name}}">
+                                    <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                    <input type="hidden" name="email" value="{{ $customer->email}}">
+                                    <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                    <input type="hidden" name="method" value="MANDIRIVA">
+                                    <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                    <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                    <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                    <input type="hidden" name="amount" value="{{ $subtotal }}">
 
 
 
-                                           <button><div class="virtual-account">
-                                               <h6>BCA Virtual Account</h6>
-                                               <img style="width:200px" src="{{ url('img/bank/BCAVA.webp') }}" alt="BCA">
-                                           </div></button>
+                                    <button>
+                                        <div class="virtual-account">
+                                            <h6>Mandiri Virtual Account</h6>
+                                            <img style="width:200px" src="{{ url('img/bank/MANDIRIVA.webp') }}" alt="Mandiri">
+                                        </div></button>
 
 
-                                       </form>
-                                   </div>
 
+                                    </form>
 
-                                   <div class="row1">
 
 
-                                       <form class="btn2" role="form" method="post" action="/tripay/create">
-                                           @csrf
-
-                                           <input type="hidden" name="name" value="{{ $customer->name}}">
-                                           <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                           <input type="hidden" name="email" value="{{ $customer->email}}">
-                                           <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                           <input type="hidden" name="method" value="CIMBVA">
-                                           <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                           <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                           <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                           <input type="hidden" name="amount" value="{{ $subtotal }}">
-
-
-
-                                           <button><div class="virtual-account">
-                                               <h6>CIMB Niaga VA</h6>
-                                               <img style="width:200px" src="{{ url('img/bank/CIMBVA.webp') }}" alt="CIMB Niaga">
-                                           </div></button>
-
-
-
-                                       </form>
-
-
-
-
-
-                                       <form class="btn2" role="form" method="post" action="/tripay/create">
+                                    <form class="btn2" role="form" method="post" action="/tripay/create">
                                         @csrf
 
                                         <input type="hidden" name="name" value="{{ $customer->name}}">
                                         <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
                                         <input type="hidden" name="email" value="{{ $customer->email}}">
                                         <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                        <input type="hidden" name="method" value="MANDIRIVA">
+                                        <input type="hidden" name="method" value="DANA">
                                         <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
                                         <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
                                         <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
@@ -942,119 +981,94 @@ $url_payment ="https://checkout.xendit.co/web/".$suminvoice_number->payment_id;
 
 
 
-                                        <button>
-                                            <div class="virtual-account">
-                                                <h6>Mandiri Virtual Account</h6>
-                                                <img style="width:200px" src="{{ url('img/bank/MANDIRIVA.webp') }}" alt="Mandiri">
-                                            </div></button>
+                                        <button><div class="virtual-account">
+                                            <h6>Dana</h6>
+                                            <img style="width:200px" src="{{ url('img/bank/DANA.webp') }}" alt="Dana">
+                                        </div></button>
+
+
+                                    </form>
+
+                                    <form class="btn2" role="form" method="post" action="/tripay/create">
+                                        @csrf
+
+                                        <input type="hidden" name="name" value="{{ $customer->name}}">
+                                        <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                        <input type="hidden" name="email" value="{{ $customer->email}}">
+                                        <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                        <input type="hidden" name="method" value="OVO">
+                                        <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                        <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                        <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                        <input type="hidden" name="amount" value="{{ $subtotal }}">
 
 
 
-                                        </form>
-
-                                        
-
-                                        <form class="btn2" role="form" method="post" action="/tripay/create">
-                                            @csrf
-
-                                            <input type="hidden" name="name" value="{{ $customer->name}}">
-                                            <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                            <input type="hidden" name="email" value="{{ $customer->email}}">
-                                            <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                            <input type="hidden" name="method" value="DANA">
-                                            <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                            <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                            <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                            <input type="hidden" name="amount" value="{{ $subtotal }}">
+                                        <button><div class="virtual-account">
+                                            <h6>Ovo</h6>
+                                            <img style="width:200px" src="{{ url('img/bank/OVO.webp') }}" alt="Ovo">
+                                        </div></button>
 
 
-
-                                            <button><div class="virtual-account">
-                                                <h6>Dana</h6>
-                                                <img style="width:200px" src="{{ url('img/bank/DANA.webp') }}" alt="Dana">
-                                            </div></button>
-
-
-                                        </form>
-
-                                        <form class="btn2" role="form" method="post" action="/tripay/create">
-                                            @csrf
-
-                                            <input type="hidden" name="name" value="{{ $customer->name}}">
-                                            <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                            <input type="hidden" name="email" value="{{ $customer->email}}">
-                                            <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                            <input type="hidden" name="method" value="OVO">
-                                            <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                            <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                            <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                            <input type="hidden" name="amount" value="{{ $subtotal }}">
-
-
-
-                                            <button><div class="virtual-account">
-                                                <h6>Ovo</h6>
-                                                <img style="width:200px" src="{{ url('img/bank/OVO.webp') }}" alt="Ovo">
-                                            </div></button>
-
-
-                                        </form>
+                                    </form>
 
 
 
 
 
-                                    </div>
-                                    <div class="row1">
+                                </div>
+                                <div class="row1">
 
 
 
-                                        <form class="btn2" role="form" method="post" action="/tripay/create">
-                                            @csrf
+                                    <form class="btn2" role="form" method="post" action="/tripay/create">
+                                        @csrf
 
-                                            <input type="hidden" name="name" value="{{ $customer->name}}">
-                                            <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                            <input type="hidden" name="email" value="{{ $customer->email}}">
-                                            <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                            <input type="hidden" name="method" value="ALFAMART">
-                                            <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                            <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                            <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                            <input type="hidden" name="amount" value="{{ $subtotal }}">
-
-
-
-                                            <button> <div class="virtual-account">
-                                                <h6>Alfamart</h6>
-                                                <img style="width:200px" src="{{ url('img/bank/ALFAMART.webp') }}" alt="Alfamart">
-                                            </div></button>
+                                        <input type="hidden" name="name" value="{{ $customer->name}}">
+                                        <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                        <input type="hidden" name="email" value="{{ $customer->email}}">
+                                        <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                        <input type="hidden" name="method" value="ALFAMART">
+                                        <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                        <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                        <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                        <input type="hidden" name="amount" value="{{ $subtotal }}">
 
 
 
-                                        </form>
-                                        <form class="btn2" role="form" method="post" action="/tripay/create">
-                                            @csrf
-
-                                            <input type="hidden" name="name" value="{{ $customer->name}}">
-                                            <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
-                                            <input type="hidden" name="email" value="{{ $customer->email}}">
-                                            <input type="hidden" name="phone" value="{{ $customer->phone}}">
-                                            <input type="hidden" name="method" value="INDOMARET">
-                                            <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
-                                            <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
-                                            <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
-                                            <input type="hidden" name="amount" value="{{ $subtotal }}">
+                                        <button> <div class="virtual-account">
+                                            <h6>Alfamart</h6>
+                                            <img style="width:200px" src="{{ url('img/bank/ALFAMART.webp') }}" alt="Alfamart">
+                                        </div></button>
 
 
 
-                                            <button><div class="virtual-account">
-                                                <h6>Indomaret</h6>
-                                                <img style="width:200px" src="{{ url('img/bank/INDOMARET.webp') }}" alt="Indomaret">
-                                            </div></button>
+                                    </form>
+                                    <form class="btn2" role="form" method="post" action="/tripay/create">
+                                        @csrf
+
+                                        <input type="hidden" name="name" value="{{ $customer->name}}">
+                                        <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                                        <input type="hidden" name="email" value="{{ $customer->email}}">
+                                        <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                                        <input type="hidden" name="method" value="INDOMARET">
+                                        <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                                        <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                                        <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                                        <input type="hidden" name="amount" value="{{ $subtotal }}">
 
 
 
-                                        </form>
+                                        <button><div class="virtual-account">
+                                            <h6>Indomaret</h6>
+                                            <img style="width:200px" src="{{ url('img/bank/INDOMARET.webp') }}" alt="Indomaret">
+                                        </div></button>
+
+
+
+                                    </form>
+
+                                    
        <!--          <form class="btn2" role="form" method="post" action="/tripay/create">
                    @csrf
 
@@ -1078,9 +1092,31 @@ $url_payment ="https://checkout.xendit.co/web/".$suminvoice_number->payment_id;
 
 
             </form> -->
+            <form class="btn2" role="form" method="post" action="/tripay/create">
+                @csrf
+
+                <input type="hidden" name="name" value="{{ $customer->name}}">
+                <input type="hidden" name="customer_id" value="{{ $customer->customer_id}}">
+                <input type="hidden" name="email" value="{{ $customer->email}}">
+                <input type="hidden" name="phone" value="{{ $customer->phone}}">
+                <input type="hidden" name="method" value="QRIS">
+                <input type="hidden" name="number" value="{{ $suminvoice_number->number }}">
+                <input type="hidden" name="tempcode" value="{{ $suminvoice_number->tempcode }}">
+                <input type="hidden" name="description" value="{{ $suminvoice_number->date }}">
+                <input type="hidden" name="amount" value="{{ $subtotal }}">
 
 
-            <button><div class="virtual-account" style="width:200px">
+
+                <button><div class="virtual-account">
+                    <h6>QRIS</h6>
+                    <img style="width:200px" src="{{ url('img/bank/QIRIS.webp') }}" alt="QRIS">
+                </div></button>
+
+
+
+            </form>
+
+            <!-- <button><div class="virtual-account" style="width:200px"> -->
             </div>
 
 

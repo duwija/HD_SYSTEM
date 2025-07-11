@@ -1,12 +1,12 @@
 @extends('layout.main')
-@section('title','Distrouter List')
+@section('title','Distribution Router')
 @section('content')
 <section class="content-header">
 
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">distrouter List  </h3>
-      <a href="{{url ('distrouter/create')}}" class=" float-right btn  bg-gradient-primary btn-sm">Add New Distrouter</a>
+      <h3 class="card-title">Router LIst  </h3>
+      <a href="{{url ('distrouter/create')}}" class=" float-right btn  bg-gradient-primary btn-sm">Add New Router</a>
     </div>
 
     <!-- /.card-header -->
@@ -31,29 +31,15 @@
           <td class="text-center"> <a href="{{ 'http://' . $distrouter->ip . ':' . $distrouter->web }}" class="badge badge-info"> {{ $distrouter->ip }} </a>
             <td>{{ $distrouter->port }}</td>
             <td>{{ $distrouter->note }}</td>
-<!--           <td >
-            <div class="float-right " >
-              <a href="https://www.google.com/maps/place/{{ $distrouter->coordinate }}" target="_blank" class="btn btn-primary btn-sm "> <i title="show map" class="fa fa-map"> </i> </a>
-              <a href="/distrouter/{{ $distrouter->id }}/edit" class="btn btn-primary btn-sm "> <i class="fa fa-edit"> </i> </a>
 
 
-              <form  action="/distrouter/{{ $distrouter->id }}" method="POST" class="d-inline distrouter-delete" >
-                @method('delete')
-                @csrf
+          </tr>
+          @endforeach
 
-                <button type="submit"  class="btn btn-danger btn-sm"> <i class="fa fa-times"> </i> </button>
-              </form>
-
-            </div>
-          </td> -->
-
-        </tr>
-        @endforeach
-
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 
 </section>
 

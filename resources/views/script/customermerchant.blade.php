@@ -32,10 +32,10 @@
       <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
       </span>&emsp;Processing ..."
     },
-    // dom: 'lBfrtip',
-    // buttons: [
-    //   'copy', 'excel', 'pdf', 'csv', 'print'
-    //   ],
+    dom: 'Bfrtip',
+    buttons: [
+     'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
+     ],
     "lengthMenu": [[25, 50, 100, 200, 500], [25, 50, 100, 200, 500]],
     processing: true,
     serverSide: true,

@@ -19,13 +19,13 @@ use Exception;
 use Illuminate\Support\Carbon;
 class InvoiceController extends Controller
 {
-   public function __construct()
-   {
+ public function __construct()
+ {
   //  $this->middleware('auth');
-      $this->middleware('auth', ['except' => ['custinv']]); 
+  $this->middleware('auth', ['except' => ['custinv']]); 
 
 
-  }
+}
 
     /**
      * Display a listing of the resource.
@@ -226,24 +226,24 @@ class InvoiceController extends Controller
         ->addColumn('cid',function($suminvoice)
         {
 
-           $status = $suminvoice->customer->id_status;
-           if ( $status == 2)
-              $badge_sts = "badge-success";
-          elseif ( $status == 3)
-              $badge_sts = "badge-secondary";
-          elseif ( $status== 4)
-              $badge_sts = "badge-danger";
-          elseif ( $status== 5)
-              $badge_sts = "badge-primary";
-          else
-              $badge_sts = "badge-warning";
+         $status = $suminvoice->customer->id_status;
+         if ( $status == 2)
+          $badge_sts = "badge-success";
+      elseif ( $status == 3)
+          $badge_sts = "badge-secondary";
+      elseif ( $status== 4)
+          $badge_sts = "badge-danger";
+      elseif ( $status== 5)
+          $badge_sts = "badge-primary";
+      else
+          $badge_sts = "badge-warning";
 
 
 
 
-          return '<a class="badge '.$badge_sts .'" href="/customer/'.$suminvoice->customer->id.'">'.$suminvoice->customer->customer_id .' </a>';
+      return '<a class="badge '.$badge_sts .'" href="/customer/'.$suminvoice->customer->id.'">'.$suminvoice->customer->customer_id .' </a>';
 
-      })
+  })
 
         ->addColumn('name',function($suminvoice)
         {
@@ -334,7 +334,7 @@ class InvoiceController extends Controller
     public function create($id)
     {
         //
-       $mount = now()->format('mY');
+     $mount = now()->format('mY');
 
    // // Mengubah input menjadi Carbon instance
    //   $invoiceDate = Carbon::parse( now()->format('y-m-d'));
@@ -350,18 +350,18 @@ class InvoiceController extends Controller
 
 
 
-       $invoice = \App\Invoice::where('id_customer', $id)
-       ->where('payment_status', '=', 0)
-       ->get(); 
-       $pajak = \App\Akun::where('tax', 1)
-       ->where('tax_value', '!=', 0)
-       ->get();
+     $invoice = \App\Invoice::where('id_customer', $id)
+     ->where('payment_status', '=', 0)
+     ->get(); 
+     $pajak = \App\Akun::where('tax', 1)
+     ->where('tax_value', '!=', 0)
+     ->get();
 
-       $customer = \App\Customer::where('customers.id', $id)
-       ->Join('statuscustomers', 'customers.id_status', '=', 'statuscustomers.id')
-       ->Join('plans', 'customers.id_plan', '=', 'plans.id')
-       ->select('customers.*','statuscustomers.name as status_name','plans.name as plan_name','plans.price as plan_price')->first();
-       $isolirDate =$customer->isolir_date - 1;
+     $customer = \App\Customer::where('customers.id', $id)
+     ->Join('statuscustomers', 'customers.id_status', '=', 'statuscustomers.id')
+     ->Join('plans', 'customers.id_plan', '=', 'plans.id')
+     ->select('customers.*','statuscustomers.name as status_name','plans.name as plan_name','plans.price as plan_price')->first();
+     $isolirDate =$customer->isolir_date - 1;
   // Convert input to Carbon instance
 $invoiceDate = Carbon::now()->startOfDay(); // Get the current date without time
 
@@ -378,7 +378,7 @@ if ($invoiceDate->day >= $isolirDate) {
 
 if (empty($customer)){
 
- return abort(404);
+   return abort(404);
 }
 else
 {
@@ -436,11 +436,11 @@ public function store(Request $request)
 {
         //
 
- $periode_month= $request->input('periode_month');
- $periode_year=$request->input('periode_year');
- $periode = $periode_month.$periode_year;
- if (($request['monthly_fee'])==1)
- {
+   $periode_month= $request->input('periode_month');
+   $periode_year=$request->input('periode_year');
+   $periode = $periode_month.$periode_year;
+   if (($request['monthly_fee'])==1)
+   {
 
     $check_invoice = \App\Invoice::where('id_customer', $request['id_customer'])->Where('periode', $periode)->Where('monthly_fee','1')->first();
         //dd($check_invoice);
@@ -534,7 +534,8 @@ public function show($id)
              //->where('monthly_fee', '=', 1)
 
           // ->where('payment_status', '!=', 1)
-    ->orderBy('date', 'DESC')
+    ->orderByDesc('date')
+    ->orderByDesc('created_at')
 
     ->get();
 
@@ -667,38 +668,38 @@ public function edit($tempcode)
 
         if (!$check_invoice)
         {
-         $no =$no +1;
-         $msg .="\n ".$no." : ".$customer->id." ( ".$customer->name." ) \n [ ";
+           $no =$no +1;
+           $msg .="\n ".$no." : ".$customer->id." ( ".$customer->name." ) \n [ ";
 
             // $invoice = $invoice +1;
-         $tempcode=sha1(time().rand());
+           $tempcode=sha1(time().rand());
 
 
 
-         \App\Invoice::create([
-             'id_customer' => ($customer->id),
-             'monthly_fee' => '1',
-             'periode' => $month, 
-             'description' => 'Monthly Fee / Biaya Bulanan ',
-             'qty' => '1',
-             'amount' => ($customer->price),
-             'payment_status' => 3,
-             'tax' => '0',
-             'tempcode' => $tempcode,
-             'created_by' => 'System',
+           \App\Invoice::create([
+               'id_customer' => ($customer->id),
+               'monthly_fee' => '1',
+               'periode' => $month, 
+               'description' => 'Monthly Fee / Biaya Bulanan ',
+               'qty' => '1',
+               'amount' => ($customer->price),
+               'payment_status' => 3,
+               'tax' => '0',
+               'tempcode' => $tempcode,
+               'created_by' => 'System',
 
-         ]);
+           ]);
 
 
-         if (!empty($customer->email))
-         {
-           $email =$customer->email;
+           if (!empty($customer->email))
+           {
+             $email =$customer->email;
 
-       }
+         }
 
-       else
+         else
 
-       { 
+         { 
           $email ="return@trikamedia.com";
       }
 
@@ -760,39 +761,39 @@ public function edit($tempcode)
         $array = json_decode(json_encode($createInvoice, true))->id;  
         if ($array)
         {
-           $msg .="\nSuccess create invoice on Payment Gateway with id ".$array;
-       }
-       else
-           {$msg .="\n  <a style='color:red'> Error create invoice on Payment Gateway </a>";}
+         $msg .="\nSuccess create invoice on Payment Gateway with id ".$array;
+     }
+     else
+         {$msg .="\n  <a style='color:red'> Error create invoice on Payment Gateway </a>";}
 
-   }
-   catch ( Exception $e)
-   {
+ }
+ catch ( Exception $e)
+ {
     $msg .="\n Error create invoice on Payment Gateway ";
 }
 finally {
 
     try
     {
-       \App\Suminvoice::create([
-           'id_customer' => ($customer->id),
-           'number' => $latest_number,
-           'date' => date("Y-m-d"), 
-           'payment_status' => 0,
-           'tax' => $tax,
-           'tempcode' => $tempcode,
-           'payment_id' => $array,
-           'total_amount' => $total_amount,
+     \App\Suminvoice::create([
+         'id_customer' => ($customer->id),
+         'number' => $latest_number,
+         'date' => date("Y-m-d"), 
+         'payment_status' => 0,
+         'tax' => $tax,
+         'tempcode' => $tempcode,
+         'payment_id' => $array,
+         'total_amount' => $total_amount,
 
-       ]);
+     ]);
 
 
 
-       $msg .="\nSuccess create invoice on Helpdesk System to ".$customer->name." with amount = ".$customer->price."";
+     $msg .="\nSuccess create invoice on Helpdesk System to ".$customer->name." with amount = ".$customer->price."";
 
-   }    
-   catch (Exception $e)
-   {
+ }    
+ catch (Exception $e)
+ {
     $msg .="\nError create invoice on Helpdesk System";
 }
 finally {
@@ -800,36 +801,36 @@ finally {
     try
     {
 
-     $message ="Yth. ".$customer->name." ";
-     $message .="\n";
-     $message .="\nTagihan Customer dengan CID *".$customer->customer_id."* sudah kami Terbitkan sebesar *Rp.". $total_amount."*";
-     $message .="\nSilahkan melakukan pembayaran sebelum tanggal 20-".date("m-Y", time());
-     $message .="\nUntuk info lebih lengkap silahkan klik link berikut";
-     $message .="\nhttp://".env("DOMAIN_NAME")."/suminvoice/".$tempcode."/print";
-     $message .="\n";
+       $message ="Yth. ".$customer->name." ";
+       $message .="\n";
+       $message .="\nTagihan Customer dengan CID *".$customer->customer_id."* sudah kami Terbitkan sebesar *Rp.". $total_amount."*";
+       $message .="\nSilahkan melakukan pembayaran sebelum tanggal 20-".date("m-Y", time());
+       $message .="\nUntuk info lebih lengkap silahkan klik link berikut";
+       $message .="\nhttp://".env("DOMAIN_NAME")."/suminvoice/".$tempcode."/print";
+       $message .="\n";
 
-     $message .="\nUntuk pembayaran non-tunai, Mohon mengirimkan bukti transfer ke nomor ini karena nomor sebelumnya sudah tidak aktif.";
-     $message .="\n";
+       $message .="\nUntuk pembayaran non-tunai, Mohon mengirimkan bukti transfer ke nomor ini karena nomor sebelumnya sudah tidak aktif.";
+       $message .="\n";
 
-     $message .="\nAbaikan pesan ini jika sudah melakukan pembayaran";
-     $message .="\n";
-     $message .="\n~ ".env("SIGNATURE")." ~";
+       $message .="\nAbaikan pesan ini jika sudah melakukan pembayaran";
+       $message .="\n";
+       $message .="\n~ ".env("SIGNATURE")." ~";
 
 
 //disable WA
      // $msgresult= \App\Suminvoice::wa_payment($customer->phone,$message);
      // $msg .="\n Whatsapp : ".$msgresult;
 
- }
- catch (Exception $e)
- {
-  $msg .="\nError sent  invoice notification to Customer";
-}
-finally {
+   }
+   catch (Exception $e)
+   {
+      $msg .="\nError sent  invoice notification to Customer";
+  }
+  finally {
 
 
 
-}
+  }
 
 }
 }
@@ -892,15 +893,15 @@ public function invoicehandle()
         }
         else
         {
-           $latest_number = $latest->number;
-       }
+         $latest_number = $latest->number;
+     }
 
 
-       $no=0;
-       $month = now()->format('mY');
-       foreach($active_customer as $customer) 
+     $no=0;
+     $month = now()->format('mY');
+     foreach($active_customer as $customer) 
 
-       {
+     {
         $msg="";
         $latest_number = $latest_number+1;
 
@@ -908,15 +909,15 @@ public function invoicehandle()
 
         if (!$check_invoice)
         {
-         $no =$no +1;
-         $msg .="\n ".$no." : ".$customer['customer_id']." ( ".$customer['name']." ) \n [ ";
+           $no =$no +1;
+           $msg .="\n ".$no." : ".$customer['customer_id']." ( ".$customer['name']." ) \n [ ";
 
 
-         $tempcode=(sha1(time())).rand();
+           $tempcode=(sha1(time())).rand();
 
 
 
-         \App\Invoice::create([
+           \App\Invoice::create([
             'id_customer' => ($customer['id']),
             'monthly_fee' => '1',
             'periode' => $month, 
@@ -931,15 +932,15 @@ public function invoicehandle()
         ]);
 
 
-         if (!empty($customer->email))
-         {
-           $email =$customer->email;
+           if (!empty($customer->email))
+           {
+             $email =$customer->email;
 
-       }
+         }
 
-       else
+         else
 
-       { 
+         { 
           $email ="return@trikamedia.com";
       }
 
@@ -1001,9 +1002,9 @@ public function invoicehandle()
     $array = json_decode(json_encode($createInvoice, true))->id;  
     if ($array)
     {
-       $msg .="\nSuccess create invoice on Payment Gateway with id ".$array;
-   }
-   else
+     $msg .="\nSuccess create invoice on Payment Gateway with id ".$array;
+ }
+ else
     {$msg .="\n  <a style='color:red'> Error create invoice on Payment Gateway </a>";}
 
 }
@@ -1015,7 +1016,7 @@ finally {
 
     try
     {
-       \App\Suminvoice::create([
+     \App\Suminvoice::create([
         'id_customer' => ($customer['id']),
         'number' => $latest_number,
         'date' => date("Y-m-d"), 
@@ -1029,11 +1030,11 @@ finally {
 
 
 
-       $msg .="\nSuccess create invoice on Helpdesk System to ".$customer['name']." with amount = ".$customer['price']."";
+     $msg .="\nSuccess create invoice on Helpdesk System to ".$customer['name']." with amount = ".$customer['price']."";
 
-   }    
-   catch (Exception $e)
-   {
+ }    
+ catch (Exception $e)
+ {
     $msg .="\nError create invoice on Helpdesk System";
 }
 finally {
@@ -1041,32 +1042,32 @@ finally {
     try
     {
 
-     $message ="Yth. ".$customer->name." ";
-     $message .="\n";
-     $message .="\nTagihan Customer dengan CID *".$customer->customer_id."* sudah kami Terbitkan sebesar *Rp.". $total_amount."*";
-     $message .="\nSilahakan melakukan pembayaran sebelum tanggal 20-".date("m-Y", time());
-     $message .="\nUntuk info lebih lengkap silahkan klik link berikut";
-     $message .="\nhttp://".env("DOMAIN_NAME")."/suminvoice/".$tempcode."/print";
-     $message .="\n";
+       $message ="Yth. ".$customer->name." ";
+       $message .="\n";
+       $message .="\nTagihan Customer dengan CID *".$customer->customer_id."* sudah kami Terbitkan sebesar *Rp.". $total_amount."*";
+       $message .="\nSilahakan melakukan pembayaran sebelum tanggal 20-".date("m-Y", time());
+       $message .="\nUntuk info lebih lengkap silahkan klik link berikut";
+       $message .="\nhttp://".env("DOMAIN_NAME")."/suminvoice/".$tempcode."/print";
+       $message .="\n";
 
-     $message .="\nUntuk pembayaran non-tunai, Mohon mengirimkan bukti transfer karena nomor sebelumnya sudah tidak aktif.";
-     $message .="\n";
-     $message .="\n~ ".env("SIGNATURE")." ~";
+       $message .="\nUntuk pembayaran non-tunai, Mohon mengirimkan bukti transfer karena nomor sebelumnya sudah tidak aktif.";
+       $message .="\n";
+       $message .="\n~ ".env("SIGNATURE")." ~";
 
 //Disable WA
      // $msgresult= \App\Suminvoice::wa_payment($customer->phone,$message);
      // $msg .="\n Whatsapp : ".$msgresult;
 
- }
- catch (Exception $e)
- {
-  $msg .="\nError sent  invoice notification to Customer";
-}
-finally {
+   }
+   catch (Exception $e)
+   {
+      $msg .="\nError sent  invoice notification to Customer";
+  }
+  finally {
 
 
 
-}
+  }
 
 }
 }

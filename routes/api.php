@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WhatsappController;  // ← pastikan ini ada
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Inbound & ack (tidak perlu auth)
+Route::prefix('wa')->group(function () {
+    Route::post('webhook',           [WhatsappController::class, 'webhook']);
+    Route::post('{session}/ack',     [WhatsappController::class, 'ack']);
+    Route::get('{session}/history',  [WhatsappController::class, 'history']);
 });
+
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::post('wa/{session}/send', [WhatsappController::class, 'send']);
+    // … route lain yang butuh login …
+// });

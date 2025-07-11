@@ -1,12 +1,12 @@
 @extends('layout.main')
 @section('title',' Customer Detail')
-@section('content')
 @section('maps')
 @inject('distrouter', 'App\Distrouter')
 
 @endsection
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
 <script type="text/javascript">
@@ -58,90 +58,72 @@
  
 </script>
 @section('content')
-<section class="content-header">
+<section class="content-header p-0 m-0 p-md-3 m-md-3">
 
 
-  <div class="card  card-outline">
+  <div class="card  card-outline ">
     <div class="card-header bg-primary  ">
       <h3 class="card-title font-weight-bold "> Show Detail Customer </h3>
     </div>
     
-    <div class="card-body">
+    <div class="card-body ">
 
 
 
 
       <div class="row">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <table class="table table-borderless col-md-6 table-sm">
 
           <tbody>
 
-            <tr class="col-md-6">
+
+            <tr>
+              <th style="width: 30%" class="text-right">Customer ID :</th>
+              @php
+
+              if ($customer->status_name->name == 'Active')
+              $btn_sts = "btn-success";
+              elseif ($customer->status_name->name == 'Inactive')
+              $btn_sts = "btn-secondary";
+              elseif ($customer->status_name->name == 'Block')
+              $btn_sts = "btn-danger";
+              elseif ($customer->status_name->name == 'Company_Properti')
+              $btn_sts = "btn-primary";
+              else
+              $btn_sts = "btn-warning";
+
+              @endphp
+              <input type="hidden" name="cid_copy" id="cid_copy" value="{{$customer->customer_id}}">
+              <td><div class=" {{$btn_sts}} badge btn-sm p-2 mr-1 " >{{$customer->customer_id}}
+
+
+                <strong> | {{$customer->status_name->name}}</strong></div><i class="fa border-secondary  fa-copy btn btn-sm " title="Copy Customer Id" onclick="copy_text()"></i></td>
+              </tr>
               <tr>
-                <th style="width: 30%" class="text-right">Customer ID :</th>
-                @php
+                <th style="width: 25%; " class="text-right">User PPPOE :</th>
+                @if ($countpppoe > 1)
+                <td>
+                  <a class="badge badge-danger">
+                    {{ $customer->pppoe }} | pppoe-conflict
+                  </a>
+                </td>
+                @else
+                <td>{{ $customer->pppoe }}</td>
+                @endif
+              </tr>
+              <tr>
+                <th style="width: 25%; " class="text-right">Password :</th>
+                <td>{{$customer->password}}</td>
+              </tr>
+              <tr>
+                <th style="width: 31%" class="text-right">Customer Name :</th>
+                <td>{{$customer->name}}</td>
 
-                if ($customer->status_name->name == 'Active')
-                $btn_sts = "btn-success";
-                elseif ($customer->status_name->name == 'Inactive')
-                $btn_sts = "btn-secondary";
-                elseif ($customer->status_name->name == 'Block')
-                $btn_sts = "btn-danger";
-                elseif ($customer->status_name->name == 'Company_Properti')
-                $btn_sts = "btn-primary";
-                else
-                $btn_sts = "btn-warning";
+              </tr>
 
-                @endphp
-                <input type="hidden" name="cid_copy" id="cid_copy" value="{{$customer->customer_id}}">
-                <td><div class=" {{$btn_sts}} badge btn-sm p-2 mr-1 " >{{$customer->customer_id}}
-
-
-                  <strong> | {{$customer->status_name->name}}</strong></div><i class="fa border-secondary  fa-copy btn btn-sm " title="Copy Customer Id" onclick="copy_text()"></i></td>
-                </tr>
-                <tr>
-                  <th style="width: 25%; " class="text-right">User PPPOE :</th>
-                  @if ($countpppoe > 1)
-                  <td>
-                    <a class="badge badge-danger">
-                      {{ $customer->pppoe }} | pppoe-conflict
-                    </a>
-                  </td>
-                  @else
-                  <td>{{ $customer->pppoe }}</td>
-                  @endif
-                </tr>
-                <tr>
-                  <th style="width: 25%; " class="text-right">Password :</th>
-                  <td>{{$customer->password}}</td>
-                </tr>
-                <tr>
-                 <th style="width: 30%" class="text-right">Customer Name :</th>
-                 <td>{{$customer->name}}</td>
-
-               </tr>
-
-               <tr>
-                <th style="width: 30%" class="text-right">Contact Name : </th>
+              <tr>
+                <th style="width: 31%" class="text-right">Contact Name : </th>
                 <td colspan="">{{$customer->contact_name}}</td>
 
               </tr>
@@ -195,6 +177,7 @@
             </tr>
 
 
+
           </tbody>
         </table>
 
@@ -203,7 +186,37 @@
           <tbody>
 
             <tr class="col-md-6">
-             <tr>
+
+              <th style="width: 30%" class="text-right">Notif by :</th>
+              <td>
+                @php
+                $icon = '';
+                $label = '';
+
+                switch ($customer->notification) {
+                  case 0:
+                  $icon = '<i class="fas fa-ban text-muted"></i>';
+                  $label = 'None';
+                  break;
+                  case 1:
+                  $icon = '<i class="fab fa-whatsapp text-success"></i>';
+                  $label = 'WhatsApp';
+                  break;
+                  case 2:
+                  $icon = '<i class="fas fa-envelope text-primary"></i>';
+                  $label = 'Email';
+                  break;
+                  default:
+                  $icon = '<i class="fas fa-ban text-muted"></i>';
+                  $label = 'None';
+                  break;
+                }
+                @endphp
+                {!! $icon !!} {{ $label }}
+              </td>
+
+
+              <tr>
                <th style="width: 30%" class="text-right">Id Card :</th>
                <td>{{$customer->id_card}}</td>
 
@@ -274,133 +287,118 @@
                   @endphp
                   {{$monitor}} --}}
                 </div>
-                @if (intval($status['ip_count']) <=1)
-                <a href="http://{{$status['ip']}}" class="btn {{$btn_online}} bt btn-sm mt-1 mr-2 " target="_blank">
-                  {{$status['online']}} | {{$status['ip']}} |  {{$status['uptime']}}
+                @if (intval($status['ip_count']) <= 1)
+                <div class="d-flex align-items-center mt-1">
+                  <a href="http://{{$status['ip']}}" 
+                  class="btn {{$btn_online}} btn-sm mr-2" 
+                  target="_blank">
+                  {{$status['online']}} | {{$status['ip']}} | {{$status['uptime']}}
                 </a>
-                <button id="createTunnelBtn">x</button>
-                @else
-                <a href="http://{{$status['ip']}}" class="btn bg-danger bt btn-sm mt-1 mr-2 " target="_blank">
-                  {{$status['online']}} | {{$status['ip']}} => ip conflic |  {{$status['uptime']}}
-                </a>
-                @endif
 
-              </strong>
+              </div>
+              @else
+              <a href="http://{{$status['ip']}}" 
+              class="btn bg-danger btn-sm mt-1 mr-2" 
+              target="_blank">
+              {{$status['online']}} | {{$status['ip']}} => IP Conflict | {{$status['uptime']}}
+            </a>
+            @endif
 
-            </td>
-
-          </tr>
-          <tr>
-           <th style="width: 25%" class="text-right">Distribution Router :</th>
-           <td colspan="2">
-            @if ( empty($customer->distrouter->name))
-
-            {{'-'}}
-            @else
-            
-            <a href="/distrouter/{{ $customer->distrouter->id}}"  class="btn btn-primary btn-sm " target="_blank">{{ $customer->distrouter->name }} | {{ $customer->distrouter->ip }}</a>
-
-          {{--  </a>  --}}
-
-          @endif
-
-
-
-
+          </strong>
 
         </td>
 
       </tr>
       <tr>
-
-        <th style="width: 25%" class="text-right">OLT | ODP :</th>
-        <td colspan="2">
-         @if ( empty($customer->distpoint_name->name))
-
-         {{'-'}}
-         @else
-         <a class="btn btn-sm bg-primary" href="/olt/{{ $customer->olt_name->id }}" >
-          {{ $customer->olt_name->name }}
-        </a>
-        @endif
-
-        @if ( empty($customer->distpoint_name->name))
+       <th style="width: 25%" class="text-right">Distribution Router :</th>
+       <td colspan="2">
+        @if ( empty($customer->distrouter->name))
 
         {{'-'}}
         @else
-        <a class="btn btn-sm bg-primary" href="/distpoint/{{ $customer->distpoint_name->id }}" >
-          {{ $customer->distpoint_name->name }}
-        </a>
+
+        <a href="/distrouter/{{ $customer->distrouter->id}}"  class="btn btn-primary btn-sm " target="_blank">{{ $customer->distrouter->name }} | {{ $customer->distrouter->ip }}</a>
+
+
+
         @endif
+
+
+
 
 
       </td>
 
     </tr>
-
-
-
-    {{--  <tr>
-      <th style="width: 25%" class="text-right">Device :</th>
-      <td colspan="2"><a href="/device/{{ $customer->id }}" title="device" class="btn btn-primary btn-sm "> <i class="fas fa-network-wired"></i> Device </a></td>
-
-    </tr> --}}
     <tr>
-      <th style="width: 25%" class="text-right">Ticket :</th>
-      <td colspan="2"><a href="/ticket/{{ $customer->id }}/create" title="device" class="btn mt-1 btn-success btn-sm  mr-2"> <i class="fas fa-ticket-alt"></i> Create Ticket </a><a href="/ticket/view/{{ $customer->id }}" title="device" class="btn btn-primary btn-sm mt-1 "> <i class="fas fa-ticket-alt"></i> View Ticket </a></td>
-
-    </tr>
-    <tr>
-      <th style="width: 25%" class="text-right">Invoice :</th>
-      <td colspan="2"><a href="/invoice/{{ $customer->id }}/create" title="device" class="btn btn-success btn-sm  mr-2 mt-1"> <i class="fas fa-ticket-alt"></i> Create Manual Invoice </a><a href="/invoice/{{ $customer->id }}" title="device" class="btn mt-1 btn-primary btn-sm "> <i class="fas fa-ticket-alt"></i> View Invoice </a></td>
-
-    </tr>
-    <tr>
-      <th style="width: 25%" class="text-right">Monitor Tools :</th>
-      <input type="hidden" name="ip"  id="ip" value="{{$customer->distrouter->ip}}">
-      <input type="hidden" name="user"  id="user" value="{{$customer->distrouter->user}}">
-      <input type="hidden" name="password"  id="password" value="{{$customer->distrouter->password}}">
-      <input type="hidden" name="port"  id="port" value="{{$customer->distrouter->port}}">
-      <input type="hidden" name="interface"  id="interface" value="<pppoe-{{$customer->pppoe}}>">
-        <td colspan="2"> <button type="button" {{$disabled}}  class="btn mb-1 {{$btn_status}} btn-sm pb-1" data-toggle="modal" data-target="#modal-monitor"> <i class="fas fa-chart-line">  </i> Traffic</button>
-         @if ( !empty($customer->id_onu))
-
-
-         <button type="button" name="btn_onu_detail" id="btn_onu_detail" class="btn mb-1 bg-info btn-sm pb-1" data-toggle="modal" data-target="#modal_onu_detail"> <i class="fas fa-sun"></i> {{ $customer->id_onu }}</button>
-
-         <button type="button" name="btn_onu_reboot" id="btn_onu_reboot" class="btn mb-1 bg-warning btn-sm pb-1" data-toggle="modal" data-target="#modal_reboot"> <i class="fas fa-sync-alt"></i>reboot</button>
-
-         @endif
-         {{-- <button type="button" {{$disabled}}  class="btn {{$btn_status}} btn-sm mb-1 pb-1" data-toggle="modal" data-target="#modal-ip"> <i class="fas fa-compress">  </i> IP</button> --}}
+      <th class="text-right">OLT | ODP :</th>
+      <td colspan="2">
+        <a class="btn btn-sm bg-primary" 
+        href="{{ $customer->olt_name 
+        ? '/olt/'.$customer->olt_name->id 
+        : '#' }}">
+        {{ optional($customer->olt_name)->name ?? '-' }}
+      </a>
+      <a class="btn btn-sm bg-primary" 
+      href="{{ $customer->distpoint_name 
+      ? '/distpoint/'.$customer->distpoint_name->id 
+      : '#' }}">
+      {{ optional($customer->distpoint_name)->name ?? '-' }}
+    </a>
+  </td>
+</tr>
 
 
 
+<tr>
+  <th style="width: 25%" class="text-right">Ticket :</th>
+  <td colspan="2"><a href="/ticket/{{ $customer->id }}/create" title="device" class="btn mt-1 btn-success btn-sm  mr-2"> <i class="fas fa-ticket-alt"></i> Create Ticket </a><a href="/ticket/view/{{ $customer->id }}" title="device" class="btn btn-primary btn-sm mt-1 "> <i class="fas fa-ticket-alt"></i> View Ticket </a></td>
+
+</tr>
+<tr>
+  <th style="width: 25%" class="text-right">Invoice :</th>
+  <td colspan="2"><a href="/invoice/{{ $customer->id }}/create" title="device" class="btn btn-success btn-sm  mr-2 mt-1"> <i class="fas fa-ticket-alt"></i> Create Manual Invoice </a><a href="/invoice/{{ $customer->id }}" title="device" class="btn mt-1 btn-primary btn-sm "> <i class="fas fa-ticket-alt"></i> View Invoice </a></td>
+
+</tr>
+<tr>
+  <th style="width: 25%" class="text-right">Monitor Tools :</th>
+  <input type="hidden" name="ip"  id="ip" value="{{$customer->distrouter->ip}}">
+  <input type="hidden" name="user"  id="user" value="{{$customer->distrouter->user}}">
+  <input type="hidden" name="password"  id="password" value="{{$customer->distrouter->password}}">
+  <input type="hidden" name="port"  id="port" value="{{$customer->distrouter->port}}">
+  <input type="hidden" name="interface"  id="interface" value="<pppoe-{{$customer->pppoe}}>">
+    <td colspan="2"> <button type="button" {{$disabled}}  class="btn mb-1 {{$btn_status}} btn-sm pb-1" data-toggle="modal" data-target="#modal-monitor"> <i class="fas fa-chart-line">  </i> Traffic</button>
+     <button type="button" {{$disabled}} id="createTunnelBtn" 
+     class="btn mb-1 {{$btn_status}} btn-sm pb-1 "
+     title="Create Tunnel">
+     <i class="fas fa-plug "></i> web
+   </button>
+   @if ( !empty($customer->id_onu))
 
 
-       </td>
+   <button type="button" name="btn_onu_detail" id="btn_onu_detail" class="btn mb-1 bg-info btn-sm pb-1" data-toggle="modal" data-target="#modal_onu_detail"> <i class="fas fa-sun"></i> {{ $customer->id_onu }}</button>
 
+   <button type="button" name="btn_onu_reboot" id="btn_onu_reboot" class="btn mb-1 bg-warning btn-sm pb-1" data-toggle="modal" data-target="#modal_reboot"> <i class="fas fa-sync-alt"></i>reboot</button>
 
+   @endif
 
-     </tr>
+ </td>
 
-     <tr>
-      <th>
-      </th>
-      <td>
-       <input type="hidden" name="id_olt"  id="id_olt" value="{{$customer->id_olt}}">
-       <input type="hidden" name="id_onu"  id="id_onu" value="{{$customer->id_onu}}">
-       <a id="ont_status"></a>
-       <a id="ont_detail"></a>
+</tr>
 
-     </td>
-   </tr>
+<tr>
+  <th>
+  </th>
+  <td>
+   <input type="hidden" name="id_olt"  id="id_olt" value="{{$customer->id_olt}}">
+   <input type="hidden" name="id_onu"  id="id_onu" value="{{$customer->id_onu}}">
+   <a id="ont_status"></a>
+   <a id="ont_detail"></a>
 
-
-
- </tbody>
+ </td>
+</tr>
+</tbody>
 </table>
-
-
 <div class="card-footer col-md-12 mt-5 mb-5">
  <a href="/customer/{{ $customer->id }}/edit" title="edit" class="btn btn-primary btn-sm "> <i class="fa fa-edit">  </i> Edit </a>
  <a href="/customer/log/{{ $customer->id }}" title="log" class="btn btn-info btn-sm "> <i class="fa fa-history">  </i> log </a>
@@ -419,23 +417,20 @@
 
 </div>
 
+<div class=" col-md-12 card card-primary card-outline pt-2 ">
+  <div class="card-header d-flex align-items-center">
+    <h3 class="card-title mb-0">File List</h3>
 
-
-
-
-
-<div class=" col-md-12 card card-primary card-outline pt-2">
-  <div class="card-header">
-    <h3 class="card-title">File List  </h3>
-
-
-
-    <button type="button" class="float-right btn  bg-gradient-primary btn-sm" data-toggle="modal" data-target="#modal-customerfile">Upload File</button>
-
-
-
-
+    <div class="ml-auto">
+      <button type="button" class="btn bg-gradient-primary btn-sm mr-2" data-toggle="modal" data-target="#modal-customerfile">
+        Upload File
+      </button>
+      <a href="/subscribe/{{ $customer->id }}" class="btn btn-primary btn-sm">
+        Form Berlangganan
+      </a>
+    </div>
   </div>
+
 
   <!-- /.card-header -->
   <div class="card-body">
@@ -483,66 +478,19 @@
 </div>
 </div>
 
+<div class=" col-md-6  card card-primary card-outline p-0 m-0 ">
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class=" col-md-6  card card-primary card-outline">
-
-  {{-- <label for="maps">Topology   </label> --}}
-  
-  <a href="/device/{{ $customer->id }}" title="device" class="btn btn-info btn-sm mt-2 "> <i class="fas fa-network-wired"></i>Manage Topology </a>
+  <a href="/device/{{ $customer->id }}" title="device" class="btn btn-info btn-sm "> <i class="fas fa-network-wired"></i>Manage Topology </a>
   <div class="overflow-auto" id="chart_div_topology"></div>
 
-
-
 </div>
 
+<div  style="height: 400px;" class="col-md-6  card card-primary card-outline p-0 m-0">
+  <a href="https://www.google.com/maps/place/{{ $customer->coordinate }}" target="_blank" class="btn btn-info btn-sm"><i  class="fa fa-map"> </i> Show in Google Maps </a>
 
-
-
-<div  style="height: 400px;" class="col-md-6  card card-primary card-outline">
-  {{--   <label for="maps">Maps   </label> --}}
-  <a href="https://www.google.com/maps/place/{{ $customer->coordinate }}" target="_blank" class="btn btn-info btn-sm mt-2"><i  class="fa fa-map"> </i> Show in Google Maps </a>
-
-  <!-- @if ($customer->coordinate == null)
-
-  <br><a class="">No Map set !!</a> 
-
-  @else
-  <div>
-   
-  </div>
-  <div class="float-right " >
-
-  </div>
-  @endif -->
-  <div style="width: 100%; height: 500px;"id="map">Map Not Set !!</div>
+  <div style="width: 100%; height: 400px;"id="map">Map Not Set !!</div>
 </div>
-
-
-
-
-
-
-
-
-
 
 </div>
 <!-- /.card-body -->
@@ -556,9 +504,6 @@
 
 
 </div>
-
-
-
 
 <div class="modal fade" id="modal-wa">
   <div class="modal-dialog modal-lg">
@@ -846,9 +791,8 @@
   </div>
   <!-- /.modal -->
 
-
 </div>
-{{-- <div class="modal fade" id="modal-ip">
+<div class="modal fade" id="modal-ip">
   <div class="modal-dialog modal-lg">
     <div class="modal-content ">
 
@@ -874,70 +818,39 @@
               @endforeach --}}
 
 
-
             </div>
 
           </div>
-
         </div>
-
-
       </div>
-
     </div>
-
   </div>
 
 
-
-</div> 
+</div>
 
 
 </section>
 
 @endsection
 @section('footer-scripts')
-<!-- <script>
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-  
 
-  $.ajax({
-    url: '/olt/ont_status',
-    method: 'post',
-    data: {
-                id_onu: $('#id_onu').val(),  // Menggunakan jQuery untuk mengambil nilai
-                id_olt: $('#id_olt').val()   // Menggunakan jQuery untuk mengambil nilai
-              },
-              success: function(data) {
-                $('#ont_status').html(data);  // Menggunakan jQuery untuk mengupdate HTML
-              },
-              error: function(xhr, status, error) {
-                console.log('Error: ' + error);  // Tambahkan error handling jika diperlukan
-              }
-            });
-          </script>
-        -->
-
-        <script>
+<script>
   // Wait for the document to be fully loaded
-          $(document).ready(function() {
+  $(document).ready(function() {
     // Get ONT status on page load
-            getOntStatus();
+    getOntStatus();
 
     // Get ONT details on page load
           //   getOntDetail();
-          });
+  });
 
   // Function to get ONT status
-          function getOntStatus() {
-            $.ajax({
-              url: '/olt/ont_status',
-              method: 'POST',
-              data: {
+  function getOntStatus() {
+    $.ajax({
+      url: '/olt/ont_status',
+      method: 'POST',
+      data: {
         id_onu: $('#id_onu').val(),  // Using jQuery to get the value
         id_olt: $('#id_olt').val()   // Using jQuery to get the value
       },
@@ -948,15 +861,15 @@
         console.log('Error fetching ONT status: ' + error);  // Error handling
       }
     });
-          }
+  }
 
   // Function to get ONT details
-          function getOntDetail() {
+  function getOntDetail() {
 
-           $.ajax({
-            url: '/olt/onu_detail',
-            method: 'POST',
-            data: {
+   $.ajax({
+    url: '/olt/onu_detail',
+    method: 'POST',
+    data: {
         id_onu: $('#id_onu').val(),  // Using jQuery to get the value
         id_olt: $('#id_olt').val()   // Using jQuery to get the value
 
@@ -968,39 +881,31 @@
         console.log('Error fetching ONT details: ' + error);  // Error handling
       }
     });
-         }
+ }
 
   // Optional: Trigger functions on a specific event (if required)
   // Example:
-         $('#btn_onu_detail').on('click', function() {
+ $('#btn_onu_detail').on('click', function() {
    // getOntStatus();
-          getOntDetail();
-        });
+  getOntDetail();
+});
 
-
-
-
-
-
-
-
-
-         var center = @json($center);
-         var locations = @json($locations);
+ var center = @json($center);
+ var locations = @json($locations);
 
     // Ubah koordinat pusat menjadi array [lat, lng]
-         var coordinates = center.coordinate.split(',').map(Number);
+ var coordinates = center.coordinate.split(',').map(Number);
 
     // Inisialisasi peta
-         var map = L.map('map').setView(coordinates, center.zoom);
+ var map = L.map('map').setView(coordinates, center.zoom);
 
-         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
     // Tambahkan marker untuk setiap lokasi
-         locations.forEach(location => {
+ locations.forEach(location => {
         var coords = location.customer.split(',').map(Number); // Ubah string koordinat jadi [lat, lng]
         L.marker(coords).addTo(map)
         .bindPopup(location.name);
@@ -1010,41 +915,72 @@
 
     <script>
       document.getElementById('createTunnelBtn').addEventListener('click', function () {
-        let remoteIp = @json($status['ip']); // Ambil IP dari Blade
+    let remoteIp = @json($status['ip']); // IP dari Blade
+    let IdCustomer = @json($customer->id); // ID customer dari Blade
 
-        // Check if remoteIp is valid
-        if (!remoteIp) {
-          alert('Invalid remote IP address.');
-          return;
-        }
-
-        fetch('/customer/createtunnel', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-          },
-          body: JSON.stringify({ remoteIp: remoteIp })
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.success) {
-            alert('SSH Tunnel has been created!');
-                window.open(`http://103.187.113.21:${data.port}`, '_blank'); // Buka tab browser ke port yang dipilih
-              } else {
-                alert('Failed to create SSH Tunnel: ' + (data.message || 'Unknown error.'));
-              }
-            })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('An error occurred: ' + error.message);
-        });
+    if (!remoteIp) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid IP Address',
+        text: 'Remote IP address is missing.',
       });
-    </script>
+      return;
+    }
 
-    @endsection
+    Swal.fire({
+      title: 'Creating Tunnel...',
+      text: 'Please wait while the tunnel is being created.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    fetch('/customer/createtunnel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({ IdCustomer: IdCustomer, remoteIp: remoteIp })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok!');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Tunnel Created!',
+          text: 'Opening port...',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        setTimeout(() => {
+          window.open(`http://${data.host}:${data.port}`, '_blank');
+        }, 2000);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to Create Tunnel',
+          text: data.message || 'Unknown error.',
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: error.message,
+      });
+    });
+  });
+</script>
+
+
+
+@endsection

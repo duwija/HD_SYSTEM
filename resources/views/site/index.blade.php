@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('title','site List')
+@section('title','Site List')
 @section('content')
 <section class="content-header">
 
@@ -9,7 +9,6 @@
       <a href="{{url ('site/create')}}" class=" float-right btn  bg-gradient-primary btn-sm">Add New Site</a>
     </div>
 
-    <!-- /.card-header -->
     <div class="card-body">
       <table id="example1" class="table table-bordered table-striped">
 
@@ -19,7 +18,6 @@
             <th scope="col">Name</th>
             <th scope="col">Location</th>
             <th scope="col">Description</th>
-            <!-- <th scope="col">Action</th> -->
           </tr>
         </thead>
         <tbody>
@@ -29,21 +27,7 @@
           <td><a href="/site/{{ $site->id }}/show" type="button" class="btn btn-primary btn-sm" >{{ $site->name }} </a></td>
           <td>{{ $site->location }}</td>
           <td>{{ $site->description }}</td>
-          <td >
-         <!--    <div class="float-right " >
-              <a href="https://www.google.com/maps/place/{{ $site->coordinate }}" target="_blank" class="btn btn-primary btn-sm "> <i title="show map" class="fa fa-map"> </i> </a>
-              <a href="/site/{{ $site->id}}/edit" class="btn btn-primary btn-sm "> <i class="fa fa-edit"> </i> </a>
-
-
-              <form  action="/site/{{ $site->id }}" method="POST" class="d-inline site-delete" >
-                @method('delete')
-                @csrf
-
-                <button type="submit"  class="btn btn-danger btn-sm"> <i class="fa fa-times"> </i> </button>
-              </form>
-
-            </div> -->
-          </td>
+          
 
         </tr>
         @endforeach

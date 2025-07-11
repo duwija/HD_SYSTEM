@@ -7,7 +7,7 @@
     <div class="card-header">
       <h3 class="card-title font-weight-bold">Laporan Jurnal  </h3>
 
-      <div class="float-right">
+<!--       <div class="float-right">
         <div class="input-group">
           <form role="form" method="post" action="/jurnal/create">
             @csrf
@@ -19,7 +19,7 @@
             <button type="submit" class="float-right btn bg-primary btn-sm">Add New Jurnal</button>
           </form>
         </div>
-      </div>
+      </div> -->
       <br>
       <hr>
 
@@ -126,9 +126,9 @@
         <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
         </span>&emsp;Processing ..."
       },
-      dom: 'lBfrtip',
+      dom: 'Bfrtip',
       buttons: [
-        'copy', 'excel', 'pdf', 'csv', 'print'
+        'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
         ],
       "lengthMenu": [[20,50, 100, 200, 500, 1000], [20,50, 100, 200, 1000]],
       processing: true,

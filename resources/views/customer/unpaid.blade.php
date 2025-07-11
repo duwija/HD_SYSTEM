@@ -119,8 +119,9 @@
         <th scope="col">#</th>
         <th scope="col">Customer Id</th>
         <th scope="col">Name</th>
-        <th scope="col">Merchant</th>
+        
         <th scope="col">Address</th>
+        <th scope="col">Merchant</th>
         <th scope="col">Plan</th>
         <th scope="col">Tax</th>
         <th scope="col">Billing Start</th>

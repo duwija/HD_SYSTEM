@@ -10,7 +10,7 @@ class Customer extends Model
 	use SoftDeletes;
 
 
-    protected $fillable =['customer_id','pppoe','password','name','id_card', 'contact_name','id_olt','id_onu','date_of_birth', 'phone','id_plan','id_distpoint','id_status','id_distrouter','email','address','id_merchant','npwp','tax','billing_start','coordinate','note','id_sale','created_by','updated_by','created_at','update_at','deleted_at'];
+    protected $fillable =['customer_id','pppoe','password','name','id_card', 'contact_name','id_olt','id_onu','date_of_birth', 'phone','id_plan','id_distpoint','id_status','id_distrouter','email','address','id_merchant','npwp','tax','billing_start','coordinate','note','id_sale','created_by','updated_by','created_at','update_at','deleted_at','notification','ip'];
 
     public function customerlog_name()
     {
@@ -50,6 +50,10 @@ class Customer extends Model
 
         return $this->hasMany('\App\Invoice', 'id_customer')->withTrashed();
     }
+    public function invoices()
+    {
+        return $this->hasMany(\App\Invoice::class, 'id_customer');
+    }
     public function device()
     {
 
@@ -64,6 +68,13 @@ class Customer extends Model
     {
         return $this->belongsTo('\App\Distrouter', 'id_distrouter');
     }
+// Customer.php
+    public function distpoint() {
+        return $this->belongsTo('\App\Distpoint', 'id_distpoint');
+    }
+
+    
+
     public function update_status()
     {
         // \Log::channel('notif')->info('JOB ISOLLIR model '.$id.' | ' .$status); 

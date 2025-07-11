@@ -106,6 +106,7 @@
               <th scope="col">Due Date</th>
               
               <th scope="col">Total</th>
+              <th scope="col">Created By</th>
               <th scope="col">Payment Status</th>
               <th scope="col">Update At</th>
               <th scope="col">Recieved By</th>
@@ -134,6 +135,7 @@
           <!-- <td>{{number_format($sum_total, 0, ',', '.')}} </td> -->
           <td>{{number_format($suminvoice->total_amount, 2, ',', '.')}} </td>
 
+          <td>{{ $suminvoice->created_by }}</td>
           @if($suminvoice->payment_status == 0)
           
           <td style="color:white; background-color: blue" >{{ 'Unpaid' }}</td>

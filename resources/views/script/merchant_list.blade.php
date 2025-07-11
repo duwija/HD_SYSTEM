@@ -12,10 +12,10 @@
       <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
       </span>&emsp;Processing ..."
     },
-    dom: 'lBfrtip',
+    dom: 'Bfrtip',
     buttons: [
-      'copy', 'excel', 'pdf', 'csv', 'print'
-      ],
+     'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
+     ],
     "lengthMenu": [[50, 100, 200, 500, 1000], [50, 100, 200, 500, 1000]],
     processing: true,
     serverSide: true,

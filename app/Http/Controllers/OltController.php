@@ -190,20 +190,196 @@ class OltController extends Controller
         return view('olt.show', ['olt' => $olt]);
     }
 
+//     public function getOltInfo($id)
+//     {
+//         try {
+//             // Temukan Olt berdasarkan ID atau lempar error 404 jika tidak ditemukan
+//             $olt = \App\Olt::findOrFail($id);
+
+//             // Ambil SNMP OID dari konfigurasi
+//             $zteoid = config('zteoid');
+//             $ontStatuses = config('zteontstatus');
+//             // Inisialisasi koneksi SNMP
+//             $snmp = new \SNMP(\SNMP::VERSION_2c, $olt->ip, $olt->community_ro);
+
+//             // OID untuk mendapatkan informasi
+
+//             $logging = 0;
+//             $los = 0;
+//             $loslist = [];
+//             $synMib = 0;
+//             $working = 0;
+//             $dyinggasp = 0;
+//             $dyinggasplist = [];
+//             $authFailed = 0;
+//             $offline = 0;
+//             $offlinelist = [];
+//             $unknowlist = [];
+//             $onuNameValue =0;
+//             $onuUncfgValue=0;
+//             $unknow=0;
+
+
+
+//             $oidOltName = $zteoid['oidOltName'];
+//             $oidOltUptime = $zteoid['oidOltUptime'];
+//             $oidOltVersion = $zteoid['oidOltVersion'];
+//             $oidOltDesc = $zteoid['oidOltDesc'];
+//             $onuUncfgSn = $zteoid['oidOnuUncfgSn'];
+//             $onuName = $zteoid['oidOnuName'];
+//             $onuStatus = $zteoid['oidOnuStatus'];
+//             try
+//             {
+//                $onuUncfgValue = count($snmp->walk($onuUncfgSn));
+
+//            } catch (\Exception $e) {
+
+//             $onuUncfgValue = 0;
+
+//         }
+
+
+
+//         $onuNameValue = array_map(function ($val) {
+//             return str_replace(['STRING: ', '"'], "", $val);
+//         }, $snmp->walk($onuName));
+//         $onuCount=count($onuNameValue);
+
+//         $frameslotportid = config('zteframeslotportid');
+
+//         $processedResults = [];
+
+//         foreach ($onuNameValue as $key => $onuName) {
+
+//     // Mengambil status ONT
+//             $components = explode('.', $key);
+//             $lastTwoComponents = array_slice($components, -2);
+//             $result = implode('.', $lastTwoComponents);
+//             $oid = $onuStatus.'.'.$result;
+//             $statusValue = $snmp->get($oid);
+//             $pon_int = array_search($lastTwoComponents[0], $frameslotportid);
+//             $pon_int = $pon_int !== false ? $pon_int : 'unknown';
+//             $onuid = $pon_int.':'.$lastTwoComponents[1];
+//     // Jika status tidak dapat diambil, lewati ONT ini
+//             if ($statusValue === false) 
+//             {
+//                 continue;
+//             }
+
+//     // Mengambil status ONT dari array $ontStatuses atau 'Unknown' jika tidak ditemukan
+//             $result_status = $ontStatuses[$statusValue] ?? 'Unknown';
+
+//     // Jika tidak ada data status, tampilkan pesan "No data"
+//             if (empty($result_status)) {
+//                 echo "No data";
+//             } else {
+//         // Memeriksa status ONT dan melakukan increment sesuai dengan status
+//                 switch ($result_status) {
+//                     case "working":
+//                     $working++;
+//                     break;
+//                     case "los":
+//                     $los++;
+//                     $loslist[] = [
+//                         'onuName' => $onuName,
+//                         'Id' => str_replace('\\', '',$onuid),
+//                     ];
+//                     break;
+//                     case "dyinggasp":
+//                     $dyinggasp++;
+//                     $dyinggasplist[] = [
+//                         'onuName' => $onuName,
+//                         'Id' => str_replace('\\', '',$onuid),
+//                     ];
+//                     break;
+//                     case "logging":
+//                     $logging++;
+//                     break;
+
+//                     case "offline":
+//         // Handle other cases or do nothing
+//                     $offline++;
+//                     $offlinelist[] = [
+//                         'onuName' => $onuName,
+//                         'Id' => str_replace('\\', '',$onuid),
+//                     ];
+//                     break;
+//                     default:
+//         // Handle other cases or do nothing
+//                     $unknow++;
+//                     $unknowlist[] = [
+//                         'onuName' => $onuName,
+//                         'Id' => str_replace('\\', '',$onuid),
+//                     ];
+//                     break;
+//                 }
+//             }
+//         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//             // Mengambil informasi OLT melalui SNMP
+//         $oltInfo = [
+//             'oltName' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltName)),
+//             'oltUptime' => str_replace(['Timeticks: ', '"'], "", $snmp->get($oidOltUptime)),
+//             'oltVersion' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltVersion)),
+//             'oltDesc' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltDesc)),
+//             'onuUnConfg' => $onuUncfgValue,
+//             'onuCount' => $onuCount,
+//             'logging' => $logging,
+//             'los' => $los,
+//             'synMib' => $synMib,
+//             'working' => $working,
+//             'dyinggasp' => $dyinggasp,
+//             'authFailed' =>$authFailed,
+//             'offline' =>  $offline,
+
+
+//         ];
+
+//             // Tutup koneksi SNMP
+//         $snmp->close();
+
+//             // Kembalikan data dalam bentuk JSON
+//         return response()->json(['success' => true, 'oltInfo' => $oltInfo, 'dyinggasplist' => $dyinggasplist, 'loslist' => $loslist,'offlinelist' => $offlinelist]);
+
+//     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+//         return response()->json(['success' => false, 'error' => 'OLT Not Found.']);
+//     } catch (\SNMPException $e) {
+//         return response()->json(['success' => false, 'error' => 'Failed to retrieve OLT information ' . $e->getMessage()]);
+//     } catch (\Exception $e) {
+//         return response()->json(['success' => false, 'error' => 'Failed to retrieve OLT information ' . $e->getMessage()]);
+//     }
+// }
+
     public function getOltInfo($id)
     {
         try {
-            // Temukan Olt berdasarkan ID atau lempar error 404 jika tidak ditemukan
             $olt = \App\Olt::findOrFail($id);
-
-            // Ambil SNMP OID dari konfigurasi
             $zteoid = config('zteoid');
             $ontStatuses = config('zteontstatus');
-            // Inisialisasi koneksi SNMP
+            $frameslotportid = config('zteframeslotportid');
+
             $snmp = new \SNMP(\SNMP::VERSION_2c, $olt->ip, $olt->community_ro);
 
-            // OID untuk mendapatkan informasi
-
+        // Inisialisasi data awal
             $logging = 0;
             $los = 0;
             $loslist = [];
@@ -214,11 +390,10 @@ class OltController extends Controller
             $authFailed = 0;
             $offline = 0;
             $offlinelist = [];
-            $onuNameValue =0;
-            $onuUncfgValue=0;
-            $unknow=0;
-
-
+            $unknowlist = [];
+            $onuUncfgValue = 0;
+            $onuCount = 0;
+            $unknow = 0;
 
             $oidOltName = $zteoid['oidOltName'];
             $oidOltUptime = $zteoid['oidOltUptime'];
@@ -227,160 +402,122 @@ class OltController extends Controller
             $onuUncfgSn = $zteoid['oidOnuUncfgSn'];
             $onuName = $zteoid['oidOnuName'];
             $onuStatus = $zteoid['oidOnuStatus'];
-            try
-            {
-             $onuUncfgValue = count($snmp->walk($onuUncfgSn));
 
-         } catch (\Exception $e) {
-
-         }
-
-
-
-         $onuNameValue = $snmp->walk($onuName);
-         $onuCount=count($onuNameValue);
-
-         $frameslotportid = config('zteframeslotportid');
-
-         $processedResults = [];
-
-         foreach ($onuNameValue as $key => $onuName) {
-
-    // Mengambil status ONT
-            $components = explode('.', $key);
-            $lastTwoComponents = array_slice($components, -2);
-            $result = implode('.', $lastTwoComponents);
-            $oid = $onuStatus.'.'.$result;
-            $statusValue = $snmp->get($oid);
-            $pon_int = array_search($lastTwoComponents[0], $frameslotportid);
-            $onuid = $pon_int.':'.$lastTwoComponents[1];
-    // Jika status tidak dapat diambil, lewati ONT ini
-            if ($statusValue === false) 
-            {
-                continue;
+        // Ambil jumlah ONU belum terkonfigurasi
+            try {
+                $uncfg = $snmp->walk($onuUncfgSn);
+                $onuUncfgValue = is_array($uncfg) ? count($uncfg) : 0;
+            } catch (\Exception $e) {
+                $onuUncfgValue = 0;
             }
 
-    // Mengambil status ONT dari array $ontStatuses atau 'Unknown' jika tidak ditemukan
-            $result_status = $ontStatuses[$statusValue] ?? 'Unknown';
+        // Ambil daftar nama ONU
+            try {
+                $onuNameRaw = $snmp->walk($onuName);
+                $onuNameValue = is_array($onuNameRaw) ? array_map(function ($val) {
+                    return str_replace(['STRING: ', '"'], "", $val);
+                }, $onuNameRaw) : [];
+            } catch (\Exception $e) {
+                $onuNameValue = [];
+            }
 
-    // Jika tidak ada data status, tampilkan pesan "No data"
-            if (empty($result_status)) {
-                echo "No data";
-            } else {
-        // Memeriksa status ONT dan melakukan increment sesuai dengan status
+            $onuCount = count($onuNameValue);
+
+        // Proses status masing-masing ONU
+            foreach ($onuNameValue as $key => $onuName) {
+                $components = explode('.', $key);
+                $lastTwo = array_slice($components, -2);
+                $result = implode('.', $lastTwo);
+                $oid = $onuStatus . '.' . $result;
+
+                $statusValue = $snmp->get($oid);
+                $pon_int = array_search($lastTwo[0], $frameslotportid);
+                $pon_int = $pon_int !== false ? $pon_int : 'unknown';
+                $onuid = $pon_int . ':' . $lastTwo[1];
+
+                if ($statusValue === false) continue;
+
+                $result_status = $ontStatuses[$statusValue] ?? 'Unknown';
+
                 switch ($result_status) {
                     case "working":
                     $working++;
                     break;
                     case "los":
                     $los++;
-                    $loslist[] = [
-                        'onuName' => str_replace(['STRING: ', '"'], "",$onuName),
-                        'Id' => str_replace('\\', '',$onuid),
-                    ];
+                    $loslist[] = ['onuName' => $onuName, 'Id' => str_replace('\\', '', $onuid)];
                     break;
                     case "dyinggasp":
                     $dyinggasp++;
-                    $dyinggasplist[] = [
-                        'onuName' => str_replace(['STRING: ', '"'], "",$onuName),
-                        'Id' => str_replace('\\', '',$onuid),
-                    ];
+                    $dyinggasplist[] = ['onuName' => $onuName, 'Id' => str_replace('\\', '', $onuid)];
                     break;
                     case "logging":
                     $logging++;
                     break;
-
                     case "offline":
-        // Handle other cases or do nothing
                     $offline++;
-                    $offlinelist[] = [
-                        'onuName' => str_replace(['STRING: ', '"'], "",$onuName),
-                        'Id' => str_replace('\\', '',$onuid),
-                    ];
+                    $offlinelist[] = ['onuName' => $onuName, 'Id' => str_replace('\\', '', $onuid)];
                     break;
                     default:
-        // Handle other cases or do nothing
                     $unknow++;
-                    $unknowlist[] = [
-                        'onuName' => str_replace(['STRING: ', '"'], "",$onuName),
-                        'Id' => str_replace('\\', '',$onuid),
-                    ];
+                    $unknowlist[] = ['onuName' => $onuName, 'Id' => str_replace('\\', '', $onuid)];
                     break;
                 }
             }
+
+            $oltInfo = [
+                'oltName' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltName)),
+                'oltUptime' => str_replace(['Timeticks: ', '"'], "", $snmp->get($oidOltUptime)),
+                'oltVersion' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltVersion)),
+                'oltDesc' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltDesc)),
+                'onuUnConfg' => $onuUncfgValue,
+                'onuCount' => $onuCount,
+                'logging' => $logging,
+                'los' => $los,
+                'synMib' => $synMib,
+                'working' => $working,
+                'dyinggasp' => $dyinggasp,
+                'authFailed' => $authFailed,
+                'offline' => $offline,
+                'unknown' => $unknow,
+            ];
+
+            $snmp->close();
+
+            return response()->json([
+                'success' => true,
+                'oltInfo' => $oltInfo,
+                'dyinggasplist' => $dyinggasplist,
+                'loslist' => $loslist,
+                'offlinelist' => $offlinelist,
+                'unknowlist' => $unknowlist,
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'error' => 'OLT Not Found.']);
+        } catch (\SNMPException $e) {
+            return response()->json(['success' => false, 'error' => 'SNMP error: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => 'Error: ' . $e->getMessage()]);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // Mengambil informasi OLT melalui SNMP
-        $oltInfo = [
-            'oltName' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltName)),
-            'oltUptime' => str_replace(['Timeticks: ', '"'], "", $snmp->get($oidOltUptime)),
-            'oltVersion' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltVersion)),
-            'oltDesc' => str_replace(['STRING: ', '"'], "", $snmp->get($oidOltDesc)),
-            'onuUnConfg' => $onuUncfgValue,
-            'onuCount' => $onuCount,
-            'logging' => $logging,
-            'los' => $los,
-            'synMib' => $synMib,
-            'working' => $working,
-            'dyinggasp' => $dyinggasp,
-            'authFailed' =>$authFailed,
-            'offline' =>  $offline,
-
-
-        ];
-
-            // Tutup koneksi SNMP
-        $snmp->close();
-
-            // Kembalikan data dalam bentuk JSON
-        return response()->json(['success' => true, 'oltInfo' => $oltInfo, 'dyinggasplist' => $dyinggasplist, 'loslist' => $loslist,'offlinelist' => $offlinelist]);
-
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json(['success' => false, 'error' => 'OLT Not Found.']);
-    } catch (\SNMPException $e) {
-        return response()->json(['success' => false, 'error' => 'Failed to retrieve OLT information ' . $e->getMessage()]);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'error' => 'Failed to retrieve OLT information ' . $e->getMessage()]);
     }
-}
 
 
+    public function unconfig()
+    {
+       $zteoid = config('zteoid');
+       $onuUncfgValue = [];
 
-public function unconfig()
-{
-   $zteoid = config('zteoid');
-   $onuUncfgValue = [];
 
+       $snmp = new \SNMP(\SNMP::VERSION_2c, '202.169.255.10', 'public_ro');
 
-   $snmp = new \SNMP(\SNMP::VERSION_2c, '202.169.255.10', 'public_ro');
+       $onuUncfgSn = $zteoid['oidOnuUncfgSn'];
+       try
+       {
+        $onuUncfgValue = $snmp->walk($onuUncfgSn);
 
-   $onuUncfgSn = $zteoid['oidOnuUncfgSn'];
-   try
-   {
-    $onuUncfgValue = $snmp->walk($onuUncfgSn);
+    } catch (\Exception $e) {
 
-} catch (\Exception $e) {
-
-}
+    }
 
 //dd($onuUncfgValue);
 }
@@ -1050,7 +1187,7 @@ public function getOltPon($id)
 
                                                        $customer = $customers->firstWhere('id_onu', "$pon_int:$lastTwoComponents[1]");
 
-                                                       $hasilStatus = $snmp->get($oidOnuStatus.'.'.$onuId);
+                                                       $hasilStatus = $this->safeSnmpGet($snmp, $oidOnuStatus.'.'.$onuId);
                                                        $result_status = $ontStatuses[$hasilStatus] ?? 'Unknown';
 
                                                        $modalId=$oltPonIndex."-".$onuId;
@@ -1069,13 +1206,13 @@ public function getOltPon($id)
                                                        $onuUptime = $zteoid['oidOnuUptime'].".$oltPonIndex.$onuId";
                                                        $OltRxPowerOid =$zteoid['oidOltRxPower'].".$oltPonIndex.$onuId";
 
-                                                       $onuDistanceValue = @$snmp->get($onuDistance).'m';
-                                                       $onuModelValue = str_replace(['STRING: ', '"'], "", @$snmp->get($onuModel));
-                                                       $onuSnValue = str_replace(['Hex-STRING: ', '"'], "", @$snmp->get($onuSn));
+                                                       $onuDistanceValue = $this->safeSnmpGet($snmp,$onuDistance).'m';
+                                                       $onuModelValue = str_replace(['STRING: ', '"'], "", $this->safeSnmpGet($snmp,$onuModel));
+                                                       $onuSnValue = str_replace(['Hex-STRING: ', '"'], "", $this->safeSnmpGet($snmp,$onuSn));
                                                        $onuSnAscii = $this->convertMacToAscii($onuSnValue);
-                                                       $onuLastOfflineValue =str_replace(['STRING: ', '"'], "",  @$snmp->get($onuLastOffline));
-                                                       $onuLastOnlineValue = str_replace(['STRING: ', '"'], "", @$snmp->get($onuLastOnline));
-                                                       $onUptimeValue = trim(preg_replace('/Timeticks: \(\d+\)/', '', @$snmp->get($onuUptime)));
+                                                       $onuLastOfflineValue =str_replace(['STRING: ', '"'], "",  $this->safeSnmpGet($snmp,$onuLastOffline));
+                                                       $onuLastOnlineValue = str_replace(['STRING: ', '"'], "", $this->safeSnmpGet($snmp,$onuLastOnline));
+                                                       $onUptimeValue = trim(preg_replace('/Timeticks: \(\d+\)/', '', $this->safeSnmpGet($snmp,$onuUptime)));
 
 
                                                        $customerLink = $customer ? '<a href="/customer/'.$customer->id.'" class="btn btn-primary btn-sm">'.$onuSnAscii.'</a>' : $onuSnAscii;
@@ -1099,8 +1236,8 @@ public function getOltPon($id)
                                                     elseif ($result_status == "working")
                                                     {
 
-                                                       $rxPowerValue = @$snmp->get($rxPowerOid);
-                                                       $txPowerValue = @$snmp->get($txPowerOid);
+                                                     $rxPowerValue = $this->safeSnmpGet($snmp,$rxPowerOid);
+                                                     $txPowerValue = $this->safeSnmpGet($snmp,$txPowerOid);
 
 
        // $oltRxPowerValue = @$snmp->get($OltRxPowerOid);
@@ -1114,20 +1251,20 @@ public function getOltPon($id)
 
 
 
-                                                       $RX = explode(' ', $rxPowerValue);
-                                                       $TX = explode(' ', $txPowerValue);
-                                                       $rxPowerValue = ((int)end($RX) * 0.002) - 30;
-                                                       $txPowerValue = ((int)end($TX) * 0.002) - 30;
+                                                     $RX = explode(' ', $rxPowerValue);
+                                                     $TX = explode(' ', $txPowerValue);
+                                                     $rxPowerValue = ((int)end($RX) * 0.002) - 30;
+                                                     $txPowerValue = ((int)end($TX) * 0.002) - 30;
 
 
 
-                                                       $oltRxPowerValue = @$snmp->get($OltRxPowerOid);
-                                                       $OltRx = explode(' ', $oltRxPowerValue);
-                                                       $oltRxPowerValue = ((int)end($OltRx) * 0.002) + 30;
+                                                     $oltRxPowerValue = $this->safeSnmpGet($snmp,$OltRxPowerOid);
+                                                     $OltRx = explode(' ', $oltRxPowerValue);
+                                                     $oltRxPowerValue = ((int)end($OltRx) * 0.002) + 30;
 
 
-                                                       if($rxPowerValue < -29)
-                                                       {
+                                                     if($rxPowerValue < -29)
+                                                     {
                                                         $bg="badge-danger";
                                                     }
                                                     elseif ($rxPowerValue < -27) {
@@ -1261,7 +1398,18 @@ public function getOltPon($id)
                                     }
                                 }
 
-
+                                private function safeSnmpGet($snmp, $oid)
+                                {
+                                    try {
+                                        $value = @$snmp->get($oid);
+                                        if ($value === false || str_contains($value, 'No Such Instance')) {
+                                            return null;
+                                        }
+                                        return $value;
+                                    } catch (\Exception $e) {
+                                        return null;
+                                    }
+                                }
                                 private function snmpWalk($host, $community, $oids)
                                 {
                                     try {

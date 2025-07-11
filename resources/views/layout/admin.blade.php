@@ -25,7 +25,7 @@
     </ul>
     <ul class="nav nav-treeview">
       <li class="nav-item">
-        <a href="{{ url ('whatsapp/qrcode')}}" class="nav-link">
+        <a href="{{ url ('wa/dashboard')}}" class="nav-link">
           <i class="fab fa-whatsapp nav-icon"></i>
           <p>Wa Gateway</p>
         </a>

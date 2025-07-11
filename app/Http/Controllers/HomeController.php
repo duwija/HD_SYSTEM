@@ -10,6 +10,9 @@ use GuzzleHttp\Exception\GuzzleException;
 Use GuzzleHttp\Clients;
 use Xendit\Xendit;
 use \Auth;
+
+
+use Illuminate\Support\Facades\DB;
 class HomeController extends Controller
 {
     /**
@@ -69,245 +72,418 @@ class HomeController extends Controller
 // }
 
 
-public function index()
+// public function index()
+// {
+//     $userPrivilege = Auth::user()->privilege;
+
+//     switch ($userPrivilege) {
+
+//         case 'admin':
+//             // Data untuk privilege "admin"
+//         $today =date("Y-m-d");
+
+//         $ticket = \App\Ticket::orderBy('time', 'ASC')
+//         ->where('date', '=', $today )
+//         ->get();
+
+//         $ticket_count = \App\Ticket::where('status', '=', 'Open' )
+//         ->count();
+
+//         $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
+//         ->count();
+
+//         $ticket_count_today = \App\Ticket::where('date', '=', $today )
+//         ->count();
+//         $cust_active = \App\Customer::where('id_status', '=', '2' )
+
+//         ->count();
+//         $cust_block = \App\Customer::where('id_status', '=', '4' )
+
+//         ->count();
+//         $cust_potensial = \App\Customer::where('id_status', '=', '1' )
+//         ->count();
+//         $cust_inactive = \App\Customer::where('id_status', '=', '3' )
+//         ->count();
+//         $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
+//         ->where('payment_date', 'like',$today.'%' )
+//         ->count();
+
+
+
+
+
+
+//         return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
+
+//         case 'noc':
+//             // Data untuk privilege "user"
+//                        // Data untuk privilege "admin"
+//         $today =date("Y-m-d");
+
+//         $ticket = \App\Ticket::orderBy('time', 'ASC')
+//         ->where('date', '=', $today )
+//         ->get();
+
+//         $ticket_count = \App\Ticket::where('status', '=', 'Open' )
+//         ->count();
+
+//         $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
+//         ->count();
+
+//         $ticket_count_today = \App\Ticket::where('date', '=', $today )
+//         ->count();
+//         $cust_active = \App\Customer::where('id_status', '=', '2' )
+
+//         ->count();
+//         $cust_block = \App\Customer::where('id_status', '=', '4' )
+
+//         ->count();
+//         $cust_potensial = \App\Customer::where('id_status', '=', '1' )
+//         ->count();
+//         $cust_inactive = \App\Customer::where('id_status', '=', '3' )
+//         ->count();
+//         $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
+//         ->where('payment_date', 'like',$today.'%' )
+//         ->count();
+
+
+//         case 'marketing':
+//             // Data untuk privilege "user"
+//                        // Data untuk privilege "admin"
+//         $today =date("Y-m-d");
+
+//         $ticket = \App\Ticket::orderBy('time', 'ASC')
+//         ->where('date', '=', $today )
+//         ->get();
+
+//         $ticket_count = \App\Ticket::where('status', '=', 'Open' )
+//         ->count();
+
+//         $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
+//         ->count();
+
+//         $ticket_count_today = \App\Ticket::where('date', '=', $today )
+//         ->count();
+//         $cust_active = \App\Customer::where('id_status', '=', '2' )
+
+//         ->count();
+//         $cust_block = \App\Customer::where('id_status', '=', '4' )
+
+//         ->count();
+//         $cust_potensial = \App\Customer::where('id_status', '=', '1' )
+//         ->count();
+//         $cust_inactive = \App\Customer::where('id_status', '=', '3' )
+//         ->count();
+//         $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
+//         ->where('payment_date', 'like',$today.'%' )
+//         ->count();
+
+
+
+
+
+//         return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
+//         case 'user':
+//                        // Data untuk privilege "user"
+//                        // Data untuk privilege "admin"
+//         $today =date("Y-m-d");
+
+//         $ticket = \App\Ticket::orderBy('time', 'ASC')
+//         ->where('date', '=', $today )
+//         ->get();
+
+//         $ticket_count = \App\Ticket::where('status', '=', 'Open' )
+//         ->count();
+
+//         $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
+//         ->count();
+
+//         $ticket_count_today = \App\Ticket::where('date', '=', $today )
+//         ->count();
+//         $cust_active = \App\Customer::where('id_status', '=', '2' )
+
+//         ->count();
+//         $cust_block = \App\Customer::where('id_status', '=', '4' )
+
+//         ->count();
+//         $cust_potensial = \App\Customer::where('id_status', '=', '1' )
+//         ->count();
+//         $cust_inactive = \App\Customer::where('id_status', '=', '3' )
+//         ->count();
+//         $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
+//         ->where('payment_date', 'like',$today.'%' )
+//         ->count();
+
+
+
+
+
+
+//         return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
+//         case 'payment':
+//             // Redirect pengguna dengan privilege "counter"
+//                         // Data untuk privilege "user"
+//                        // Data untuk privilege "admin"
+//         $today =date("Y-m-d");
+
+//         $ticket = \App\Ticket::orderBy('time', 'ASC')
+//         ->where('date', '=', $today )
+//         ->get();
+
+//         $ticket_count = \App\Ticket::where('status', '=', 'Open' )
+//         ->count();
+
+//         $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
+//         ->count();
+
+//         $ticket_count_today = \App\Ticket::where('date', '=', $today )
+//         ->count();
+//         $cust_active = \App\Customer::where('id_status', '=', '2' )
+
+//         ->count();
+//         $cust_block = \App\Customer::where('id_status', '=', '4' )
+
+//         ->count();
+//         $cust_potensial = \App\Customer::where('id_status', '=', '1' )
+//         ->count();
+//         $cust_inactive = \App\Customer::where('id_status', '=', '3' )
+//         ->count();
+//         $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
+//         ->where('payment_date', 'like',$today.'%' )
+//         ->count();
+
+
+
+
+
+
+//         return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
+//         case 'accounting':
+//             // Redirect pengguna dengan privilege "counter"
+//                        // Data untuk privilege "user"
+//                        // Data untuk privilege "admin"
+//         $today =date("Y-m-d");
+
+//         $ticket = \App\Ticket::orderBy('time', 'ASC')
+//         ->where('date', '=', $today )
+//         ->get();
+
+//         $ticket_count = \App\Ticket::where('status', '=', 'Open' )
+//         ->count();
+
+//         $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
+//         ->count();
+
+//         $ticket_count_today = \App\Ticket::where('date', '=', $today )
+//         ->count();
+//         $cust_active = \App\Customer::where('id_status', '=', '2' )
+
+//         ->count();
+//         $cust_block = \App\Customer::where('id_status', '=', '4' )
+
+//         ->count();
+//         $cust_potensial = \App\Customer::where('id_status', '=', '1' )
+//         ->count();
+//         $cust_inactive = \App\Customer::where('id_status', '=', '3' )
+//         ->count();
+//         $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
+//         ->where('payment_date', 'like',$today.'%' )
+//         ->count();
+
+
+
+
+
+
+//         return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
+
+//         case 'vendor':
+//         return redirect()->to('/vendorticket');
+//         case 'merchant':
+//         return redirect()->to('/payment');
+//         default:
+//             // Default untuk privilege lain
+//         abort(403, 'You do not have permission to access this page.');
+//     }
+// }
+
+
+
+
+
+public function index(Request $request)
 {
     $userPrivilege = Auth::user()->privilege;
-
-    switch ($userPrivilege) {
-
-        case 'admin':
-            // Data untuk privilege "admin"
-        $today =date("Y-m-d");
-
-        $ticket = \App\Ticket::orderBy('time', 'ASC')
-        ->where('date', '=', $today )
-        ->get();
-
-        $ticket_count = \App\Ticket::where('status', '=', 'Open' )
-        ->count();
-
-        $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
-        ->count();
-
-        $ticket_count_today = \App\Ticket::where('date', '=', $today )
-        ->count();
-        $cust_active = \App\Customer::where('id_status', '=', '2' )
-
-        ->count();
-        $cust_block = \App\Customer::where('id_status', '=', '4' )
-
-        ->count();
-        $cust_potensial = \App\Customer::where('id_status', '=', '1' )
-        ->count();
-        $cust_inactive = \App\Customer::where('id_status', '=', '3' )
-        ->count();
-        $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
-        ->where('payment_date', 'like',$today.'%' )
-        ->count();
-
-
-
-
-
-
-        return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
-
-        case 'noc':
-            // Data untuk privilege "user"
-                       // Data untuk privilege "admin"
-        $today =date("Y-m-d");
-
-        $ticket = \App\Ticket::orderBy('time', 'ASC')
-        ->where('date', '=', $today )
-        ->get();
-
-        $ticket_count = \App\Ticket::where('status', '=', 'Open' )
-        ->count();
-
-        $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
-        ->count();
-
-        $ticket_count_today = \App\Ticket::where('date', '=', $today )
-        ->count();
-        $cust_active = \App\Customer::where('id_status', '=', '2' )
-
-        ->count();
-        $cust_block = \App\Customer::where('id_status', '=', '4' )
-
-        ->count();
-        $cust_potensial = \App\Customer::where('id_status', '=', '1' )
-        ->count();
-        $cust_inactive = \App\Customer::where('id_status', '=', '3' )
-        ->count();
-        $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
-        ->where('payment_date', 'like',$today.'%' )
-        ->count();
-
-
-        case 'marketing':
-            // Data untuk privilege "user"
-                       // Data untuk privilege "admin"
-        $today =date("Y-m-d");
-
-        $ticket = \App\Ticket::orderBy('time', 'ASC')
-        ->where('date', '=', $today )
-        ->get();
-
-        $ticket_count = \App\Ticket::where('status', '=', 'Open' )
-        ->count();
-
-        $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
-        ->count();
-
-        $ticket_count_today = \App\Ticket::where('date', '=', $today )
-        ->count();
-        $cust_active = \App\Customer::where('id_status', '=', '2' )
-
-        ->count();
-        $cust_block = \App\Customer::where('id_status', '=', '4' )
-
-        ->count();
-        $cust_potensial = \App\Customer::where('id_status', '=', '1' )
-        ->count();
-        $cust_inactive = \App\Customer::where('id_status', '=', '3' )
-        ->count();
-        $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
-        ->where('payment_date', 'like',$today.'%' )
-        ->count();
-
-
-
-
-
-        return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
-        case 'user':
-                       // Data untuk privilege "user"
-                       // Data untuk privilege "admin"
-        $today =date("Y-m-d");
-
-        $ticket = \App\Ticket::orderBy('time', 'ASC')
-        ->where('date', '=', $today )
-        ->get();
-
-        $ticket_count = \App\Ticket::where('status', '=', 'Open' )
-        ->count();
-
-        $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
-        ->count();
-
-        $ticket_count_today = \App\Ticket::where('date', '=', $today )
-        ->count();
-        $cust_active = \App\Customer::where('id_status', '=', '2' )
-
-        ->count();
-        $cust_block = \App\Customer::where('id_status', '=', '4' )
-
-        ->count();
-        $cust_potensial = \App\Customer::where('id_status', '=', '1' )
-        ->count();
-        $cust_inactive = \App\Customer::where('id_status', '=', '3' )
-        ->count();
-        $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
-        ->where('payment_date', 'like',$today.'%' )
-        ->count();
-
-
-
-
-
-
-        return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
-        case 'payment':
-            // Redirect pengguna dengan privilege "counter"
-                        // Data untuk privilege "user"
-                       // Data untuk privilege "admin"
-        $today =date("Y-m-d");
-
-        $ticket = \App\Ticket::orderBy('time', 'ASC')
-        ->where('date', '=', $today )
-        ->get();
-
-        $ticket_count = \App\Ticket::where('status', '=', 'Open' )
-        ->count();
-
-        $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
-        ->count();
-
-        $ticket_count_today = \App\Ticket::where('date', '=', $today )
-        ->count();
-        $cust_active = \App\Customer::where('id_status', '=', '2' )
-
-        ->count();
-        $cust_block = \App\Customer::where('id_status', '=', '4' )
-
-        ->count();
-        $cust_potensial = \App\Customer::where('id_status', '=', '1' )
-        ->count();
-        $cust_inactive = \App\Customer::where('id_status', '=', '3' )
-        ->count();
-        $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
-        ->where('payment_date', 'like',$today.'%' )
-        ->count();
-
-
-
-
-
-
-        return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
-        case 'accounting':
-            // Redirect pengguna dengan privilege "counter"
-                       // Data untuk privilege "user"
-                       // Data untuk privilege "admin"
-        $today =date("Y-m-d");
-
-        $ticket = \App\Ticket::orderBy('time', 'ASC')
-        ->where('date', '=', $today )
-        ->get();
-
-        $ticket_count = \App\Ticket::where('status', '=', 'Open' )
-        ->count();
-
-        $invoice_count = \App\Suminvoice::where('payment_status', '=', '0' )
-        ->count();
-
-        $ticket_count_today = \App\Ticket::where('date', '=', $today )
-        ->count();
-        $cust_active = \App\Customer::where('id_status', '=', '2' )
-
-        ->count();
-        $cust_block = \App\Customer::where('id_status', '=', '4' )
-
-        ->count();
-        $cust_potensial = \App\Customer::where('id_status', '=', '1' )
-        ->count();
-        $cust_inactive = \App\Customer::where('id_status', '=', '3' )
-        ->count();
-        $invoice_paid = \App\Suminvoice::where('payment_status', '=', '1' )
-        ->where('payment_date', 'like',$today.'%' )
-        ->count();
-
-
-
-
-
-
-        return view ('home',['ticket' =>$ticket, 'ticket_count'=>$ticket_count, 'ticket_count_today'=>$ticket_count_today, 'cust_active'=>$cust_active,'cust_block'=>$cust_block,'cust_potensial'=>$cust_potensial,'cust_inactive'=>$cust_inactive, 'invoice_count' => $invoice_count, 'invoice_paid' => $invoice_paid] );
-
-        case 'vendor':
-        return redirect()->to('/vendorticket');
-        case 'merchant':
-        return redirect()->to('/payment');
-        default:
-            // Default untuk privilege lain
-        abort(403, 'You do not have permission to access this page.');
+    $date_start = $request->input('date_start') ?? date('Y-m-d');
+    $date_end = $request->input('date_end') ?? date('Y-m-d');
+    // Daftar role yang melihat data dashboard yang sama
+    $dashboardRoles = ['admin', 'noc', 'marketing', 'user', 'payment', 'accounting'];
+    $ticket_report = \App\Ticket::Join('ticketcategories', 'tickets.id_categori', '=', 'ticketcategories.id')
+    ->whereBetween('tickets.date', [$date_start, $date_end])
+    ->groupBy('id_categori')
+    ->select('tickets.id_categori as categori','ticketcategories.name as name', DB::raw("count(tickets.id_categori) as count"))->get();
+
+    $ticket_data = \App\Ticket::join('users', 'tickets.assign_to', '=', 'users.id')
+    ->whereBetween('tickets.date', [$date_start, $date_end])
+    ->select('users.job_title', 'tickets.status')
+    ->get();
+
+
+// Ambil jumlah tiket per tag pada periode tertentu
+    $tags = \App\Tag::withCount(['tickets' => function($q) use ($date_start, $date_end) {
+        $q->whereBetween('date', [$date_start, $date_end]);
+    }])->get()->map(function($tag) {
+        return [
+            'name' => $tag->name,
+            'total' => $tag->tickets_count,
+        ];
+    });
+
+// Ambil jumlah tiket tanpa tag pada periode tertentu
+    $ticketsWithoutTag = \App\Ticket::whereBetween('date', [$date_start, $date_end])
+    ->doesntHave('tags')
+    ->count();
+
+    $labels = $tags->pluck('name')->toArray();
+    $totals = $tags->pluck('total')->toArray();
+
+    if ($ticketsWithoutTag > 0) {
+        $labels[] = 'Tanpa Tag';
+        $totals[] = $ticketsWithoutTag;
     }
+
+$tagLabels = $labels; // dari proses sebelumnya
+$tagData = $totals;
+
+
+// Definisikan bobot status
+$status_weight = [
+    'Open' => 0,
+    'Pending' => 0,
+    'Inprogress' => 50,
+    'Solve' => 90,
+    'Close' => 100,
+];
+
+// Hitung bobot rata-rata per job_title
+$jobTitleScores = [];
+
+foreach ($ticket_data as $ticket) {
+    $weight = $status_weight[$ticket->status] ?? 0; // default 0 kalau status tak dikenal
+    $job = $ticket->job_title ?? 'Unknown';
+
+    if (!isset($jobTitleScores[$job])) {
+        $jobTitleScores[$job] = ['total_weight' => 0, 'count' => 0];
+    }
+
+    $jobTitleScores[$job]['total_weight'] += $weight;
+    $jobTitleScores[$job]['count']++;
+}
+
+// Buat array final dengan persentase rata-rata
+$jobTitleProgress = [];
+
+foreach ($jobTitleScores as $job => $data) {
+    $avg = $data['count'] > 0 ? round($data['total_weight'] / $data['count']) : 0;
+    $jobTitleProgress[] = [
+        'job_title' => $job,
+        'percent' => $avg,
+        'count' => $data['count'],
+    ];
+}
+
+if (in_array($userPrivilege, $dashboardRoles)) {
+
+
+    $ticket = \App\Ticket::orderBy('time', 'ASC')
+    ->whereBetween('tickets.date', [$date_start, $date_end])
+    ->get();
+
+    // $ticket_count = \App\Ticket::where('status', 'Open')->count();
+    // $ticket_count_today = \App\Ticket::whereBetween('tickets.date', [$date_start, $date_end])->count();
+
+    $statuses = ['Open', 'Pending', 'Inprogress', 'Solve', 'Close'];
+    $ticket_count_per_status = [];
+
+    foreach ($statuses as $status) {
+        $ticket_count_per_status[$status] = \App\Ticket::whereBetween('date', [$date_start, $date_end])
+        ->where('status', $status)
+        ->count();
+    }
+
+    $invoice_count = \App\Suminvoice::where('payment_status', '0')->count();
+    $invoice_paid = \App\Suminvoice::where('payment_status', '1')
+    ->whereBetween('payment_date', [
+        $date_start . ' 00:00:00',
+        $date_end . ' 23:59:59'
+    ])
+    ->count();
+
+    $cust_active = \App\Customer::where('id_status', '2')->count();
+    $cust_block = \App\Customer::where('id_status', '4')->count();
+    $cust_potensial = \App\Customer::where('id_status', '1')->count();
+    $cust_inactive = \App\Customer::where('id_status', '3')->count();
+
+
+
+
+// Query semua tiket hari ini beserta job_title dan status-nya
+    $ticket_status_per_job = \App\Ticket::join('users', 'tickets.assign_to', '=', 'users.id')
+    ->whereBetween('tickets.date', [$date_start, $date_end])
+    ->select('users.job_title', 'tickets.status', DB::raw('count(*) as jumlah'))
+    ->groupBy('users.job_title', 'tickets.status')
+    ->get();
+
+// Bentuk array [job_title][status] = jumlah
+    $jobTickets = [];
+    foreach ($ticket_status_per_job as $row) {
+        $job = $row->job_title ?: 'Unknown';
+        $status = $row->status ?: 'Unknown';
+        $jobTickets[$job][$status] = $row->jumlah;
+    }
+
+
+
+    return view('home', compact('tagLabels', 'tagData','ticket_count_per_status','date_start', 'date_end',
+        'ticket',
+        'invoice_count', 'invoice_paid',
+        'cust_active', 'cust_block', 'cust_potensial', 'cust_inactive','ticket_report','ticket_data','jobTitleScores','jobTitleProgress','jobTickets'
+    ));
+}
+
+    // Redirect khusus
+return match ($userPrivilege) {
+    'vendor'   => redirect()->to('/vendorticket'),
+    'merchant' => redirect()->to('/payment'),
+    default    => abort(403, 'You do not have permission to access this page.'),
+};
 }
 
 
 
+public function jobScheduleAjax(Request $request)
+{
+    $date_start = $request->input('date_start', date('Y-m-d'));
+    $date_end = $request->input('date_end', date('Y-m-d'));
+    $page = (int) $request->input('page', 1);
+    $perPage = 10;
 
+    $tickets = \App\Ticket::with(['user', 'customer'])
+    ->whereBetween('date', [$date_start, $date_end])
+    ->orderBy('time', 'ASC')
+    ->skip(($page - 1) * $perPage)
+    ->take($perPage + 1)
+    ->get();
 
+    $hasMore = $tickets->count() > $perPage;
+    $tickets = $tickets->take($perPage);
+
+    $html = view('partials.timeline_items', compact('tickets'))->render();
+    return response()->json([
+        'html' => $html,
+        'hasMore' => $hasMore
+    ]);
+}
 
 
 public function mikrotik()

@@ -131,7 +131,6 @@
         <th scope="col">Price</th>
         <th scope="col">Billing Start</th>
         <th scope="col">Status</th>
-        <!-- <th scope="col">Select</th> -->
         <th scope="col">Invoice</th>
         
       </tr>

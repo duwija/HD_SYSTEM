@@ -24,62 +24,59 @@
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-navy">
-              <div class="inner">
-                <h4>Rp. {{number_format($totalReceivable ?? '', 0, ',', '.')}}</h4>
-                <p>Total Receivable | Piutang</p>
+          {{-- sebelah kiri: infobox --}}
+          <div class="col-lg-6 p-3">
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-12">
+                <div class="small-box bg-navy">
+                  <div class="inner">
+                    <h4>Rp. {{ number_format($totalReceivable,0,',','.') }}</h4>
+                    <p>Total Receivable</p>
+                  </div>
+                  <div class="icon"><i class="fas fa-wallet"></i></div>
+                </div>
               </div>
-              <div class="icon">
-                <i class="fas fa-wallet"></i>
+              <div class="col-md-6 col-sm-6 col-12">
+                <div class="small-box bg-green">
+                  <div class="inner">
+                    <h4>Rp. {{ number_format($totalTransactionThisMonth,0,',','.') }}</h4>
+                    <p>This Month</p>
+                  </div>
+                  <div class="icon"><i class="fas fa-university"></i></div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-12">
+                <div class="small-box bg-lightblue">
+                  <div class="inner">
+                    <h4>Rp. {{ number_format($totalTransactionThisWeek,0,',','.') }}</h4>
+                    <p>This Week</p>
+                  </div>
+                  <div class="icon"><i class="fas fa-chart-line"></i></div>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-6 col-12">
+                <div class="small-box bg-pink">
+                  <div class="inner">
+                    <h4>Rp. {{ number_format($totalPaymentToday,0,',','.') }}</h4>
+                    <p>Today</p>
+                  </div>
+                  <div class="icon"><i class="fas fa-chart-bar"></i></div>
+                </div>
               </div>
             </div>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-green">
-              <div class="inner">
-                <h4>Rp. {{number_format($totalTransactionThisMonth, 0, ',', '.')}} </h4>
-                <p>Total Transaction This Month</p>
+
+          {{-- sebelah kanan: chart --}}
+          <div class="col-lg-6 p-3">
+            <div class="card">
+              <div class="card-body">
+                <canvas id="dailyTransactionChart" style="width:100%; height:300px;"></canvas>
               </div>
-              <div class="icon">
-                <i class="fas fa-university"></i>
-              </div>
-              <!-- <a href="#" class="small-box-footer">Detail <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-lightblue">
-              <div class="inner">
-                <h4>Rp. {{number_format($totalTransactionThisWeek, 0, ',', '.')}} </h4>
-                <p>Total Transaction This Week</p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-chart-line"></i>
-              </div>
-              <!-- <span class="small-box-footer">-85%</span> -->
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-pink">
-              <div class="inner">
-                <h4>Rp. {{number_format($totalPaymentToday, 0, ',', '.')}}</h4>
-                <p>Total Transaction Today</p>
-              </div>
-              <div class="icon">
-                <i class="fas fa-chart-bar"></i>
-              </div>
-              <!-- <span class="small-box-footer">-76%</span> -->
-            </div>
-          </div>
-          <!-- ./col -->
         </div>
+
+
         <!-- /.row -->
       </div><!-- /.container-fluid -->
     </section>

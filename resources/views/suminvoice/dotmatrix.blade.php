@@ -96,18 +96,13 @@ h4, p{
 
           <td align="center">
 
-            {{-- <img width="50px" src="/dashboard/dist/img/logo.jpg">
-            <p> --}}
-                <strong style="font-size: 11px">PT ADI SOLUSINDO TEKNOLOGI  <br>
-                    {{-- Jl. Ir Soekarno, Pejeng<br> --}}
-                    {{-- 0361-9201919 --}} 
-                    {{-- NPWP : 95.733.946.8-907.000<br>
-                </p> --}}
-            </strong>
-        </td>
-    </tr>
-    
-    
+            {{ env('COMPANY') }} <br>
+
+        </strong>
+    </td>
+</tr>
+
+
 </table> 
 
 
@@ -263,7 +258,7 @@ h4, p{
          <tr>
             @else
             @endif
-            <td colspan="3" style="border: 1px solid #333" >Total Tagihan</td>
+            <td colspan="3" style="border: 1px solid #333" >Total Tagihan sudah termasuk pajak</td>
             <td style="border: 1px solid #333" align="right"><strong id="total">Rp. {{ number_format($subtotal, 0, ',', '.') }} </strong></td>
             {{--  <td colspan="2" style="border: 1px solid #333"> <strong> Tax Ppn ({{$taxfee}}%)</strong> --}}
               {{-- <input type="text" name="subtotal" id="subtotal" value={{$subtotal}} >--}}
@@ -314,7 +309,7 @@ h4, p{
 
       @endphp
 
-      <p> Tabanan, {{ $date }}<br><br>
+      <p> Gianyar, {{ $date }}<br><br>
 
         {!! QrCode::size(80)->generate(url('https://billing.alis.co.id/suminvoice/'.$suminvoice_number->tempcode.'/viewinvoice')); !!}<br><br>
         {{-- {{url('suminvoice/'.$suminvoice_number->tempcode.'/viewinvoice')}} --}}

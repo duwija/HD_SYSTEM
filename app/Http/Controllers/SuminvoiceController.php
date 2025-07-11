@@ -9,6 +9,7 @@ Use GuzzleHttp\Clients;
 use App\Jobs\NotifInvJob;
 use App\Jobs\IsolirJob;
 use App\Jobs\CreateInvJob;
+use App\Jobs\EnableMikrotikJob; 
 use App\User;
 use Xendit\Xendit;
 use Exception;   
@@ -21,6 +22,15 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Vinkla\Hashids\Facades\Hashids;
+use App\Mail\EmailNotification;
+use App\Mail\EmailReceivePayment;
+use App\Helpers\WaGatewayHelper;
+use Illuminate\Support\Facades\Mail;
+
+
+use Illuminate\Support\Facades\Http;
+
 class SuminvoiceController extends Controller
 {
    public function __construct()
@@ -62,7 +72,7 @@ class SuminvoiceController extends Controller
         foreach ($customers as $cust) {
             $count++;
             CreateInvJob::dispatch($cust->id, $inv_date)
-            ->delay($start->addSeconds(15));
+            ->delay($start->addSeconds(40));
         }
 
     // Pesan sukses
@@ -96,7 +106,7 @@ class SuminvoiceController extends Controller
         }
         if (empty($email))
         {
-            $email = 'billing@alus.co.id';
+            $email = 'billing@trikamedia.com';
         }
 
         $data = [
@@ -110,7 +120,7 @@ class SuminvoiceController extends Controller
             'order_items'    => [
                 [
                     'sku'         => $request->description,
-                    'name'        => 'Invoice ALUSNET No #'. $merchantRef,
+                    'name'        => 'Invoice '.env("COMPANY_NAME").' No #'. $merchantRef,
                     'price'       => $amount,
                     'quantity'    => 1,
 
@@ -194,6 +204,224 @@ curl_close($curl);
 
 
 
+public function winpay()
+{
+
+
+   return view ('suminvoice/winpay');
+}
+
+
+// public function createWinpayVA(Request $request)
+// {
+//     try {
+
+//         $privateKeyPem = storage_path('app/rsa_private_key.pem');
+//         $privateKey = file_get_contents($privateKeyPem);
+//         $key= 'HV0AB11MJBQB';
+//         $secretkey= '0130ada7c736403e6c60087f8c8ca62b30d8dd83';
+
+
+//         $endpointUrl = '/v1.0/transfer-va/create-va';
+//         $baseUrl = 'https://sandbox-api.bmstaging.id/snap';
+//         $httpMethod = 'POST';
+//         $timestamp = now()->setTimezone('Asia/Jakarta')->format('c');
+//         $expired = now()->addDay()->setTimezone('Asia/Jakarta')->format('c');
+
+
+//         $partnerId = 'be2c392b-15d8-4ebc-a7b8-68f0a1d32988';
+//         $channelId = 'BSI';
+//         $externalId = '00002';
+
+
+//         $payload = '
+//         {
+//             "customerNo": "08123456789",
+//             "virtualAccountName": "CHUS PANDI",
+//             "trxId": "INV-000000001",
+//             "totalAmount": {
+//                 "value": "10000.00",
+//                 "currency": "IDR"
+//                 },
+//                 "virtualAccountTrxType": "c",
+//                 "expiredDate": "'.$expired.'",
+//                 "additionalInfo": {
+//                     "channel": "BSI"
+//                 }
+//             }
+//             ';
+
+
+//             $body = json_decode($payload);
+//             $hashedBody = strtolower(bin2hex(hash('sha256', json_encode($body, JSON_UNESCAPED_SLASHES), true)));
+
+
+//             $stringToSign =  [
+//                 $httpMethod,
+//                 $endpointUrl,
+//                 $hashedBody,
+//                 $timestamp
+//             ];
+
+
+//             $signature = '';
+//             $stringToSign = implode(':', $stringToSign);
+
+//             $privKey = openssl_pkey_get_private($privateKey);
+
+//             openssl_sign($stringToSign, $signature, $privKey, OPENSSL_ALGO_SHA256);
+//             $encodedSignature = base64_encode($signature);
+
+
+
+
+
+//             $headers = [
+//                 'Content-Type'     => 'application/json',
+//                 'X-TIMESTAMP'      => $timestamp,
+//                 'X-SIGNATURE'      => $encodedSignature,
+//                 'X-PARTNER-ID'     => $partnerId,
+//                 'X-EXTERNAL-ID'    => $externalId,
+//                 'CHANNEL-ID'       => $channelId,
+//             ];
+
+
+//             Log::debug('Winpay Signature Debug', [
+//                 'stringToSign' => $stringToSign,
+//                 'hashedBody' => $hashedBody,
+//                 'signatureBase64' => $encodedSignature,
+//                 'timestamp' => $timestamp,
+//                 'jsonPayload' => $hashedBody,
+//                 'headers' => $headers
+//             ]);
+
+
+//             $response = Http::withHeaders($headers)
+//             ->withBody($payload, 'application/json')
+//             ->post($baseUrl . $endpointUrl);
+
+
+//             if ($response->failed()) {
+//                 Log::error('Winpay response error', [
+//                     'status' => $response->status(),
+//                     'body' => $response->body(),
+//                 ]);
+//                 return response()->json([
+//                     'error' => 'Gagal request ke Winpay',
+//                     'status' => $response->status(),
+//                     'response' => $response->json()
+//                 ], 500);
+//             }
+
+
+//             return response()->json($response->json());
+
+//         } catch (\Exception $e) {
+
+//             Log::error('Exception saat membuat VA Winpay', [
+//                 'message' => $e->getMessage(),
+//                 'trace' => $e->getTraceAsString()
+//             ]);
+//             return response()->json([
+//                 'error' => 'Terjadi exception',
+//                 'message' => $e->getMessage()
+//             ], 500);
+//         }
+//     }
+
+
+
+public function createWinpayVA(Request $request)
+{
+    try {
+        $key = 'HV0AB11MJBQB';
+        $secretKey = '0130ada7c736403e6c60087f8c8ca62b30d8dd83';
+
+        // Timestamp format ISO8601 (Asia/Jakarta)
+        $timestamp = (new \DateTime('now', new \DateTimeZone('Asia/Jakarta')))
+        ->format('Y-m-d\TH:i:sP');
+
+        // Generate signature
+        $signature = hash_hmac('sha256', $timestamp, $secretKey);
+
+        // Data payload
+        $data = [
+            "customer" => [
+                "name" => "Duwija Putra",
+                "email" => "gigih.putri@corp.bm.co.id",
+                "phone" => "082342341"
+            ],
+            "invoice" => [
+                "ref" => "90909090",
+                "products" => [
+                    [
+                        "name" => "01002676",
+                        "qty" => 1,
+                        "price" => 260000
+                    ]
+                ]
+            ],
+            "back_url" => "https://billing.alus.co.id",
+            "interval" => 3600
+        ];
+
+        // Headers
+        $headers = [
+            'Content-Type: application/json',
+            'X-Winpay-Key: ' . $key,
+            'X-Winpay-Signature: ' . $signature,
+            'X-Winpay-Timestamp: ' . $timestamp
+        ];
+
+        // Winpay API endpoint
+        $url = 'https://checkout.bmstaging.id/api/create';
+
+        // cURL init
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            Log::error("Winpay cURL Error: " . $error);
+            return response()->json(['success' => false, 'message' => 'Connection error: ' . $error], 500);
+        }
+
+        curl_close($ch);
+
+        Log::info('Winpay Response: ' . $response);
+        $responseData = json_decode($response, true);
+
+// Pastikan parsing berhasil
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::error('JSON decode error: ' . json_last_error_msg());
+            return response()->json(['success' => false, 'message' => 'Invalid JSON']);
+        }
+
+// Cek jika invoice berhasil
+        if (
+            isset($responseData['responseCode']) &&
+            $responseData['responseCode'] === '2010300' &&
+            isset($responseData['responseData']['redirect_url'])
+        ) {
+            $redirectUrl = $responseData['responseData']['redirect_url'];
+            return redirect()->away($redirectUrl);
+        }
+
+// Jika tidak ada URL atau kode gagal
+        return response()->json(['success' => false, 'message' => 'Gagal membuat invoice']);
+
+
+    } catch (\Exception $e) {
+        Log::error('Winpay Exception: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Internal server error'], 500);
+    }
+}
+
+
 public function customerblockednotifJob()
 {
 
@@ -209,23 +437,7 @@ public function customerblockednotifJob()
     $count =0;
     foreach($customer as $customer) {
 
-      // $encryptedurl = Crypt::encryptString($customer->id);
-      // $message  ="*Remainder (Pengingat)!*";
-      // $message .="\n";
-      // $message .="Yth. ".$customer->name." ";
-      // $message .="\n";
-      // $message .="\nTerimakasih atas kesetiaan Anda menggunakan layanan".env("SIGNATURE") ;
-      // $message .="\n";
-      // $message .="\nLayanan Internet Anda saat ini dalam masa ISOLIR (PENGHENTIAN SEMENTARA)";  
-      // $message .="\nSilakan segera melakukan pembayaran tagihan untuk mengaktifkan kembali Layanan Internet Anda";
-      // $message .="\n";
 
-      // $message .="\nUntuk info tagihan lebih lengkap silahkan klik link berikut";
-      // $message .="\nhttp://".env("DOMAIN_NAME")."/invoice/cst/".$encryptedurl;
-      // $message .="\n";
-      // $message .="\nAbaikan pesan ini jika sudah melakukan pembayaran";
-      // $message .="\n";
-      // $message .="\n~ ".env("SIGNATURE")." ~";
         $encryptedurl = Crypt::encryptString($customer->id);
 
         $message = "*🔔 Pengingat Tagihan!*";
@@ -244,7 +456,8 @@ public function customerblockednotifJob()
 
         $count = $count +1;
 
-        NotifInvJob::dispatch($customer->phone, $message)->delay($start->addSeconds(19));
+
+        NotifInvJob::dispatch($customer->phone, $customer->name, $customer->customer_id, $encryptedurl )->delay($start->addSeconds(10));
         \Log::channel('notif')->info('Add to Job Blocked Remainder CID '.$customer->customer_id. ' | ' .$customer->name); 
 
 
@@ -328,6 +541,7 @@ public function getSelectedcustomermerchant(Request $request)
     $customer_count = \App\Invoice::whereIn('id_customer', $customer_ids)
     ->where('monthly_fee', 1)
     ->where('periode', $periode)
+    ->where('payment_status', '!=', 5)
     ->count();
     $month = Carbon::parse($inv_date)->translatedFormat('F Y');
     $result =$customer_count_all-$customer_count;
@@ -454,7 +668,7 @@ public function customerisolirJob(Request $request)
      $count = $count +1;
 
 
-     IsolirJob::dispatch($customer->id, $customer->id_status)->delay($start->addSeconds(2));
+     IsolirJob::dispatch($customer->id, $customer->id_status)->delay($start->addSeconds(5));
      \Log::channel('isolir')->info('Set Customer :'.$customer->customer_id. ' | ' .$customer->name." to Blocked | Isolir"); 
 
 
@@ -494,7 +708,7 @@ $customers = \App\Customer::select(
 if (!empty($id_merchant)) {
     $customers->where('customers.id_merchant', $id_merchant);
 }
-
+$customers->where('customers.notification', '!=', 0);
 $customers = $customers->groupBy('customers.id')->get();
 
 // Tambahkan log untuk melihat hasilnya
@@ -526,7 +740,7 @@ foreach($customers as $customer) {
 
     $count = $count +1;
 
-    NotifInvJob::dispatch($customer->phone, $customer->name, $customer->customer_id, $encryptedurl )->delay($start->addSeconds(5));
+    NotifInvJob::dispatch($customer->phone, $customer->name, $customer->customer_id, $encryptedurl )->delay($start->addSeconds(40));
     // \Log::channel('notif')->info('Add to Job Invoice Remainder CID '.$customer->customer_id. ' | ' .$customer->name); 
 
 
@@ -555,14 +769,22 @@ public function transaction()
 {
         //
  $today = Carbon::today();
-
+ $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
  $startOfWeek = Carbon::now()->startOfWeek();
  $endOfWeek = Carbon::now()->endOfWeek();
  $startOfMonth = Carbon::now()->startOfMonth();
  $endOfMonth = Carbon::now()->endOfMonth();
  $sixMonthsAgo = Carbon::today()->subMonths(6);
- $groupedTransactionsUser = \App\Suminvoice::whereBetween('payment_date', [$startOfMonth, $today->addday()])
+ $groupedTransactionsUser = \App\Suminvoice::whereBetween('payment_date', [$startOfLastMonth, $today->addday()])
  ->groupBy('updated_by')
+ ->get();
+
+// 1) Laporan volume transaksi per hari (hanya yang dibayar)
+ $dailyTransactions = \App\Suminvoice::whereBetween('payment_date', [$startOfMonth, $endOfMonth])
+ ->where('payment_status', 1)
+ ->selectRaw('DATE(payment_date) as date, COUNT(*) as volume, SUM(recieve_payment) as total_paid')
+ ->groupBy(DB::raw('DATE(payment_date)'))
+ ->orderBy('date')
  ->get();
 
 
@@ -592,7 +814,7 @@ public function transaction()
  ->whereNotIn('akun_code', $parentAkuns)
  ->get();
 
- return view ('suminvoice/transaction',['suminvoice' =>$suminvoice, 'user'=>$groupedTransactionsUser, 'totalPaymentToday'=>$totalPaymentToday, 'totalTransactionThisWeek'=>$totalTransactionThisWeek, 'totalTransactionThisMonth'=>$totalTransactionThisMonth, 'totalReceivable'=>$totalReceivable, 'groupedTransactions' => $groupedTransactions,'merchant'=>$merchant, 'kasbank'=>$kasbank]);
+ return view ('suminvoice/transaction',['dailyTransactions' => $dailyTransactions,'suminvoice' =>$suminvoice, 'user'=>$groupedTransactionsUser, 'totalPaymentToday'=>$totalPaymentToday, 'totalTransactionThisWeek'=>$totalTransactionThisWeek, 'totalTransactionThisMonth'=>$totalTransactionThisMonth, 'totalReceivable'=>$totalReceivable, 'groupedTransactions' => $groupedTransactions,'merchant'=>$merchant, 'kasbank'=>$kasbank]);
 }
 //======================================================================================
 
@@ -609,6 +831,7 @@ public function table_transaction_list(Request $request){
     $kasbank = $request->input('kasbank');
     $today = Carbon::today();
     $sixMonthsAgo = Carbon::today()->subMonths(6);
+
     $groupedTransactionsUser = \App\Suminvoice::whereBetween('payment_date', [$dateStart, $dateEnd])
     ->where('payment_status', 1)
     ->select(
@@ -752,7 +975,7 @@ public function table_transaction_list(Request $request){
     // $suminvoice->orderby('updated_at', 'DESC');
 
     $results = $suminvoice->get();
-    $sql = $suminvoice->toSql();
+   // $sql = $suminvoice->toSql();
 
 
     $suminvoiceData = $suminvoice->get();
@@ -928,34 +1151,33 @@ public function table_transaction_list(Request $request){
 public function mytransaction()
 {
         //
-   $suminvoice = \App\Suminvoice::orderBy('updated_at', 'ASC')
-   ->where('updated_by','=',  \Auth::user()->id)
+    $suminvoice = \App\Suminvoice::orderBy('updated_at', 'ASC')
+    ->where('updated_by', \Auth::user()->id)
+    ->whereBetween('payment_date', [
+        date('Y-m-01 00:01:00'), 
+        date('Y-m-d 23:59:59')
+    ])
+    ->get();
 
-   ->whereBetween('payment_date',[(date('Y-m-1')), (date('Y-m-d'))])
-   ->get();
 
-
-   return view ('suminvoice/mytransaction',['suminvoice' =>$suminvoice]);
+    return view ('suminvoice/mytransaction',['suminvoice' =>$suminvoice]);
 }
 public function searchmytransaction(Request $request)
 {
-        //
-    $date_from = ($request['date_from']);
-    $date_end = ($request['date_end']);
-        // $customer_id = ($request['customer_id']);
-
+    $date_from = $request['date_from'] . ' 00:01:00';
+    $date_end  = $request['date_end']  . ' 23:59:59';
 
     $suminvoice = \App\Suminvoice::orderBy('payment_date', 'ASC')
-        //->whereNotNull('updated_by')
     ->where('updated_by','=',  \Auth::user()->id)
-        // ->where('customer_id',[($request['customer_id'])])
-    ->whereBetween('payment_date',[($request['date_from']), ($request['date_end'])])
+    ->whereBetween('payment_date', [$date_from, $date_end])
     ->get();
-    
 
-
-        //dd ($suminvoice);
-    return view ('suminvoice/mytransaction',['suminvoice' =>$suminvoice,'date_from'=>$date_from, 'date_end'=>$date_end ]);
+    // Kirim nilai date_from dan date_end asli (tanpa jam) ke view jika perlu filter form
+    return view('suminvoice/mytransaction', [
+        'suminvoice' => $suminvoice,
+        'date_from'  => $request['date_from'],
+        'date_end'   => $request['date_end']
+    ]);
 }
     /**
      * Show the form for creating a new resource.
@@ -982,16 +1204,18 @@ public function searchmytransaction(Request $request)
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-
     {
+
+      // \Log::channel('invoice')->info('Start processing Create Manual INV');
+        \Log::info('Start processing Create Manual INV');
         $msg="";  
         //$array="";  
         $tempcode=sha1(time().rand());
         $id = $request->invoice_item;
         $latest_number=uniqid();
         $customers = \App\Customer::Where('id',$request['id_customer'])->withTrashed()->first();
-
-        $email = !empty($customer->email) ? $customer->email : "return@alus.co.id";
+        $updatedBy = Auth::check() ? '' . Auth::user()->name : 'System';
+        $email = !empty($customer->email) ? $customer->email : "return@trikamedia.com";
 
    // try
    // { 
@@ -999,7 +1223,11 @@ public function searchmytransaction(Request $request)
 
         $date=date("Y-m-d");
 
+        if (session()->has('invoice_locked')) {
+            return redirect()->back()->with('info', 'Sedang memproses invoice. Mohon tunggu...');
+        }
 
+        session(['invoice_locked' => true]);
         DB::beginTransaction();
 
         try{
@@ -1015,13 +1243,14 @@ public function searchmytransaction(Request $request)
             \App\Suminvoice::create([
                 'id_customer' => ($request['id_customer']),
                 'number' => $latest_number,
-                'date' => $date, 
+                'date' => ($request['invoice_date']), 
                 'payment_status' => 0,
                 'tax' => ($request['tax']),
                 'total_amount' =>($request['subtotal']+ $request['tax_total']),
                 'payment_id' => 'empty',
                 'tempcode' => $tempcode,
-                'due_date' => $request->due_date,
+                'due_date' => ($request['due_date']), 
+                'created_by' => $updatedBy
 
 
             ]);
@@ -1037,6 +1266,7 @@ public function searchmytransaction(Request $request)
                 'type' => 'jumum',
                 'description' => 'Invoice #'.$latest_number,
                 'note' => 'Invoice #'.$latest_number.' | '.$customers->customer_id .' | '.$customers->name,
+                'contact_id' => $customers->customer_id,
             ];
 
 // Create debit entry
@@ -1057,63 +1287,80 @@ if (!empty($request['tax']) && $request['tax'] != 0) {
 }
 
 
-
-
-// $message ="Yth. ".$customers->name." ";
-// $message .="\n";
-// $message .="\nTagihan Customer dengan CID *".$customers->customer_id."* sudah kami Terbitkan";
-// $message .="\n";
-// $message .="\nNo Tagihan : *#".$latest_number."*";
-// $message .="\nTotal Tagihan : *Rp.".$request["total"]."*";
-// $message .="\nJatuh Tempo :  *". $request->due_date."*";
-// $message .="\n";
-// $message .="\nUntuk info lebih lengkap silahkan klik link berikut";
-// $message .="\nhttp://".env("DOMAIN_NAME")."/suminvoice/".$tempcode."/print";
-// $message .="\n";
-// $message .="\nAbaikan pesan ini jika sudah melakukan pembayaran";
-// $message .="\n";
-// $message .="\n~ ".env("SIGNATURE")." ~";
-
-// $message = "Halo *" . $customers->name . "*,";
-// $message .= "\n\nTagihan dengan CID *" . $customers->customer_id . "* telah diterbitkan.";
-// $message .= "\n\n📄 *No. Tagihan*: #" . $latest_number;
-// $message .= "\n💰 *Total*: Rp. " . number_format($request["total"], 0, ',', '.');
-// $message .= "\n📅 *Jatuh Tempo*: " . $request->due_date;
-// $message .= "\n\nUntuk detail lebih lanjut, silakan klik tautan berikut:";
-// $message .= "\n👉 " . url("/suminvoice/" . $tempcode . "/print");
-// $message .= "\n\nJika sudah melakukan pembayaran, abaikan pesan ini.";
-// $message .= "\n\nTerima kasih atas perhatian Anda.";
-// $message .= "\n~ *" . env("SIGNATURE") . "* ~";
-
-
+DB::commit();
 
 $sumamount =$request['subtotal'] + $request['tax_total'];
 
 $encryptedurl = Crypt::encryptString($customers->id);
+if($customers->notification == 1)
+{
+    // $response = qontak_whatsapp_helper_info_new_inv(
+    //     $customers->phone,
+    //     $customers->name,
+    //     $customers->customer_id,
+    //     $sumamount,
+    //     $request->due_date,
+    //     "/invoice/cst/" . $encryptedurl
+    // );
+    $message = "*[Informasi Pembayaran Internet]*";
+    $message .= "\n\n";
+    $message .= "Yth. " . $customers->name . ",";
+    $message .= "\n\n";
+    $message .= "Tagihan Anda dengan Customer ID (CID) *" . $customers->customer_id . "* telah diterbitkan.";
+    $message .= "\n*Total Tagihan:* Rp." . number_format($sumamount, 0, ',', '.') . "";
+    $message .= "\n*Batas Pembayaran:* " . $request->due_date;
+    $message .= "\n\n";
+    $message .= "Untuk informasi lebih lanjut, silakan klik link berikut:";
+    $message .= "\n" . "http://" . env("DOMAIN_NAME") . "/invoice/cst/" . $encryptedurl;
+    $message .= "\n\n";
+    $message .= "Jika sudah melakukan pembayaran, abaikan pesan ini.";
+    $message .= "\nJika ada pertanyaan, hubungi CS kami di ".env("PAYMENT_WA");
+    $message .= "\n\n";
+    $message .= "".env("SIGNATURE")."";
+    $msgresult = WaGatewayHelper::wa_payment($customers->phone, $message);
+    // $msgresult = \App\Suminvoice::wa_payment($customers->phone, $message);
+} elseif ($customers->notification == 2) {
 
-$response = qontak_whatsapp_helper_info_new_inv(
-    $customers->phone,
-    $customers->name,
-    $customers->customer_id,
-    $sumamount,
-    $request->due_date,
-    "/invoice/cst/" . $encryptedurl
-);
+
+   if (!empty($customers->email)) {
+    $data = [
+        'phone' => $customers->phone,
+        'name' => $customers->name,
+        'customer_id' => $customers->customer_id,
+        'number' => "#" . $latest_number,
+        'total_amount' => $sumamount,
+        'date' => $date,
+        'due_date' => $request->due_date,
+        'url' => "/invoice/cst/" . $encryptedurl,
+    ];
+
+    try {
+        Mail::to($customers->email)->send(new EmailNotification($data));
+    } catch (\Exception $e) {
+        \Log::error("Gagal kirim email ke {$customers->email}: " . $e->getMessage());
+    }
+}
 
 
+}
+
+//\Log::channel('invoice')->info('MANUAL INV CID : '. $customers->customer_id. ' |' . $customers->name . ' Created Inv by  |'. $updatedBy);
 
 
-DB::commit();
+\Log::info('MANUAL INV CID : '. $customers->customer_id. ' |' . $customers->name . ' Created Inv by  |'. $updatedBy);
+
 $msg = "Success create invoice.";
 //Disable WA
 $msgresult="";
 // $msgresult= \App\Suminvoice::wa_payment($customers->phone,$message);
 // $msg .="\n Whatsapp : ".$response;
+session()->forget('invoice_locked');
 return redirect ('invoice/'.$request->id_customer)->with('info',$msg);
 
 }catch(\Exception $e){
 
     DB::rollback();
+    session()->forget('invoice_locked');
     return redirect ('invoice/'.$request->id_customer)->with('info','Failed to Create Invoice'.$e);
 }
 
@@ -1255,7 +1502,9 @@ $bank = $user->akuns; // Mengembalikan koleksi akunbn
 $mount = now()->format('mY');
 $invoice = \App\Invoice::where('tempcode', $id)
 
-->where('payment_status', '=', 3)
+// ->where('payment_status', '=', 3)
+// ->orWhere('payment_status', 5)
+->whereIn('payment_status', [3, 5])
 ->get();
 
 if (empty($invoice[0])){
@@ -1323,7 +1572,7 @@ else
         $mount = now()->format('mY');
         $invoice = \App\Invoice::where('tempcode', $id)
 
-        ->where('payment_status', '=', 3)
+        ->whereIn('payment_status', [3, 5])
         ->get();
         if (empty($invoice[0])){
 
@@ -1458,7 +1707,7 @@ public function dotmatrix($id)
     $bank = \App\Bank::pluck('name', 'id');
     $mount = now()->format('mY');
     $invoice = \App\Invoice::where('tempcode', $id)        
-    ->where('payment_status', '=', 3)
+    ->whereIn('payment_status', [3, 5])
     ->get();
 
     if (empty($invoice[0])){
@@ -1505,21 +1754,45 @@ public function edit($id)
  {
      DB::beginTransaction();
 
+
      try {
+
+ // Setelah transaksi mulai, baru lock invoice untuk update
+        $invoice = \App\Suminvoice::where('id', $id)->lockForUpdate()->first();
+
+        if (!$invoice) {
+            return redirect()->back()->with('warning', 'Invoice tidak ditemukan.');
+        }
+
+        if ($invoice->payment_status == 1) {
+            DB::rollBack(); // Jangan lupa rollback kalau invoice sudah paid
+            return redirect('/suminvoice/' . $invoice->tempcode)->with('warning', 'Invoice sudah dibayar sebelumnya.');
+        }
+
+
+
+        
         $date=date("Y-m-d H:i:s");
         $msg="";
-        $query = \App\Suminvoice::where('id', $id)
-        ->update([
+        // $query = \App\Suminvoice::where('id', $id)
+        // ->update([
+        //     'recieve_payment' => $request->recieve_payment,
+        //     'payment_point' => $request->payment_point,
+        //     'note' => $request->note,
+        //     'updated_by' => $request->updated_by,
+        //     'payment_status' =>1,
+        //     'payment_date' =>now()->toDateTimeString(),
+
+
+        // ]);
+        $invoice->update([
             'recieve_payment' => $request->recieve_payment,
             'payment_point' => $request->payment_point,
             'note' => $request->note,
             'updated_by' => $request->updated_by,
-            'payment_status' =>1,
-            'payment_date' =>now()->toDateTimeString(),
-
-
+            'payment_status' => 1,
+            'payment_date' => now(),
         ]);
-
 
 
         $data = [
@@ -1529,12 +1802,14 @@ public function edit($id)
             'type' => 'jumum',
             'description' => 'Receive Payment  #'.$request->number.' | '. $request->customer_name,
             'note' => 'Receive Payment OFFLINE  #'.$request->number.' | '.$request->customer_id. ' | '.$request->customer_name,
+            'contact_id' => $request->customer_id,
         ];
 
 
         $data['id_akun'] = $request->payment_point;
         $data['debet'] = $request->recieve_payment;
         \App\Jurnal::create($data);
+        $invstatus="";
 
     unset($data['debet']); // Remove debet key for the credit entry
 
@@ -1549,6 +1824,10 @@ public function edit($id)
     $customers = \App\Customer::withTrashed()->where('id', $request->id_customer)->first();
     $oldStatus =$customers->status_name->name;
 
+    $updatedBy = Auth::check() ? 'Payment by ' . Auth::user()->name : 'System';
+
+    $logMessage = now() . " - {$customers->name} updated by {$updatedBy}";
+
 // Hitung jumlah invoice yang masih unpaid
     $active_invoice = \App\Suminvoice::where('payment_status', '=', '0')
     ->where('id_customer', '=', $request->id_customer)
@@ -1560,15 +1839,15 @@ public function edit($id)
 
         \App\Customer::where('id', $request->id_customer)->update(['id_status' => 2]);
 
-        \App\Distrouter::mikrotik_enable(
-            $distrouter->ip, 
-            $distrouter->user, 
-            $distrouter->password, 
-            $distrouter->port, 
-            $customers->pppoe
-        );
+        // \App\Distrouter::mikrotik_enable(
+        //     $distrouter->ip, 
+        //     $distrouter->user, 
+        //     $distrouter->password, 
+        //     $distrouter->port, 
+        //     $customers->pppoe
+        // );
 
-
+        EnableMikrotikJob::dispatch($customers->id)->delay(now()->addSeconds(2));
 
         // Perubahan status
 
@@ -1599,7 +1878,9 @@ public function edit($id)
             'updates' => json_encode($changes),
         ]);
 
-        Log::channel('payment')->info("Pelanggan ID: {$customers->customer_id} diaktifkan kembali karena tidak ada invoice unpaid. |".$logMessage);
+        // Log::channel('payment')->info("Pelanggan ID: {$customers->customer_id} diaktifkan kembali karena tidak ada invoice unpaid. |".$logMessage);
+
+        $invstatus ='Diaktifkan kembali karena tidak ada invoice unpaid.';
 
     } 
 // Jika status pelanggan = 4 dan masih ada invoice unpaid
@@ -1616,14 +1897,15 @@ public function edit($id)
 
             \App\Customer::where('id', $request->id_customer)->update(['id_status' => 2]);
 
-            \App\Distrouter::mikrotik_enable(
-                $distrouter->ip, 
-                $distrouter->user, 
-                $distrouter->password, 
-                $distrouter->port, 
-                $customers->pppoe
-            );
+            // \App\Distrouter::mikrotik_enable(
+            //     $distrouter->ip, 
+            //     $distrouter->user, 
+            //     $distrouter->password, 
+            //     $distrouter->port, 
+            //     $customers->pppoe
+            // );
               // Perubahan status
+            EnableMikrotikJob::dispatch($customers->id)->delay(now()->addSeconds(2));
 
             $changes = [
                 'Status' => [
@@ -1650,8 +1932,8 @@ public function edit($id)
             'topic' => 'payment',
             'updates' => json_encode($changes),
         ]);
-
-        Log::channel('payment')->info("Pelanggan ID: {$customers->customer_id} diaktifkan kembali karena invoice unpaid masih dalam masa jatuh tempo | ".$logMessage);
+        $invstatus ='Diaktifkan kembali karena invoice unpaid masih dalam masa jatuh tempo.';
+        // Log::channel('payment')->info("Pelanggan ID: {$customers->customer_id} diaktifkan kembali karena invoice unpaid masih dalam masa jatuh tempo | ".$logMessage);
     }
 }
 
@@ -1664,37 +1946,8 @@ $customers = \App\Customer::Where('id',$request->id_customer)->withTrashed()->fi
 $users = \App\User::Where('id',$request->updated_by)->withTrashed()->first();
 $jumlah = $request->recieve_payment; 
 
- // $message ="Yth. ".$customers->name." ";
- // $message .="\n";
- // $message .="\nTerimakasih, Pembayaran tagihan Customer dengan CID ".$customers->customer_id." sudah kami *TERIMA* ";
- // $message .="\nUntuk info lebih lengkap silahkan klik link";
- // $message .="\nhttp://".env("DOMAIN_NAME")."/suminvoice/".$request->tempcode."/print";
-
- // $message .="\n*".env("SIGNATURE")."*";
-
-   // $message = "Halo *" . $customers->name . "*,";
-   // $message .= "\n\nKami ingin mengonfirmasi bahwa pembayaran tagihan dengan CID *" . $customers->customer_id . "* telah kami terima.";
-   // $message .= "\n\nUntuk informasi lebih lanjut, Anda dapat mengakses tautan berikut:";
-   // $message .= "\n👉 " . url("/suminvoice/" . $request->tempcode . "/print");
-   // $message .= "\n\nTerima kasih atas kepercayaan Anda.";
-   // $message .= "\nSalam,";
-   // $message .= "\n*" . env("SIGNATURE") . "*";
 
 
-
-
-
-
-
-
-
-
- // $notif_group ="Offline Payment ";
- // $notif_group .="\n";
- // $notif_group .="\nPembayaran tagihan dari CID".$customers->customer_id." ( ".$customers->name." )  Sudah DITERIMA";
- // $notif_group .="\nCheck : http://".env("DOMAIN_NAME")."/suminvoice/".$request->tempcode;
- // $notif_group .="\n";
- // $notif_group .="\n*".env("SIGNATURE")."*";
 $msg ='';
 $jumlah = $request->recieve_payment; // Ambil jumlah dari request
 $jumlah_rupiah = number_format($jumlah, 0, ',', '.'); // Format menjadi rupiah
@@ -1704,14 +1957,58 @@ $jumlah_rupiah = number_format($jumlah, 0, ',', '.'); // Format menjadi rupiah
 
 $encryptedurl = Crypt::encryptString($customers->id);
 
-$response = qontak_whatsapp_helper_receive_payment_confirmation(
-    $customers->phone,
-    $customers->name,
-    $request->number,
-    $customers->customer_id,
-    $jumlah,
-    "/invoice/cst/" . $encryptedurl
-);
+if($customers->notification == 1)
+{
+
+    // $response = qontak_whatsapp_helper_receive_payment_confirmation(
+    //     $customers->phone,
+    //     $customers->name,
+    //     $request->number,
+    //     $customers->customer_id,
+    //     $jumlah,
+    //     "/invoice/cst/" . $encryptedurl
+    // );
+
+
+   $message  = "\n\n";
+   $message .= "\nPelanggan Yth. ";
+   $message .= "\n\n";
+   $message .= "\nNama : " . $customers->name;
+   $message .= "\nCID : " . $customers->customer_id ;
+   $message .= "\nKami ingin menginformasikan bahwa Tagihan no #".$request->number;
+   $message .= "\nSejumlah Rp.".$jumlah ." Sudah kami TERIMA";
+   $message .= "\n\n";
+   $message .= "Untuk informasi lebih lanjut, silakan klik link berikut:";
+   $message .= "\n" . "http://" . env("DOMAIN_NAME") . "/invoice/cst/" . $encryptedurl;
+   $message .= "\n\n";
+   $message .= "Jika sudah melakukan pembayaran, abaikan pesan ini.";
+   $message .= "\nJika ada pertanyaan, hubungi CS kami di ".env("PAYMENT_WA");
+   $message .= "\n\n";
+   $message .= "".env("SIGNATURE")."";
+
+   $msgresult = WaGatewayHelper::wa_payment($customers->phone, $message);
+
+} elseif ($customers->notification == 2) {
+
+
+   if (!empty($customers->email)) {
+
+    $data = [
+        'phone' => $customers->phone,
+        'name' => $customers->name,
+        'number' => "#".$request->number,
+        'customer_id' => $customers->customer_id,
+        'total_amount' => $jumlah,
+        'url' => "/invoice/cst/" .$encryptedurl
+    ];
+    try {
+        Mail::to($customers->email)->send(new EmailReceivePayment($data));
+    } catch (\Exception $e) {
+        \Log::error("Gagal kirim email ke {$customers->email}: " . $e->getMessage());
+    }
+
+}
+}
 
 
 
@@ -1733,10 +2030,11 @@ $notif_group .= "\n~ " . env("SIGNATURE") . " ~";
 
 
 
-
+$msgresult = WaGatewayHelper::wa_payment(env("WA_GROUP_PAYMENT"), $message);
 
 
 DB::commit();
+Log::channel('payment')->info("[OFFLINE PAYMENT ] Pelanggan ID: {$customers->customer_id}  |  INV no: ".$request->number." | ".$invstatus." | ".$logMessage);
  //Disable WA
 // $msg .="\n Wa to Customer : ".$response;
 
@@ -1851,32 +2149,87 @@ return redirect ('/suminvoice/'. $request->tempcode)->with('info',$msg);
 // }
 
 
-public function send_reminder_inv($id)
 
+
+
+public function send_reminder_inv(Request $request, $id)
 {
-    //dd($id);
+    try {
 
-    $suminvoice = \App\Suminvoice::where('id', $id)->first();
+        $type = $request->input('type');
 
-    $customer = \App\Customer::Where('id',$suminvoice->id_customer)->withTrashed()->first();
-    $encryptedurl = '/invoice/cst/'. Crypt::encryptString($customer->id);
-    $formattedDate = Carbon::parse($suminvoice->date)->translatedFormat('M Y');
+        if (!in_array($type, ['wa', 'email'])) {
+            return response()->json(['error'=>'Tipe notifikasi tidak valid.'], 422);
+        }
+
+        $suminvoice = \App\Suminvoice::find($id);
+        if (!$suminvoice) {
+            return redirect()->back()->with('error', 'Invoice not found.');
+        }
+
+        $customer = \App\Customer::withTrashed()->find($suminvoice->id_customer);
+        if (!$customer) {
+            return redirect()->back()->with('error', 'Customer not found.');
+        }
+        $duedate = $suminvoice->due_date ?: 'N/A';
+        $encryptedurl = '/invoice/cst/' . Crypt::encryptString($customer->id);
+       // $encryptedurl = '/invoice/cst/' . Hashids::encode($customer->id);
+        $formattedDate = Carbon::parse($suminvoice->date)->translatedFormat('M Y');
+
+        if ($type == 'wa') {
 
 
-    $response = qontak_whatsapp_helper_remainder_inv(
-        $customer->phone,
-        $customer->name,
-        $customer->customer_id,
-        "#".$suminvoice->number,
-        $suminvoice->total_amount,
-        $formattedDate,
-        $suminvoice->due_date,
-        $encryptedurl
-    );
+            $message = "*[Informasi Pembayaran Internet]*";
+            $message .= "\n\n";
+            $message .= "Yth. " . $customer->name . ",";
+            $message .= "\n\n";
+            $message .= "Tagihan Anda dengan Customer ID (CID) *" . $customer->customer_id . "* telah diterbitkan.";
+            $message .= "\n*Total Tagihan:* Rp." . number_format($suminvoice->total_amount, 0, ',', '.') . "";
+            $message .= "\n*Batas Pembayaran:* " . $duedate;
+            $message .= "\n\n";
+            $message .= "Untuk informasi lebih lanjut, silakan klik link berikut:";
+            $message .= "\n" . "http://" . env("DOMAIN_NAME") . "" . $encryptedurl;
+            $message .= "\n\n";
+            $message .= "Jika sudah melakukan pembayaran, abaikan pesan ini.";
+            $message .= "\nJika ada pertanyaan, hubungi CS kami di ".env("PAYMENT_WA");
+            $message .= "\n\n";
+            $message .= "".env("SIGNATURE")."";
 
-    return redirect()->back()->with($response, $response);
+            // $msgresult = \App\Suminvoice::wa_payment($customer->phone, $message);
+            $msgresult = WaGatewayHelper::wa_payment($customer->phone, $message);
+            
+            if (! isset($msgresult['status']) || $msgresult['status'] !== 'success') {
+                return response()->json(['message' => $msgresult['message']]);
+            } else {
+                return response()->json(['message' => $msgresult['message']], 400);
+            }
 
+        } elseif ($type == 'email') {
+            if (!empty($customer->email)){
+                $data = [
+                    'phone' => $customer->phone,
+                    'name' => $customer->name,
+                    'customer_id' => $customer->customer_id,
+                    'number' => "#".$suminvoice->number,
+                    'total_amount' => $suminvoice->total_amount,
+                    'date' => $formattedDate,
+                    'due_date' => $suminvoice->due_date,
+                    'url' => $encryptedurl
+                ];
+
+                Mail::to($customer->email)->send(new EmailNotification($data));
+                return response()->json(['message' => 'Email notification sent successfully.']);
+            }
+        }
+
+        return response()->json(['message' => 'Invalid notification type.'], 400);
+
+    } catch (\Exception $e) {
+        \Log::error('Error sending reminder: ' . $e->getMessage());
+        return response()->json(['message' => 'Server error while sending notification.'], 500);
+    }
 }
+
 
 public function destroy(Request $request, $id)
 {
@@ -1896,7 +2249,10 @@ public function destroy(Request $request, $id)
 
         // Update semua invoice yang memiliki tempcode yang sama
         \App\Invoice::where('tempcode', $suminvoice->tempcode)
-        ->update(['monthly_fee' => 0]);
+        ->update([
+            'monthly_fee' => 0,
+            'payment_status' => 5
+        ]);
 
         // Soft delete pada tabel jurnals berdasarkan reff = tempcode atau tempcode + 'receive'
         \App\Jurnal::where('reff', $request->tempcode)

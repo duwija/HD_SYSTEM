@@ -838,7 +838,7 @@ public function kaskeluar()
         {
 
          $request->validate([
-
+          'name' => 'required',
           'date' => 'required|date',
           'akun'   => 'required|array',
           'akun.*' => 'required|string', 

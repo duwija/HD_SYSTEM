@@ -522,7 +522,8 @@
             localStorage.removeItem("due_date_" + customerId);
             localStorage.removeItem("tax_" + customerId);
             localStorage.removeItem("invoice_date_" + customerId);
-
+            createInvoiceButton.disabled = true;
+            createInvoiceButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Membuat Invoice...';
             // Jika tombol dikonfirmasi, submit form
             createInvoiceButton.closest("form").submit();
           }
