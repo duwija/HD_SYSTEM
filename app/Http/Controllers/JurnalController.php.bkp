@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 
-
 class JurnalController extends Controller
 {
     /**
@@ -30,7 +29,7 @@ class JurnalController extends Controller
       $pendapatan = \App\Akun::with(['transactions' => function ($query) use ($tanggalAwal, $tanggalAkhir) {
         $query->whereBetween('date', [$tanggalAwal, $tanggalAkhir]);
       }])
-      ->where('category', 'LIKE', '%pendapatan%')
+      ->where('type', 'pendapatan')
       ->get();
 
     // Hitung saldo awal untuk pendapatan
@@ -44,9 +43,7 @@ class JurnalController extends Controller
       $beban = \App\Akun::with(['transactions' => function ($query) use ($tanggalAwal, $tanggalAkhir) {
         $query->whereBetween('date', [$tanggalAwal, $tanggalAkhir]);
       }])
-      ->where('category', 'LIKE', '%beban%')
-      ->orWhere('category', 'LIKE', '%harga pokok%')
-      ->orWhere('category', 'LIKE', '%depresiasi%')
+      ->where('type', 'beban')
       ->get();
 
     // Hitung saldo awal untuk beban
@@ -74,22 +71,21 @@ class JurnalController extends Controller
     // Return data ke view
       return view('jurnal.rugi_laba', compact('pendapatan', 'beban', 'totalPendapatan', 'totalBeban', 'labaRugi', 'tanggalAwal', 'tanggalAkhir'));
     }
-    public function kasbank(Request $request)
+    public function kasbank()
     {
         // Ambil transaksi hari ini
-     $date_from = $request->input('date_from', \Carbon\Carbon::today()->toDateString());
-     $date_to   = $request->input('date_to', \Carbon\Carbon::today()->toDateString());
-     $transactions = DB::table('jurnals')
-     ->join('akuns', 'jurnals.id_akun', '=', 'akuns.akun_code')
+      $today = Carbon::today();
+      $transactions = DB::table('jurnals')
+      ->join('akuns', 'jurnals.id_akun', '=', 'akuns.akun_code')
         ->where('akuns.category', 'kas & bank') // Filter hanya kategori Kas & Bank
-        ->whereBetween('jurnals.date', [$date_from, $date_to])
+        ->whereDate('jurnals.date', $today)
         ->select('jurnals.*') // Ambil semua kolom dari jurnals
         ->get();
 
         $transactionsByAccount = DB::table('jurnals')
         ->join('akuns', 'jurnals.id_akun', '=', 'akuns.akun_code')
         ->where('akuns.category', 'kas & bank')
-        ->whereBetween('jurnals.date', [$date_from, $date_to])
+        ->whereDate('jurnals.date', $today)
         ->selectRaw('
           jurnals.id_akun, 
           akuns.name AS akun_name,
@@ -117,7 +113,7 @@ class JurnalController extends Controller
           ],
         ];
 
-        return view('jurnal/kasbank', compact('transactions', 'saldo', 'chartData','transactionsByAccount' ,'date_from', 'date_to'));
+        return view('jurnal/kasbank', compact('transactions', 'saldo', 'chartData','transactionsByAccount'));
       }
 
       public function index()
@@ -249,8 +245,8 @@ class JurnalController extends Controller
           ? $transaction->akun_name->akun_code . ' | ' . $transaction->akun_name->name. '</br><small>'.$transaction->description.'</small>'
           : '',
 
-          'debet' => number_format($transaction->debet, 2, ',', '.'),
-          'kredit' => number_format($transaction->kredit, 2, ',', '.'),
+          'debet' => number_format($transaction->debet, 0, ',', '.'),
+          'kredit' => number_format($transaction->kredit, 0, ',', '.'),
         ];
               // $totalDebet += $transaction->debet;
               // $totalKredit += $transaction->kredit;
@@ -264,8 +260,8 @@ class JurnalController extends Controller
         'user_name' => '',
         'date' => '',
         'akun_name' => 'Subtotal',
-        'debet' => number_format($transactions->sum('debet'), 2, ',', '.'),
-        'kredit' => number_format($transactions->sum('kredit'), 2, ',', '.'),
+        'debet' => number_format($transactions->sum('debet'), 0, ',', '.'),
+        'kredit' => number_format($transactions->sum('kredit'), 0, ',', '.'),
       ];
     }
 
@@ -276,8 +272,8 @@ class JurnalController extends Controller
     return response()->json([
       'data' => $data,
       'totals' => [
-        'debet' => number_format($totalDebet, 2, ',', '.'),
-        'kredit' => number_format($totalKredit, 2, ',', '.'),
+        'debet' => number_format($totalDebet, 0, ',', '.'),
+        'kredit' => number_format($totalKredit, 0, ',', '.'),
       ],
       'recordsTotal' => $recordsTotal,
       'recordsFiltered' => $recordsFiltered,
@@ -295,7 +291,7 @@ class JurnalController extends Controller
 
     function formatSaldo($value)
     {
-      return $value < 0 ? '(' . number_format(abs($value), 2, ',', '.') . ')' : number_format($value, 2, ',', '.');
+      return $value < 0 ? '(' . number_format(abs($value), 0, ',', '.') . ')' : number_format($value, 0, ',', '.');
     }
 
   // Query dasar dengan filter tanggal
@@ -318,152 +314,99 @@ class JurnalController extends Controller
       $saldoAwalQuery = $saldoAwalQuery->groupBy('id_akun')->pluck('saldo_awal', 'id_akun');
 
     // Kelompokkan transaksi berdasarkan id_akun
-      $allTransactions = $query->orderBy('id_akun', 'asc')
-                         ->orderBy('date', 'asc') // <--- Tambahkan ini!
-                         ->get()
-                         ->groupBy('id_akun');
-                         $recordsTotal = $allTransactions->count();
-                         $paginatedTransactions = $allTransactions->slice($start, $length);
+      $allTransactions = $query->orderBy('id_akun', 'asc')->get()->groupBy('id_akun');
+      $recordsTotal = $allTransactions->count();
+      $paginatedTransactions = $allTransactions->slice($start, $length);
 
-                         $totalDebet = $query->sum('debet');
-                         $totalKredit = $query->sum('kredit');
+      $totalDebet = $query->sum('debet');
+      $totalKredit = $query->sum('kredit');
 
-                         $data = [];
-                         $index = $start;
+      $data = [];
+      $index = $start;
 
-                         foreach ($paginatedTransactions as $id_akun => $transactions) {
+      foreach ($paginatedTransactions as $id_akun => $transactions) {
         // Nama akun
-                          $akunName = $transactions[0]->akun_name
-                          ? $transactions[0]->akun_name->akun_code . ' | ' . $transactions[0]->akun_name->name
-                          : 'Akun Tidak Ditemukan';
+        $akunName = $transactions[0]->akun_name
+        ? $transactions[0]->akun_name->akun_code . ' | ' . $transactions[0]->akun_name->name
+        : 'Akun Tidak Ditemukan';
 
         // Saldo awal dari query sebelumnya
-                          $saldoAwal = $saldoAwalQuery[$id_akun] ?? 0;
-                          $saldo = $saldoAwal;
+        $saldoAwal = $saldoAwalQuery[$id_akun] ?? 0;
+        $saldo = $saldoAwal;
 
         // Header grup untuk akun
-                          $data[] = [
-                            'index' => ++$index,
-                            'is_group' => true,
-                            'reff' => '',
-                            'description' => $akunName,
-                            'user_name' => '',
-                            'date' => '',
-                            'akun_name' => '',
-                            'debet' => '',
-                            'kredit' => '',
-                            'saldo' => formatSaldo($saldoAwal),
-                          ];
+        $data[] = [
+          'index' => ++$index,
+          'is_group' => true,
+          'reff' => '',
+          'description' => $akunName,
+          'user_name' => '',
+          'date' => '',
+          'akun_name' => '',
+          'debet' => '',
+          'kredit' => '',
+          'saldo' => formatSaldo($saldoAwal),
+        ];
 
         // Detail transaksi dalam grup
-                          foreach ($transactions as $transaction) {
-                            $saldo += $transaction->debet - $transaction->kredit;
+        foreach ($transactions as $transaction) {
+          $saldo += $transaction->debet - $transaction->kredit;
 
-                            $data[] = [
-                              'is_group' => false,
-                              'reff' => $transaction->reff,
-                              'description' => $transaction->description,
-                              'user_name' => $transaction->user_name,
-                              'date' => $transaction->date,
-                              'akun_name' =>$transaction->description,
-                              'debet' => number_format($transaction->debet, 2, ',', '.'),
-                              'kredit' => number_format($transaction->kredit, 2, ',', '.'),
-                              'saldo' =>formatSaldo($saldo),
-                            ];
-                          }
-
-        // Subtotal untuk grup
-                          $data[] = [
-                            'is_group' => false,
-                            'reff' => '',
-                            'description' => '',
-                            'user_name' => '',
-                            'date' => '',
-                            'akun_name' => 'Saldo Akhir',
-                            'debet' => number_format($transactions->sum('debet'), 2, ',', '.'),
-                            'kredit' => number_format($transactions->sum('kredit'), 2, ',', '.'),
-                            'saldo' => formatSaldo($saldo),
-                          ];
-                        }
-
-                        $recordsFiltered = $recordsTotal;
-
-                        return response()->json([
-                          'data' => $data,
-                          'totals' => [
-                            'debet' => number_format($totalDebet, 2, ',', '.'),
-                            'kredit' => number_format($totalKredit, 2, ',', '.'),
-                          ],
-                          'recordsTotal' => $recordsTotal,
-                          'recordsFiltered' => $recordsFiltered,
-                        ]);
-                      }
-
-                      public function laporanNeraca(Request $request)
-                      {
-    // Tanggal default: awal tahun s.d. hari ini
-                        $tanggalAwal = $request->input('tanggal_awal', now()->startOfYear()->format('Y-m-d'));
-                        $tanggalAkhir = $request->input('tanggal_akhir', now()->format('Y-m-d'));
-
-    // Ambil akun grup: aktiva, kewajiban, ekuitas
-                        $groups = ['aktiva', 'kewajiban', 'ekuitas'];
-                        $data = [];
-                        $total = [
-                          'aktiva' => 0,
-                          'kewajiban' => 0,
-                          'ekuitas' => 0,
-                        ];
-
-                        foreach ($groups as $group) {
-        // Ambil semua akun anak (bukan parent) pada grup
-                          $akuns = \App\Akun::where('group', $group)
-            ->whereDoesntHave('children') // ambil hanya yang bukan parent
-            ->get();
-
-            $data[$group] = [];
-
-            foreach ($akuns as $akun) {
-            // Hitung saldo: (debet - kredit)
-              $saldo = \App\Jurnal::where('id_akun', $akun->id)
-              ->whereBetween('date', [$tanggalAwal, $tanggalAkhir])
-              ->sum(DB::raw('debet - kredit'));
-
-              $data[$group][] = [
-                'akun' => $akun,
-                'saldo' => $saldo,
-              ];
-
-              $total[$group] += $saldo;
-            }
-          }
-
-    // Pastikan neraca seimbang: total aktiva = total kewajiban + ekuitas
-          $total_kewajiban_ekuitas = $total['kewajiban'] + $total['ekuitas'];
-
-          return view('jurnal.laporan_neraca', [
-            'data' => $data,
-            'total' => $total,
-            'total_kewajiban_ekuitas' => $total_kewajiban_ekuitas,
-            'tanggalAwal' => $tanggalAwal,
-            'tanggalAkhir' => $tanggalAkhir,
-          ]);
+          $data[] = [
+            'is_group' => false,
+            'reff' => $transaction->reff,
+            'description' => $transaction->description,
+            'user_name' => $transaction->user_name,
+            'date' => $transaction->date,
+            'akun_name' =>$transaction->description,
+            'debet' => number_format($transaction->debet, 0, ',', '.'),
+            'kredit' => number_format($transaction->kredit, 0, ',', '.'),
+            'saldo' =>formatSaldo($saldo),
+          ];
         }
 
+        // Subtotal untuk grup
+        $data[] = [
+          'is_group' => false,
+          'reff' => '',
+          'description' => '',
+          'user_name' => '',
+          'date' => '',
+          'akun_name' => 'Saldo Akhir',
+          'debet' => number_format($transactions->sum('debet'), 0, ',', '.'),
+          'kredit' => number_format($transactions->sum('kredit'), 0, ',', '.'),
+          'saldo' => formatSaldo($saldo),
+        ];
+      }
+
+      $recordsFiltered = $recordsTotal;
+
+      return response()->json([
+        'data' => $data,
+        'totals' => [
+          'debet' => number_format($totalDebet, 0, ',', '.'),
+          'kredit' => number_format($totalKredit, 0, ',', '.'),
+        ],
+        'recordsTotal' => $recordsTotal,
+        'recordsFiltered' => $recordsFiltered,
+      ]);
+    }
 
 
-        public function jurnal(Request $request)
-        {
+
+    public function jurnal(Request $request)
+    {
           // $date_from = $request->date_from ?? date('Y-m-1');
           // $date_end = $request->date_end ?? date('Y-m-d');
           // $date_msg = "Show Data From $date_from to $date_end";
 
-          $akuntransaction = \App\Akuntransaction::pluck('name', 'id');
+      $akuntransaction = \App\Akuntransaction::pluck('name', 'id');
 
-          return view('jurnal/jumum', compact('akuntransaction'));
-        }
+      return view('jurnal/jumum', compact('akuntransaction'));
+    }
 
-        public function bukubesar(Request $request)
-        {
+    public function bukubesar(Request $request)
+    {
     // Default tanggal dan akun
     $from = $request->date_from ?? date('Y-m-01'); // Awal bulan
     $to = $request->date_end ?? date('Y-m-d'); // Hari ini
@@ -562,8 +505,7 @@ public function kaskeluar()
             'ekuitas',
             'akun hutang',
             'kewajiban lancar lainnya',
-            'kewajiban jangka panjang',
-            'aktiva lainnya'
+            'kewajiban jangka panjang'
           ])
           ->get();
 
@@ -682,20 +624,19 @@ public function kaskeluar()
         public function kasmasuktransaction(Request $request)
         {
           $request->validate([
-           'name' => 'required',
-           'akundebet'    => 'required',
-           'type' => 'required|string',
-           'date' => 'required|date',
-           'category' =>'required|string',
-           'contact_id' =>'required|string',
-           'akunkredit'   => 'required|array',
-           'akunkredit.*' => 'required|string', 
-           'description'  => 'required|array',
-           'description.*' => 'nullable|string',
-           'kredit'       => 'required|array',
-           'kredit.*'     => 'required|numeric|min:0',
-           'debet'        => 'required|numeric|min:0',
-         ]);
+            'akundebet'    => 'required',
+            'type' => 'required|string',
+            'date' => 'required|date',
+            'category' =>'required|string',
+            'contact_id' =>'required|string',
+            'akunkredit'   => 'required|array',
+            'akunkredit.*' => 'required|string', 
+            'description'  => 'required|array',
+            'description.*' => 'nullable|string',
+            'kredit'       => 'required|array',
+            'kredit.*'     => 'required|numeric|min:0',
+            'debet'        => 'required|numeric|min:0',
+          ]);
 
           $totalKredit = array_sum($request->kredit);
           if ($totalKredit != $request->debet) {
@@ -753,20 +694,19 @@ public function kaskeluar()
         {
         // dd($request);
           $request->validate([
-           'name' => 'required',
-           'akunkredit'   => 'required',
-           'type' => 'required|string',
-           'date' => 'required|date',
-           'category' =>'required|string',
-           'contact_id' =>'required|string',
-           'akundebet'   => 'required|array',
-           'akundebet.*' => 'required|string', 
-           'description'  => 'required|array',
-           'description.*' => 'nullable|string',
-           'debet'       => 'required|array',
-           'debet.*'     => 'required|numeric|min:0',
-           'kredit'        => 'required|numeric|min:0',
-         ]);
+            'akunkredit'   => 'required',
+            'type' => 'required|string',
+            'date' => 'required|date',
+            'category' =>'required|string',
+            'contact_id' =>'required|string',
+            'akundebet'   => 'required|array',
+            'akundebet.*' => 'required|string', 
+            'description'  => 'required|array',
+            'description.*' => 'nullable|string',
+            'debet'       => 'required|array',
+            'debet.*'     => 'required|numeric|min:0',
+            'kredit'        => 'required|numeric|min:0',
+          ]);
 
           $totalDebet = array_sum($request->debet);
           if ($totalDebet != $request->kredit) {
@@ -1436,85 +1376,55 @@ public function ccreate()
  return view ('jurnal/custom',['cjurnal' => $cjurnal,'akun' => $akun, 'akuntransaction' =>$akuntransaction]);
 
 }
-// Di app/Models/Akun.php
-public function getSaldoAttribute()
+
+
+public function neraca()
 {
-  $debit = $this->transactions->sum('debet');
-  $kredit = $this->transactions->sum('kredit');
-  return $debit - $kredit;
-}
+  $aktiva = \App\Akun::where('group', 'aktiva')
+            ->whereNull('parent') // Hanya parent akun
+            ->with('children.transactions') // Muat children dan transaksinya
+            ->get();
 
+            $kewajiban = \App\Akun::where('group', 'kewajiban')
+            ->whereNull('parent')
+            ->with('children.transactions')
+            ->get();
 
-public function neraca(Request $request)
-{
-  $tanggalAwal = $request->input('tanggal_awal', now()->startOfYear()->toDateString());
-  $tanggalAkhir = $request->input('tanggal_akhir', now()->endOfYear()->toDateString());
+            $ekuitas = \App\Akun::where('group', 'ekuitas')
+            ->whereNull('parent')
+            ->with('children.transactions')
+            ->get();
 
-  $kelompok = ['aktiva', 'kewajiban', 'ekuitas'];
-  $data = [];
-  $total = [
-    'aktiva' => 0,
-    'kewajiban' => 0,
-    'ekuitas' => 0,
-  ];
+            // Hitung total saldo seluruh akun
+            $totalAktiva = $aktiva->sum(function ($akun) {
+              return $akun->saldo;
+            });
+            ($totalAktiva);
+            $totalKewajiban = $kewajiban->sum(function ($akun) {
+              return $akun->saldo;
+            });
 
-  foreach ($kelompok as $group) {
-    $parentAkun = \App\Akun::where('group', $group)
-    ->whereNull('parent')
-    ->get();
+            $totalEkuitas = $ekuitas->sum(function ($akun) {
+              return $akun->saldo;
+            });
 
-    foreach ($parentAkun as $akun) {
-      $children = \App\Akun::where('parent', $akun->id)->get();
+            $totalSaldo = $totalAktiva + $totalKewajiban + $totalEkuitas;
 
-      $akunData = [
-        'parent' => $akun,
-        'children' => [],
-        'total_saldo' => 0,
-      ];
-
-      foreach ($children as $child) {
-        $saldo = DB::table('jurnals')
-        ->where('id_akun', $child->id)
-        ->whereBetween('date', [$tanggalAwal, $tanggalAkhir])
-        ->selectRaw('SUM(debet) as total_debet, SUM(kredit) as total_kredit')
-        ->first();
-
-        $childSaldo = ($saldo->total_debet ?? 0) - ($saldo->total_kredit ?? 0);
-
-        $akunData['children'][] = [
-          'akun' => $child,
-          'saldo' => $childSaldo,
-        ];
-
-        $akunData['total_saldo'] += $childSaldo;
-      }
-
-      $total[$group] += $akunData['total_saldo'];
-      $data[$group][] = $akunData;
-    }
-  }
-
-  return view('jurnal.neraca', [
-    'data' => $data,
-    'totalAktiva' => $total['aktiva'],
-    'totalKewajiban' => $total['kewajiban'],
-    'totalEkuitas' => $total['ekuitas'],
-    'totalSaldo' => $total['kewajiban'] + $total['ekuitas'],
-    'tanggalAwal' => $tanggalAwal,
-    'tanggalAkhir' => $tanggalAkhir,
-  ]);
-}
-
-public function neracaSaldo(Request $request)
-{
+            return view('jurnal.neraca', compact('aktiva', 'kewajiban', 'ekuitas', 'totalAktiva',
+              'totalKewajiban',
+              'totalEkuitas',
+              'totalSaldo'));
+          }
+          public function neracaSaldo(Request $request)
+          {
     // Ambil input tanggal
-  $tanggalAwal = $request->input('tanggal_awal', now()->startOfMonth()->format('Y-m-d'));
-  $tanggalAkhir = $request->input('tanggal_akhir', now()->endOfMonth()->format('Y-m-d'));
+            $tanggalAwal = $request->input('tanggal_awal', now()->startOfMonth()->format('Y-m-d'));
+            $tanggalAkhir = $request->input('tanggal_akhir', now()->endOfMonth()->format('Y-m-d'));
 
     // Ambil data akun yang bukan parent
-  $akun = \App\Akun::with(['transactions' => function ($query) use ($tanggalAwal, $tanggalAkhir) {
-    $query->whereBetween('date', [$tanggalAwal, $tanggalAkhir]);
-  }])
+            $akun = \App\Akun::with(['transactions' => function ($query) use ($tanggalAwal, $tanggalAkhir) {
+              $query->whereBetween('date', [$tanggalAwal, $tanggalAkhir]);
+            }])
     ->whereDoesntHave('children') // Hanya ambil akun yang bukan parent
     ->get();
 

@@ -65,12 +65,12 @@
 
 
                     } else {
-                        $('#distrouter-info').html('<div class="alert alert-danger">' + data.error + '</div>');
+                        // $('#distrouter-info').html('<div class="alert alert-danger">' + data.error + '</div>');
                     }
                 },
                 error: function () {
                     $('#spinner').hide();
-                    $('#distrouter-info').html('<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>');
+                    // $('#distrouter-info').html('<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>');
                 }
             });
         }
@@ -258,7 +258,7 @@
                 }
             },
             error: function (xhr, status, error) {
-                alert('Error: ' + xhr.responseText);
+                // alert('Error: ' + xhr.responseText);
             }
         });
     }
@@ -270,8 +270,8 @@
 
     fetchRouterInfo();
     fetchInterfaceMonitor();
-    setInterval(fetchRouterInfo, 10000);
-    setInterval(fetchInterfaceMonitor, 10000);
+    setInterval(fetchRouterInfo, 60000);
+    setInterval(fetchInterfaceMonitor, 90000);
     loadData('all');
 
 });

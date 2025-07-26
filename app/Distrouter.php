@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\softDeletes;
 use \RouterOS\Client;
 use \RouterOS\Query;
+use Illuminate\Support\Facades\Log; // Pastikan ini ada di atas file jika belum
 use Exception;
 
 class Distrouter extends Model
@@ -499,102 +500,176 @@ class Distrouter extends Model
 
 
 
-	public function mikrotik_status($ip,$user,$pass,$port,$cid)
+	// public function mikrotik_status($ip,$user,$pass,$port,$cid)
+	// {
+	// 	$result = 'unknow';
+
+	// 	$status['online']= 'Unknow';
+	// 	$status['ip'] = 'Unknow';
+	// 	$status['uptime']  = 'Unknow';
+	// 	$status['user']  = 'User not Found';
+	// 	$status['ip_count']  = 0;
+
+
+
+
+	// 	try {
+
+	// 		$client = new Client([
+	// 			'host' => $ip,
+	// 			'user' => $user,
+	// 			'pass' => $pass,
+	// 			'port' => $port
+	// 		]);
+
+	// 		$query =
+	// 		(new Query('/ppp/secret/print'))
+	// 		->where('name', $cid);
+
+
+	// 		$response = $client->query($query)->read();
+	// 		if (!empty($response)){
+
+	// 			foreach ($response as $response) {
+	// 				$result = $response['disabled'];
+	// 			}
+
+
+	// 			if ($result == 'true')
+	// 			{
+	// 				$status['user'] = 'Disable';
+	// 			}
+	// 			else if ($result =='false')
+	// 			{
+	// 				$status['user'] = 'Enable';
+	// 			}
+	// 			else
+	// 			{
+	// 				$status['user'] = 'Unknow';
+	// 			}
+
+
+
+
+	// 			$query_status =
+	// 			(new Query('/ppp/active/print'))
+	// 			->where('name', $cid);
+
+	// 			$response_status = $client->query($query_status)->read();
+	// 			if (!empty($response_status ))
+	// 			{
+	// 				$status['online']= 'Online';
+	// 				foreach ($response_status as $response_ip) {
+	// 					$status['ip'] = ($response_ip['address']);
+	// 					$status['uptime']  = ($response_ip['uptime']);
+
+
+	// 					$query_ip =
+	// 					(new Query('/ip/address/print'))
+	// 					->where('network',$status['ip']);
+
+	// 					$status['ip_count'] = count($client->query($query_ip)->read());
+
+	// 				}
+
+	// 			}
+	// 			else
+	// 			{
+	// 				$status['online']= 'Offline';
+	// 				$status['ip'] = 'Unknow';
+	// 				$status['uptime']  = 'Unknow';
+	// 			}
+
+
+
+	// 		}
+
+
+	// 	} catch (Exception $ex) {
+	// 		$result = 'Unknow';
+	// 	}
+
+
+
+	// 	return $status;
+
+
+	// }
+
+
+
+	public function mikrotik_status($ip, $user, $pass, $port, $cid)
 	{
 		$result = 'unknow';
-
-		$status['online']= 'Unknow';
-		$status['ip'] = 'Unknow';
-		$status['uptime']  = 'Unknow';
-		$status['user']  = 'User not Found';
-		$status['ip_count']  = 0;
-
-		
-		
+		$status = [
+			'online' => 'Unknow',
+			'ip' => 'Unknow',
+			'uptime' => 'Unknow',
+			'user' => 'User not Found',
+			'ip_count' => 0,
+		];
 
 		try {
-
 			$client = new Client([
 				'host' => $ip,
 				'user' => $user,
 				'pass' => $pass,
-				'port' => $port
+				'port' => $port,
+				'timeout' => 10
 			]);
 
-			$query =
-			(new Query('/ppp/secret/print'))
-			->where('name', $cid);
-
-
+			$query = (new Query('/ppp/secret/print'))->where('name', $cid);
 			$response = $client->query($query)->read();
-			if (!empty($response)){
 
-				foreach ($response as $response) {
-					$result = $response['disabled'];
+			if (!empty($response)) {
+				foreach ($response as $r) {
+					$result = $r['disabled'];
 				}
 
+				$status['user'] = $result === 'true' ? 'Disable' :
+				($result === 'false' ? 'Enable' : 'Unknow');
 
-				if ($result == 'true')
-				{
-					$status['user'] = 'Disable';
-				}
-				else if ($result =='false')
-				{
-					$status['user'] = 'Enable';
-				}
-				else
-				{
-					$status['user'] = 'Unknow';
-				}
-
-				
-
-
-				$query_status =
-				(new Query('/ppp/active/print'))
-				->where('name', $cid);
-
+				$query_status = (new Query('/ppp/active/print'))->where('name', $cid);
 				$response_status = $client->query($query_status)->read();
-				if (!empty($response_status ))
-				{
-					$status['online']= 'Online';
-					foreach ($response_status as $response_ip) {
-						$status['ip'] = ($response_ip['address']);
-						$status['uptime']  = ($response_ip['uptime']);
 
+				if (!empty($response_status)) {
+					$status['online'] = 'Online';
+					foreach ($response_status as $r) {
+						$status['ip'] = $r['address'];
+						$status['uptime'] = $r['uptime'];
 
-						$query_ip =
-						(new Query('/ip/address/print'))
-						->where('network',$status['ip']);
-
+						$query_ip = (new Query('/ip/address/print'))->where('network', $status['ip']);
 						$status['ip_count'] = count($client->query($query_ip)->read());
-
 					}
-
+				} else {
+					$status['online'] = 'Offline';
 				}
-				else
-				{
-					$status['online']= 'Offline';
-					$status['ip'] = 'Unknow';
-					$status['uptime']  = 'Unknow';
-				}
-
-
-
 			}
 
+			Log::info('Mikrotik status check successful', [
+				'ip' => $ip,
+				'port' => $port,
+				'user' => $user,
+				'cid' => $cid,
+				'status' => $status,
+			]);
 
-		} catch (Exception $ex) {
-			$result = 'Unknow';
+		} catch (\Exception $ex) {
+			$status['online'] = 'API Error';
+			$status['user'] = 'Unreachable';
+
+			Log::error("Mikrotik connection failed", [
+				'ip' => $ip,
+				'port' => $port,
+				'user' => $user,
+				'cid' => $cid,
+				'error' => $ex->getMessage()
+			]);
 		}
 
-
-
 		return $status;
-		
-
 	}
-	
+
 
 
 
@@ -640,7 +715,7 @@ class Distrouter extends Model
 
 
 		return $status;
-		
+
 
 	}
 

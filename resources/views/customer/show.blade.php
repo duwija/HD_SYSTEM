@@ -238,7 +238,7 @@
                <th style="width: 25%" class="text-right">On Router Status :</th>
                <td>
 
-                <strong>
+<!--                 <strong>
 
                   @php
                   try
@@ -304,7 +304,12 @@
             </a>
             @endif
 
-          </strong>
+          </strong>  -->
+
+
+          <div id="router-status">
+            <span class="text-muted"><i class="fas fa-spinner fa-spin"></i> Loading router status...</span>
+          </div>
 
         </td>
 
@@ -367,8 +372,8 @@
   <input type="hidden" name="password"  id="password" value="{{$customer->distrouter->password}}">
   <input type="hidden" name="port"  id="port" value="{{$customer->distrouter->port}}">
   <input type="hidden" name="interface"  id="interface" value="<pppoe-{{$customer->pppoe}}>">
-    <td colspan="2"> <button type="button" {{$disabled}}  class="btn mb-1 {{$btn_status}} btn-sm pb-1" data-toggle="modal" data-target="#modal-monitor"> <i class="fas fa-chart-line">  </i> Traffic</button>
-     <button type="button" {{$disabled}} id="createTunnelBtn" 
+    <td co lspan="2"> <button type="button" {{$disabled}}id="trafficBtn"  class="btn mb-1 {{$btn_status}} btn-sm pb-1" data-toggle="modal" data-target="#modal-monitor"> <i class="fas fa-chart-line">  </i> Traffic</button>
+     <button type="button" {{$disabled}} id="createTunnelBtn" id="createTunnelBtn" 
      class="btn mb-1 {{$btn_status}} btn-sm pb-1 "
      title="Create Tunnel">
      <i class="fas fa-plug "></i> web
@@ -792,7 +797,7 @@
   <!-- /.modal -->
 
 </div>
-<div class="modal fade" id="modal-ip">
+<!-- <div class="modal fade" id="modal-ip">
   <div class="modal-dialog modal-lg">
     <div class="modal-content ">
 
@@ -808,15 +813,8 @@
               @php
               $status_ip = $distrouter->mikrotik_status_ip($customer->distrouter->ip,$customer->distrouter->user,$customer->distrouter->password,$customer->distrouter->port,$customer->customer_id);
 
-              // dd($status_ip);
+              
               @endphp
-              {{-- @foreach ($status_ip as $status_ip)
-
-              <a >{{$status_ip['network']}}  |  {{$status_ip['interface']}}</a>
-
-
-              @endforeach --}}
-
 
             </div>
 
@@ -827,7 +825,7 @@
   </div>
 
 
-</div>
+</div> -->
 
 
 </section>
@@ -846,30 +844,62 @@
   });
 
   // Function to get ONT status
+  // function getOntStatus() {
+  //   $.ajax({
+  //     url: '/olt/ont_status',
+  //     method: 'POST',
+  //     data: {
+  //       id_onu: $('#id_onu').val(),  // Using jQuery to get the value
+  //       id_olt: $('#id_olt').val()   // Using jQuery to get the value
+  //     },
+  //     success: function(data) {
+  //       $('#ont_status').html(data);  // Update HTML with the received data
+  //     },
+  //     error: function(xhr, status, error) {
+  //       console.log('Error fetching ONT status: ' + error);  // Error handling
+  //     }
+  //   });
+  // }
+
   function getOntStatus() {
-    $.ajax({
-      url: '/olt/ont_status',
-      method: 'POST',
-      data: {
-        id_onu: $('#id_onu').val(),  // Using jQuery to get the value
-        id_olt: $('#id_olt').val()   // Using jQuery to get the value
-      },
-      success: function(data) {
-        $('#ont_status').html(data);  // Update HTML with the received data
-      },
-      error: function(xhr, status, error) {
-        console.log('Error fetching ONT status: ' + error);  // Error handling
-      }
-    });
+    const id_onu = $('#id_onu').val();
+    const id_olt = $('#id_olt').val();
+
+  // Hindari pengiriman jika salah satu ID tidak tersedia
+    if (!id_onu || !id_olt) {
+      console.warn('ID ONU atau OLT tidak ditemukan. Skip polling.');
+    setTimeout(getOntStatus, 10000); // tetap polling ulang setelah 10 detik
+    return;
   }
 
-  // Function to get ONT details
-  function getOntDetail() {
-
-   $.ajax({
-    url: '/olt/onu_detail',
+  $.ajax({
+    url: '/olt/ont_status',
     method: 'POST',
     data: {
+      id_onu: id_onu,
+      id_olt: id_olt
+    },
+    success: function(data) {
+      $('#ont_status').html(data);
+    },
+    error: function(xhr, status, error) {
+      console.error('Error fetching ONT status: ' + error);
+    },
+    complete: function() {
+      // Lanjut polling setelah 10 detik (baik sukses atau error)
+      setTimeout(getOntStatus, 10000);
+    }
+  });
+}
+
+
+  // Function to get ONT details
+function getOntDetail() {
+
+ $.ajax({
+  url: '/olt/onu_detail',
+  method: 'POST',
+  data: {
         id_onu: $('#id_onu').val(),  // Using jQuery to get the value
         id_olt: $('#id_olt').val()   // Using jQuery to get the value
 
@@ -881,31 +911,31 @@
         console.log('Error fetching ONT details: ' + error);  // Error handling
       }
     });
- }
+}
 
   // Optional: Trigger functions on a specific event (if required)
   // Example:
- $('#btn_onu_detail').on('click', function() {
+$('#btn_onu_detail').on('click', function() {
    // getOntStatus();
   getOntDetail();
 });
 
- var center = @json($center);
- var locations = @json($locations);
+var center = @json($center);
+var locations = @json($locations);
 
     // Ubah koordinat pusat menjadi array [lat, lng]
- var coordinates = center.coordinate.split(',').map(Number);
+var coordinates = center.coordinate.split(',').map(Number);
 
     // Inisialisasi peta
- var map = L.map('map').setView(coordinates, center.zoom);
+var map = L.map('map').setView(coordinates, center.zoom);
 
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
     // Tambahkan marker untuk setiap lokasi
- locations.forEach(location => {
+locations.forEach(location => {
         var coords = location.customer.split(',').map(Number); // Ubah string koordinat jadi [lat, lng]
         L.marker(coords).addTo(map)
         .bindPopup(location.name);
@@ -981,6 +1011,77 @@
   });
 </script>
 
+<script>
+  // document.addEventListener("DOMContentLoaded", function() {
+  //   fetchRouterStatus();
+  // });
+
+  // function fetchRouterStatus() {
+
+  //   const customerId = "{{ $customer->id }}";
+
+  //   fetch(`/customer/${customerId}/router-status`)
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     let html = '';
+
+  //     if (data.success) {
+  //       html += `<div class="btn btn-sm ${data.btn_status} mr-2">${data.status_user}</div>`;
+  //       if (parseInt(data.ip_count) <= 1) {
+  //         html += `<a href="http://${data.ip}" target="_blank" class="btn btn-sm ${data.btn_online} mr-2">${data.online} | ${data.ip} | ${data.uptime}</a>`;
+  //       } else {
+  //         html += `<a href="http://${data.ip}" target="_blank" class="btn btn-sm bg-danger mr-2">${data.online} | ${data.ip} => IP Conflict | ${data.uptime}</a>`;
+  //       }
+  //     } else {
+  //       html = `<span class="text-warning">Status unknown</span>`;
+  //     }
+
+  //     document.getElementById('router-status').innerHTML = html;
+  //   })
+  //   .catch(error => {
+  //     console.error('Error fetching router status:', error);
+  //     document.getElementById('router-status').innerHTML = `<span class="text-danger">Failed to load router status</span>`;
+  //   });
+  // }
+
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+    fetchRouterStatus(); // panggil pertama kali saat halaman dimuat
+  });
+
+  function fetchRouterStatus() {
+    const customerId = "{{ $customer->id }}";
+
+    fetch(`/customer/${customerId}/router-status`)
+    .then(response => response.json())
+    .then(data => {
+      let html = '';
+
+      if (data.success) {
+        html += `<div class="btn btn-sm ${data.btn_status} mr-2">${data.status_user}</div>`;
+        if (parseInt(data.ip_count) <= 1) {
+          html += `<a href="http://${data.ip}" target="_blank" class="btn btn-sm ${data.btn_online} mr-2">${data.online} | ${data.ip} | ${data.uptime}</a>`;
+        } else {
+          html += `<a href="http://${data.ip}" target="_blank" class="btn btn-sm bg-danger mr-2">${data.online} | ${data.ip} => IP Conflict | ${data.uptime}</a>`;
+        }
+      } else {
+        html = `<span class="text-warning">Status unknown</span>`;
+      }
+
+      document.getElementById('router-status').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error fetching router status:', error);
+      document.getElementById('router-status').innerHTML = `<span class="text-danger">Failed to load router status</span>`;
+    })
+    .finally(() => {
+        // Panggil lagi setelah 5 detik
+      setTimeout(fetchRouterStatus, 5000);
+    });
+  }
+
+</script>
 
 
 @endsection

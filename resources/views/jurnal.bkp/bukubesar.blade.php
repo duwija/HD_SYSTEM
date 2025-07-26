@@ -7,6 +7,19 @@
     <div class="card-header">
       <h3 class="card-title font-weight-bold">BUKU BESAR  </h3>
 
+  <!--     <div class="float-right">
+        <div class="input-group">
+          <form role="form" method="post" action="/jurnal/create">
+            @csrf
+            <select style="border: 1px solid blue"  name="akuntransaction" id="akuntransaction" class="form-control-sm">
+              @foreach ($akuntransaction as $id => $name)
+              <option value="{{ $id }}">{{ $name }}</option>
+              @endforeach
+            </select>
+            <button type="submit" class="float-right btn bg-primary btn-sm">Add New Jurnal</button>
+          </form>
+        </div>
+      </div> -->
       <br>
       <hr>
 
@@ -37,7 +50,7 @@
         <label for="site location">  Kode Akun </label>
         <div class="input-group mb-3">
           <div class="input-group p-1 date" id="reservationdate" data-target-input="nearest">
-            <select name="akun_filter" id="akun_filter" class="form-control select2">
+            <select name="akun_filter" id="akun_filter" class="form-control">
               <option value="">All Akun</option>
               @foreach ($akun as $akun_code =>$name)
               <option value="{{$akun_code }}">{{ $akun_code }} | {{ $name}}</option>
@@ -60,41 +73,39 @@
     <hr>
 
     <div class="card-body">
-      <div class="table-responsive">
-        <div id="totals" style="margin-bottom: 10px;">
+      <div id="totals" style="margin-bottom: 10px;">
 
-        </div>
-        <table id="bukubesar-table" class="table table-bordered table-striped">
-          <thead>
-           <tr>
+      </div>
+      <table id="bukubesar-table" class="table table-bordered table-striped">
+        <thead>
+         <tr>
 
-            <th colspan="12"class="text-right border-0" >
-              <div class="row float-right">
-
-
-
-              </div>
-            </th>
+          <th colspan="12"class="text-right border-0" >
+            <div class="row float-right">
 
 
 
-
-          </tr>
-
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Date</th>
-
-            <th scope="col">Akun</th>
+            </div>
+          </th>
 
 
-            <th scope="col">Total Rp. <span name='total-debet' id='total-debet'>0 </span></br> Debet   </th>
-            <th scope="col">Total Rp. <span name='total-kredit' id='total-kredit'>0 </span></br> Kredit</th>
-            <th scope="col"> Saldo</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
+
+
+        </tr>
+
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date</th>
+
+          <th scope="col">Akun</th>
+
+
+          <th scope="col">Total Rp. <span name='total-debet' id='total-debet'>0 </span></br> Debet   </th>
+          <th scope="col">Total Rp. <span name='total-kredit' id='total-kredit'>0 </span></br> Kredit</th>
+          <th scope="col"> Saldo</th>
+        </tr>
+      </thead>
+    </table>
   </div>
 </div>
 </section>

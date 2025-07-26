@@ -18,16 +18,32 @@
       </ul>
     </div>
   </div>
-</div>
 
+</div>
+<div>
+  <form method="GET" action="{{ url()->current() }}" class="form-inline mb-4">
+    <div class="form-group mr-2">
+      <label for="date_from" class="mr-2">Dari</label>
+      <input type="date" name="date_from" id="date_from" class="form-control"
+      value="{{ request('date_from', \Carbon\Carbon::today()->toDateString()) }}">
+    </div>
+    <div class="form-group mr-2">
+      <label for="date_to" class="mr-2">s/d</label>
+      <input type="date" name="date_to" id="date_to" class="form-control"
+      value="{{ request('date_to', \Carbon\Carbon::today()->toDateString()) }}">
+    </div>
+    <button type="submit" class="btn btn-primary ml-2">Cari</button>
+  </form>
+</div>
 <!-- Grafik Chart.js -->
+<p class="mb-2"><strong>Periode:</strong> {{ $date_from }} s/d {{ $date_to }}</p>
 <div class="row mb-6">
 
 
   <div class="col-md-3">
     <div class="card mb-4">
       <div class="card-body">
-        <canvas id="cashChart"></canvas>
+        <div id="kasPieApex" style="height:420px"></div>
       </div>
     </div>
   </div>
@@ -35,7 +51,11 @@
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Grafik Posisi Kas & Bank</h5>
-        <canvas id="kasBankChart"></canvas>
+
+        <div id="kasBankApex" style="height:420px"></div>
+
+
+
       </div>
     </div>
   </div>
@@ -47,7 +67,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">Detail Transaksi Per Akun</h5>
-    <table class="table table-bordered">
+    <table id="example1" class="table table-bordered">
       <thead class="table-dark">
         <tr>
           <th>ID Akun</th>
@@ -72,6 +92,8 @@
   </div>
 </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <!-- Script untuk Chart.js dan DataTables -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -90,41 +112,86 @@
     $('#transactionsTable').DataTable();
   });
 </script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const ctx = document.getElementById("kasBankChart").getContext("2d");
 
-    const kasBankChart = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: {!! json_encode($transactionsByAccount->pluck('akun_name')) !!},
-        datasets: [
-        {
-          label: "Total Debit",
-          data: {!! json_encode($transactionsByAccount->pluck('total_debit')) !!},
-          backgroundColor: "#28a745",
-        },
-        {
-          label: "Total Kredit",
-          data: {!! json_encode($transactionsByAccount->pluck('total_kredit')) !!},
-          backgroundColor: "#dc3545",
-        }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: { 
-            stacked: true 
-          },
-          y: { 
-            beginAtZero: true, 
-            stacked: true 
-          }
+<script>
+  var options = {
+    chart: {
+      type: 'bar',
+      height: 400,
+      stacked: true,
+      toolbar: { show: false }
+    },
+    plotOptions: {
+      bar: { horizontal: false }
+    },
+    dataLabels: { enabled: false },
+    series: [
+    {
+      name: 'Total Debit',
+      data: {!! json_encode($transactionsByAccount->pluck('total_debit')) !!}
+    },
+    {
+      name: 'Total Kredit',
+      data: {!! json_encode($transactionsByAccount->pluck('total_kredit')) !!}
+    }
+    ],
+    xaxis: {
+      categories: {!! json_encode($transactionsByAccount->pluck('akun_name')) !!},
+      labels: {
+        rotate: -45
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: function(value) {
+          return 'Rp ' + value.toLocaleString('id-ID', {minimumFractionDigits: 2});
         }
       }
-    });
-  });
+    },
+    tooltip: {
+      y: {
+        formatter: function(value) {
+          return 'Rp ' + value.toLocaleString('id-ID', {minimumFractionDigits: 2});
+        }
+      }
+    },
+    legend: {
+      position: 'top'
+    },
+    colors: ['#28a745', '#dc3545']
+  };
+
+  var chart = new ApexCharts(document.querySelector("#kasBankApex"), options);
+  chart.render();
+
+
+</script>
+<script>
+  var optionsPie = {
+    chart: {
+      type: 'pie',
+      height: 350,
+      toolbar: { show: false }
+    },
+    labels: ['Debit', 'Kredit'],
+    series: [{{ $transactionsByAccount->sum('total_debit') }}, {{ $transactionsByAccount->sum('total_kredit') }}],
+    colors: ['#28a745', '#dc3545'],
+    tooltip: {
+      y: {
+        formatter: function(val){ return 'Rp ' + val.toLocaleString('id-ID', {minimumFractionDigits:2}) }
+      }
+    },
+    legend: { position: 'bottom' },
+    dataLabels: {
+      formatter: function (val, opts) {
+        let valNum = opts.w.config.series[opts.seriesIndex];
+        return 'Rp ' + valNum.toLocaleString('id-ID', {minimumFractionDigits:2});
+      }
+    }
+  };
+  var pieChart = new ApexCharts(document.querySelector("#kasPieApex"), optionsPie);
+  pieChart.render();
+</script>ut.render();
 </script>
 
 @endsection

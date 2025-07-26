@@ -60,8 +60,7 @@
     <hr>
 
     <div class="card-body">
-      <div class="table-responsive">
-        <div id="totals" style="margin-bottom: 10px;">
+      <div id="totals" style="margin-bottom: 10px;">
         <!-- <strong>Total Debet:</strong> <span id="total-debet">0</span> |
           <strong>Total Kredit:</strong> <span id="total-kredit">0</span> -->
         </div>
@@ -97,79 +96,77 @@
             <th scope="col">Akun</th>
 
 
-            <th scope="col">Total Rp. <span name='total-debet' id='total-debet'>0 </span><p> Debet   </p></th>
-            <th scope="col">Total Rp. <span name='total-kredit' id='total-kredit'>0 </span><p> Kredit</p></th>
-          </tr>
-        </thead>
-      </table>
+            <th scope="col">Total Rp. <span name='total-debet' id='total-debet'>0 </span><p> Debet   </th>
+              <th scope="col">Total Rp. <span name='total-kredit' id='total-kredit'>0 </span><p> Kredit</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </section>
+    @endsection
 
-    </div>
-  </div>
-</div>
-</section>
-@endsection
+    @section('footer-scripts')
 
-@section('footer-scripts')
+    <script>
+     var index = 0;
+     $('#jurnal').click(function() 
+     {
+      var index=0;
+      $('#jurnal-table').DataTable().ajax.reload();
 
-<script>
- var index = 0;
- $('#jurnal').click(function() 
- {
-  var index=0;
-  $('#jurnal-table').DataTable().ajax.reload();
-
-});
-
- var table = $('#jurnal-table').DataTable({
-   "responsive": true,
-   "autoWidth": false,
+    });
+     
+     var table = $('#jurnal-table').DataTable({
+       "responsive": true,
+       "autoWidth": false,
        // "searching": true,
-   "language": {
-    "processing": "<span class='fa-stack fa-lg'>\n\
-    <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
-    </span>&emsp;Processing ..."
-  },
-  dom: 'Bfrtip',
-  buttons: [
-    'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
-    ],
-  "lengthMenu": [[20,50, 100, 200, 500, 1000], [20,50, 100, 200, 1000]],
-  processing: true,
-  serverSide: true,
-  ajax: {
+       "language": {
+        "processing": "<span class='fa-stack fa-lg'>\n\
+        <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i>\n\
+        </span>&emsp;Processing ..."
+      },
+      dom: 'Bfrtip',
+      buttons: [
+        'pageLength','copy', 'excel', 'pdf', 'csv', 'print'
+        ],
+      "lengthMenu": [[20,50, 100, 200, 500, 1000], [20,50, 100, 200, 1000]],
+      processing: true,
+      serverSide: true,
+      ajax: {
 
-    url: '/jurnal/getjurnaldata',
-    type: 'POST',
-    data: function ( d ) {
-     return $.extend( {}, d, {
-      "date_from": $(document.querySelector('[name="date_from"]')).val(),
-      "date_end": $(document.querySelector('[name="date_end"]')).val(),
+        url: '/jurnal/getjurnaldata',
+        type: 'POST',
+        data: function ( d ) {
+         return $.extend( {}, d, {
+          "date_from": $(document.querySelector('[name="date_from"]')).val(),
+          "date_end": $(document.querySelector('[name="date_end"]')).val(),
 
-    } );
-   },
-   dataSrc: function (json) {
+        } );
+       },
+       dataSrc: function (json) {
                 // Update totals in the div
-    $('#total-debet').text(json.totals.debet.toLocaleString());
-    $('#total-kredit').text(json.totals.kredit.toLocaleString());
-    table.start = json.start;
-    return json.data; 
+        $('#total-debet').text(json.totals.debet.toLocaleString());
+        $('#total-kredit').text(json.totals.kredit.toLocaleString());
+        table.start = json.start;
+        return json.data; 
 
-  },
-},
-columns: [
+      },
+    },
+    columns: [
 
-  { data: null, name: null, orderable: false, searchable: false, className: 'dt-center' },
-  { data: 'date', name: 'date', className: 'dt-left', orderable: false, searchable: false},
-  { data: 'akun_name', name: 'akun_name', className: 'dt-left', orderable: false, searchable: false },
-  { data: 'debet', name: 'debet', className: 'dt-right' },
-  { data: 'kredit', name: 'kredit', className: 'dt-right' },
-  ],
-rowCallback: function (row, data) {
+      { data: null, name: null, orderable: false, searchable: false, className: 'dt-center' },
+      { data: 'date', name: 'date', className: 'dt-left', orderable: false, searchable: false},
+      { data: 'akun_name', name: 'akun_name', className: 'dt-left', orderable: false, searchable: false },
+      { data: 'debet', name: 'debet', className: 'dt-right' },
+      { data: 'kredit', name: 'kredit', className: 'dt-right' },
+      ],
+    rowCallback: function (row, data) {
 
-  if (data.is_group) {
-   index++; 
+      if (data.is_group) {
+       index++; 
           // Set nomor dan description untuk baris grup
-   $(row).addClass('bg-light text-bold');
+       $(row).addClass('bg-light text-bold');
 
            $('td', row).eq(0).html(data.index); // Nomor dan description
            $('td:gt(1)', row).remove(); // Hapus kolom lain di baris grup

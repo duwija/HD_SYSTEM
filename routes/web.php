@@ -64,6 +64,8 @@ Route::delete('/customer/{id}','CustomerController@destroy');
 Route::post('/customer/searchforjurnal', 'CustomerController@searchforjurnal');
 Route::get('/customermerchant','CustomerController@customermerchant');
 Route::post('/customer/createtunnel', 'CustomerController@createtunnel');
+Route::get('/customer/{id}/router-status', 'CustomerController@ajaxRouterStatus');
+
 Route::get('/subscribe/{customerId}', 'CustomerController@subscribeform');
 Route::get('/pendaftaran/pdf/{id}', 'ustomerController@cetakPDF');
 Route::post('/pendaftaran', 'CustomerController@generatePDF');

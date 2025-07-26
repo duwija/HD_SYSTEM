@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use \RouterOS\Client;
 use \RouterOS\Query;
@@ -399,7 +399,6 @@ $filteredUsers = match ($status) {
 
 
 
-
 public function getRouterInfo($id)
 {
     $routerInfo = [];
@@ -419,55 +418,76 @@ public function getRouterInfo($id)
             'user' => $distrouter->user,
             'pass' => $distrouter->password,
             'port' => $distrouter->port,
-            'timeout' => 5, // Timeout agar tidak menggantung
+            'timeout' => 5,
         ]);
 
-        // Ambil informasi sistem
-        try {
-            $query = new Query('/system/resource/print');
-            $routerInfo = $client->query($query)->read();
-        } catch (\Exception $e) {
-            \Log::warning("Gagal ambil informasi router: " . $e->getMessage());
-            $routerInfo = [['error' => 'Router info not available']];
-        }
+        // 1. Caching system resource info
+        $routerInfo = Cache::remember("router_info_{$id}", 30, function () use ($client) {
+            try {
+                $query = new Query('/system/resource/print');
+                return $client->query($query)->read();
+            } catch (\Exception $e) {
+                \Log::warning("Gagal ambil informasi router: " . $e->getMessage());
+                return [['error' => 'Router info not available']];
+            }
+        });
 
-        // Ambil daftar pengguna aktif (online)
-        try {
-            $pppActiveQuery = new Query('/ppp/active/print');
-            $pppActive = $client->query($pppActiveQuery)->read();
-            $onlineUsers = collect($pppActive)->pluck('name')->toArray();
-            $pppActiveCount = count($pppActive);
-        } catch (\Exception $e) {
-            \Log::warning("Gagal ambil ppp active: " . $e->getMessage());
-            $onlineUsers = [];
-            $pppActiveCount = 0;
-        }
+        // 2. Caching ppp active users
+        $onlineUsers = Cache::remember("ppp_active_{$id}", 30, function () use ($client) {
+            try {
+                $pppActiveQuery = new Query('/ppp/active/print');
+                $pppActive = $client->query($pppActiveQuery)->read();
+                return collect($pppActive)->pluck('name')->toArray();
+            } catch (\Exception $e) {
+                \Log::warning("Gagal ambil ppp active: " . $e->getMessage());
+                return [];
+            }
+        });
+        $pppActiveCount = count($onlineUsers);
 
-        // Ambil semua user PPPoE
-        try {
-            $pppUserQuery = new Query('/ppp/secret/print');
-            $pppUsers = $client->query($pppUserQuery)->read();
-            $pppUserCount = count($pppUsers);
+        // 3. Caching ppp users
+        $pppData = Cache::remember("ppp_users_{$id}", 30, function () use ($client, $onlineUsers) {
+            $disabled = [];
+            $offline = [];
+            $online = [];
+            $pppUserCount = 0;
 
-            foreach ($pppUsers as $user) {
-                $userInfo = $user['name'] . ' - ' . ($user['comment'] ?? 'No Description');
+            try {
+                $pppUserQuery = new Query('/ppp/secret/print');
+                $pppUsers = $client->query($pppUserQuery)->read();
+                $pppUserCount = count($pppUsers);
 
-                if (isset($user['disabled']) && $user['disabled'] == 'true') {
-                    $disabled[] = $userInfo;
-                } elseif (in_array($user['name'], $onlineUsers)) {
-                    $online[] = $userInfo;
-                } else {
-                    $offline[] = $userInfo;
+                foreach ($pppUsers as $user) {
+                    $userInfo = $user['name'] . ' - ' . ($user['comment'] ?? 'No Description');
+
+                    if (isset($user['disabled']) && $user['disabled'] == 'true') {
+                        $disabled[] = $userInfo;
+                    } elseif (in_array($user['name'], $onlineUsers)) {
+                        $online[] = $userInfo;
+                    } else {
+                        $offline[] = $userInfo;
+                    }
                 }
+            } catch (\Exception $e) {
+                \Log::warning("Gagal ambil daftar user PPPoE: " . $e->getMessage());
             }
 
-            $pppOfflineCount = count($offline);
-            $pppDisabledCount = count($disabled);
-        } catch (\Exception $e) {
-            \Log::warning("Gagal ambil daftar user PPPoE: " . $e->getMessage());
-        }
+            return [
+                'pppUserCount' => $pppUserCount,
+                'online' => $online,
+                'offline' => $offline,
+                'disabled' => $disabled,
+            ];
+        });
 
-        // Kembalikan semua data meskipun sebagian error
+        // Set hasil akhir
+        $pppUserCount = $pppData['pppUserCount'];
+        $online = $pppData['online'];
+        $offline = $pppData['offline'];
+        $disabled = $pppData['disabled'];
+        $pppOfflineCount = count($offline);
+        $pppDisabledCount = count($disabled);
+
         return response()->json([
             'success' => true,
             'routerInfo' => $routerInfo,
@@ -481,7 +501,6 @@ public function getRouterInfo($id)
         ]);
 
     } catch (\Exception $ex) {
-        // Hanya jika gagal total, misal router tidak bisa dikoneksikan sama sekali
         \Log::error("MikroTik API Error: " . $ex->getMessage());
 
         return response()->json([
@@ -624,11 +643,11 @@ public function show($id)
         //     $result = 'Unknow';
         // }
 
-catch (\RouterOS\Exceptions\ConnectException $ex) {
-    $result = 'Connection Timeout';
-} catch (\Exception $ex) {
-    $result = 'Unknown Error';
-}
+        catch (\RouterOS\Exceptions\ConnectException $ex) {
+            $result = 'Connection Timeout';
+        } catch (\Exception $ex) {
+            $result = 'Unknown Error';
+        }
 
 
 

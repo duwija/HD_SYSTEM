@@ -408,7 +408,7 @@
          <!--  @include('layout/olt')
           @include('layout/distrouter') -->
           <hr>
-          <!-- @include('layout/payment') -->
+          @include('layout/payment-inv')
           @include('layout/marketing')
           <!-- @include('layout/accounting') -->
           @break

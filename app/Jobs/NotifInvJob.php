@@ -47,10 +47,10 @@ class NotifInvJob implements ShouldQueue
     public function handle()
     {
         //
-       $response = null;
-       $customer = \App\Customer::where('customer_id', $this->cid)->first();
+     $response = null;
+     $customer = \App\Customer::where('customer_id', $this->cid)->first();
 
-       if (!$customer) {
+     if (!$customer) {
         Log::channel('notif')->warning("Customer not found with CID: {$this->cid}");
         return;
     }
@@ -59,25 +59,25 @@ class NotifInvJob implements ShouldQueue
 
 
         // WhatsApp Notification
-     $message = "*[Pengingat Pembayaran Internet]*";
-     $message .= "\n\n";
-     $message .= "\nPelanggan Yth. ";
-     $message .= "\n\n";
-     $message .= "\nNama : " . $customer->name;
-     $message .= "\nCID : " . $customer->customer_id ;
-     $message .= "\nKami ingin mengingatkan bahwa tagihan Anda sudah tersedia";
-     $message .= "\nAgar tetap bisa menikmati Layanan kami, mohon untuk menyelesaikan pembayaran tepat waktu.";
-     $message .= "\n\n";
-     $message .= "Untuk informasi lebih lanjut, silakan klik link berikut:";
-     $message .= "\n" . "http://" . env("DOMAIN_NAME") . "/invoice/cst/" . $this->encryptedurl;
-     $message .= "\n\n";
-     $message .= "Jika sudah melakukan pembayaran, abaikan pesan ini.";
-     $message .= "\nJika ada pertanyaan, hubungi CS kami di ".env("PAYMENT_WA");
-     $message .= "\n\n";
-     $message .= "".env("SIGNATURE")."";
+       $message = "*[Pengingat Pembayaran Internet]*";
+       $message .= "\n\n";
+       $message .= "\nPelanggan Yth. ";
+       $message .= "\n\n";
+       $message .= "\nNama : " . $customer->name;
+       $message .= "\nCID : " . $customer->customer_id ;
+       $message .= "\nKami ingin mengingatkan bahwa tagihan Anda sudah tersedia";
+       $message .= "\nAgar tetap bisa menikmati Layanan kami, mohon untuk menyelesaikan pembayaran tepat waktu.";
+       $message .= "\n\n";
+       $message .= "Untuk informasi lebih lanjut, silakan klik link berikut:";
+       $message .= "\n" . "http://" . env("DOMAIN_NAME") . $this->encryptedurl;
+       $message .= "\n\n";
+       $message .= "Jika sudah melakukan pembayaran, abaikan pesan ini.";
+       $message .= "\nJika ada pertanyaan, hubungi CS kami di ".env("PAYMENT_WA");
+       $message .= "\n\n";
+       $message .= "".env("SIGNATURE")."";
 
     // $msgresult = \App\Helpers\::wa_payment($customer->phone, $message);
-     $msgresult = WaGatewayHelper::wa_payment($customer->phone, $message);
+       $msgresult = WaGatewayHelper::wa_payment($customer->phone, $message);
         // $response = qontak_whatsapp_helper_job_remainder_inv(
         //     $this->phone,
         //     $this->name,
@@ -85,7 +85,7 @@ class NotifInvJob implements ShouldQueue
         //     $this->encryptedurl
         // );
 
- } elseif ($customer->notification == 2) {
+   } elseif ($customer->notification == 2) {
         // Email Notification
     if (!empty($customer->email)) {
         $data = [

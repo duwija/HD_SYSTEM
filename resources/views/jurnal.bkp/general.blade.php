@@ -40,160 +40,172 @@
         <div class="col-md-3">
           <label for="kas" class="form-label">Bertransaksi dengan</label>
           <select name="category" id="category" class="form-control select2" required>
-           <option value="" selected disabled>-- Pilih Kategori --</option>
-           <option value="none">None</option>
-           <option value="contact">Contact</option>
-           <option value="customer">Customer</option>
-           <option value="employee">Employee</option>
-         </select>
-       </div>
-       <div class="col-md-3">
-        <label for="yangMembayar" class="form-label">Name</label>
-        <input type="hidden" name="contact_id" class="form-control" placeholder="ID">
-        <input type="text" name="name" class="form-control" placeholder="name" readonly>
+            <option value="" selected disabled>-- Pilih Kategori --</option>
+            <option value="none">None</option>
+            <option value="contact">Contact</option>
+            <option value="customer">Customer</option>
+            <option value="employee">Employee</option>
+            
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="yangMembayar" class="form-label">Name</label>
+          <input type="hidden" name="contact_id" class="form-control" placeholder="ID">
+          <input
+          type="text"
+          class="form-control @error('name') is-invalid @enderror"
+          name="name"
+          id="name"
+          placeholder="Name"
+          value="{{ old('name') }}"
+          readonly
+          >
+          @error('name')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+        </div>
       </div>
-    </div>
 
-    <div class="row mb-12 pt-4 ">
-      <div class="col-md-12 card card-outline card-success">
-        <label for="kas" class="form-label"></label>
-        <table class="table table-bordered">
-          <thead class="table-light bg-light">
+      <div class="row mb-12 pt-4 ">
+        <div class="col-md-12 card card-outline card-success">
+          <label for="kas" class="form-label"></label>
+          <table class="table table-bordered">
+            <thead class="table-light bg-light">
+              <tr>
+                <th class="col-md-3">Akun</th>
+                <th class="col-md-4">Deskripsi</th>
+                <th class="col-md-2">Debet</th>
+                <th class="col-md-2">Kredit</th>
+                <th class="col-md-1"></th>
+              </tr>
+            </thead>
+            <tbody id="transaksiTable">
+              <tr>
+                <td>
+                  <select name="akun[]" class="form-control select2" required>
+                    <option value="">-- Pilih Akun --</option>
+                    @foreach($akundebet as $akund)
+                    <option value="{{ $akund->akun_code }}">{{ $akund->akun_code }} - {{ $akund->name }}</option>
+                    @endforeach
+                  </select>
+                </td>
+                <td><input type="text" name="description[]" class="form-control" placeholder="Deskripsi"></td>
+                <td><input type="number" name="debet[]" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required></td>
+                <td><input type="number" name="kredit[]" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required></td>
+                <td><button type="button" class="btn btn-danger btn-sm delete-row">-</button></td>
+              </tr>
+            </tbody>
             <tr>
-              <th class="col-md-3">Akun</th>
-              <th class="col-md-4">Deskripsi</th>
-              <th class="col-md-2">Debet</th>
-              <th class="col-md-2">Kredit</th>
-              <th class="col-md-1"></th>
-            </tr>
-          </thead>
-          <tbody id="transaksiTable">
-            <tr>
+              <td colspan="2" class="text-end"><h5>Total:</h5></td>
               <td>
-                <select name="akun[]" class="form-control select2" required>
-                  <option value="">-- Pilih Akun --</option>
-                  @foreach($akundebet as $akund)
-                  <option value="{{ $akund->akun_code }}">{{ $akund->akun_code }} - {{ $akund->name }}</option>
-                  @endforeach
-                </select>
+                <h5>
+                  <input type="number" readonly name="totaldebet" id="totalAmountdebet" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required>
+                </h5>
               </td>
-              <td><input type="text" name="description[]" class="form-control" placeholder="Deskripsi"></td>
-              <td><input type="number" name="debet[]" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required></td>
-              <td><input type="number" name="kredit[]" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required></td>
-              <td><button type="button" class="btn btn-danger btn-sm delete-row">-</button></td>
+              <td>
+                <h5>
+                  <input type="number" readonly name="totalkredit" id="totalAmountkredit" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required>
+                </h5>
+              </td>
             </tr>
-          </tbody>
-          <tr>
-            <td colspan="2" class="text-end"><h5>Total:</h5></td>
-            <td>
-              <h5>
-                <input type="number" readonly name="totaldebet" id="totalAmountdebet" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required>
-              </h5>
-            </td>
-            <td>
-              <h5>
-                <input type="number" readonly name="totalkredit" id="totalAmountkredit" class="form-control jumlah" placeholder="Rp. 0,00" min="0" step="0.01" required>
-              </h5>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <button type="button" class="btn btn-primary btn-sm" id="addRow">+ Tambah Data</button>
-
-    <div class="row my-3">
-      <div class="col-md-12">
-        <label for="memo" class="form-label">Memo</label>
-        <textarea class="form-control" name="memo" id="memo" rows="3"></textarea>
-      </div>
-    </div>
-
-    <div class="d-flex justify-content-between mt-4">
-      <button type="reset" class="btn btn-danger">Batal</button>
-      <button type="submit" id='submit' disabled class="btn btn-success">Buat Transaksi</button>
-    </div>
-  </form>
-</div>
-
-<!-- Modal untuk search customer -->
-<div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="customerModalLabel">Cari Customer</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-10">
-            <input type="text" id="searchCustomerText" class="form-control" placeholder="Enter Id or Name">
-          </div>
-          <div class="col-md-2">
-            <button type="button" id="searchCustomer" class="btn btn-primary">Find</button>
-          </div>
+          </table>
         </div>
       </div>
-      <ul id="customerList" class="list-group m-2 p-1"></ul>
-    </div>
-  </div>
-</div>
 
-<!-- Modal untuk search contact -->
-<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="contactModalLabel">Cari contact</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-10">
-            <input type="text" id="searchcontactText" class="form-control " placeholder="Enter Id or Name">
-          </div>
-          <div class="col-md-2">
-            <button type="button" id="searchcontact" class="btn btn-primary">Find</button>
-          </div>
+      <button type="button" class="btn btn-primary btn-sm" id="addRow">+ Tambah Data</button>
+
+      <div class="row my-3">
+        <div class="col-md-12">
+          <label for="memo" class="form-label">Memo</label>
+          <textarea class="form-control" name="memo" id="memo" rows="3"></textarea>
         </div>
       </div>
-      <ul id="contactList" class="list-group m-2 p-1 "></ul>
-    </div>
-  </div>
-</div>
 
-<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="employeeModalLabel">Cari employee</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="d-flex justify-content-between mt-4">
+        <button type="reset" class="btn btn-danger">Batal</button>
+        <button type="submit" id='submit' disabled class="btn btn-success">Buat Transaksi</button>
       </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-10">
-            <input type="text" id="searchemployeeText" class="form-control " placeholder="Enter Id or Name">
-          </div>
-          <div class="col-md-2">
-            <button type="button" id="searchemployee" class="btn btn-primary">Find</button>
+    </form>
+  </div>
+
+  <!-- Modal untuk search customer -->
+  <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="customerModalLabel">Cari Customer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-10">
+              <input type="text" id="searchCustomerText" class="form-control" placeholder="Enter Id or Name">
+            </div>
+            <div class="col-md-2">
+              <button type="button" id="searchCustomer" class="btn btn-primary">Find</button>
+            </div>
           </div>
         </div>
+        <ul id="customerList" class="list-group m-2 p-1"></ul>
       </div>
-      <ul id="employeeList" class="list-group m-2 p-1 "></ul>
     </div>
   </div>
-</div>
 
-<!-- Modal Loading -->
-<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="text-center">Sedang memproses, harap tunggu...</h5>
+  <!-- Modal untuk search contact -->
+  <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="contactModalLabel">Cari contact</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-10">
+              <input type="text" id="searchcontactText" class="form-control " placeholder="Enter Id or Name">
+            </div>
+            <div class="col-md-2">
+              <button type="button" id="searchcontact" class="btn btn-primary">Find</button>
+            </div>
+          </div>
+        </div>
+        <ul id="contactList" class="list-group m-2 p-1 "></ul>
       </div>
     </div>
   </div>
-</div>
+
+  <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeModalLabel">Cari employee</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-10">
+              <input type="text" id="searchemployeeText" class="form-control " placeholder="Enter Id or Name">
+            </div>
+            <div class="col-md-2">
+              <button type="button" id="searchemployee" class="btn btn-primary">Find</button>
+            </div>
+          </div>
+        </div>
+        <ul id="employeeList" class="list-group m-2 p-1 "></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Loading -->
+  <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h5 class="text-center">Sedang memproses, harap tunggu...</h5>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 @endsection
@@ -205,6 +217,7 @@
     const transaksiTable = document.getElementById('transaksiTable');
     const addRowBtn = document.getElementById('addRow');
 
+    // Tambah baris baru
     addRowBtn.addEventListener('click', function () {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
@@ -220,15 +233,8 @@
       <td><button type="button" class="btn btn-danger btn-sm delete-row">-</button></td>
       `;
       transaksiTable.appendChild(newRow);
-
-  // *** Tambahkan baris ini ***
-      $(newRow).find('.select2').select2({
-        dropdownParent: $(newRow)
-      });
-
       updateTotal();
     });
-
 
     // Hapus baris
     transaksiTable.addEventListener('click', function (e) {
@@ -492,27 +498,5 @@ function generateAkunOptions() {
       $('#employeeModal').modal('hide');
     });
   });
-</script>
-<script>
-// Saat modal contact ditutup, cek apakah ada item yang dipilih
-  $('#contactModal').on('hidden.bs.modal', function () {
-  // Jika input 'name' kosong, berarti tidak ada yang dipilih
-    if($('input[name="name"]').val() === '') {
-    // Reset category ke none (atau kosong)
-      $('#category').val('none').trigger('change');
-    }
-  });
-
-  $('#customerModal').on('hidden.bs.modal', function () {
-    if($('input[name="name"]').val() === '') {
-      $('#category').val('none').trigger('change');
-    }
-  });
-  $('#employeeModal').on('hidden.bs.modal', function () {
-    if($('input[name="name"]').val() === '') {
-      $('#category').val('none').trigger('change');
-    }
-  });
-
 </script>
 @endsection

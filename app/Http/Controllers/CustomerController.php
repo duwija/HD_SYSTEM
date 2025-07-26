@@ -9,6 +9,7 @@ use \RouterOS\Query;
 Use GuzzleHttp\Clients;
 use \App\Customer;
 use \App\Suminvoice;
+
 use DataTables;
 use Exception;
 use App\Plan;
@@ -995,7 +996,17 @@ public function table_invoice(Request $request)
      */
     public function show($id)
     {
-      $customer = \App\Customer::findOrFail($id);
+      $customer = \App\Customer::with([
+        'status_name',
+        'merchant_name',
+        'plan_name',
+        'sale_name',
+        'distrouter',
+        'olt_name',
+        'distpoint_name',
+        'file',
+        'device'
+    ])->findOrFail($id);
         //$customer =DB::table('customers')->get();
       // dd($customer);
 
@@ -1003,15 +1014,11 @@ public function table_invoice(Request $request)
 
       $countpppoe = ($countpppoe > 1) ? $countpppoe : 1;
 
-      if  (\App\Customer::findOrFail($id) ->coordinate == null)
-      {
-        $coordinate =env('COORDINATE_CENTER');
+      if ($customer->coordinate == null) {
+        $coordinate = env('COORDINATE_CENTER');
+    } else {
+        $coordinate = $customer->coordinate;
     }
-    else
-    {
-        $coordinate =\App\Customer::findOrFail($id) ->coordinate;
-    }
-
 
     $config['center'] = $coordinate;
     $config['zoom'] = '13';
@@ -1040,6 +1047,51 @@ public function table_invoice(Request $request)
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function ajaxRouterStatus($id)
+    {
+        try {
+            $customer = \App\Customer::with('distrouter')->findOrFail($id);
+          //  Log::info("Fetching Mikrotik status for customer: {$customer->id}, pppoe: {$customer->pppoe}");
+            $status = $customer->distrouter->mikrotik_status(
+                $customer->distrouter->ip,
+                $customer->distrouter->user,
+                $customer->distrouter->password,
+                $customer->distrouter->port,
+                $customer->pppoe
+            );
+          //  Log::info($status);
+            $btn_status = match ($status['user'] ?? '') {
+                'Enable' => 'btn-success',
+                'Disable' => 'btn-secondary',
+                default => 'btn-warning',
+            };
+
+            $btn_online = match ($status['online'] ?? '') {
+                'Online' => 'btn-success',
+                'Offline' => 'btn-secondary',
+                default => 'btn-warning',
+            };
+
+            return response()->json([
+                'success' => true,
+                'status_user' => $status['user'],
+                'online' => $status['online'],
+                'ip' => $status['ip'],
+                'uptime' => $status['uptime'],
+                'ip_count' => $status['ip_count'] ?? 0,
+                'btn_status' => $btn_status,
+                'btn_online' => $btn_online,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch router status',
+            ]);
+        }
+    }
+
+
     public function edit($id)
     {
         $status = \App\Statuscustomer::pluck('name', 'id');

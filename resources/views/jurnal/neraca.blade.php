@@ -1,76 +1,77 @@
+{{-- resources/views/jurnal/neraca.blade.php --}}
 @extends('layout.main')
-@section('title', 'Laporan Neraca')
 
 @section('content')
 <div class="container">
-  <h2 class="text-center">Laporan Neraca</h2>
-  <hr>
+  <h1>Neraca</h1>
+  <p>Periode: {{ $tanggalAwal }} s/d {{ $tanggalAkhir }}</p>
 
-  <div class="row">
-    <!-- Aktiva -->
-    <div class="col-md-6">
-      <h4>Aktiva</h4>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Akun</th>
-            <th>Saldo</th>
-          </tr>
-        </thead>
-        <tbody>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Nama Akun</th>
+        <th class="text-end">Saldo (Rp)</th>
+      </tr>
+    </thead>
+    <tbody>
 
-          @foreach ($aktiva as $akun)
+      {{-- Aktiva --}}
+      <tr class="table-primary">
+        <td colspan="2"><strong>Aktiva</strong></td>
+      </tr>
+      @foreach ($data['aktiva'] ?? [] as $parentData)
+      <tr>
+        <td><strong>{{ $parentData[0]->name }}</strong></td>
+        <td class="text-end"><strong>{{ number_format($parentData['total_saldo'], 2, ',', '.') }}</strong></td>
+      </tr>
+      @foreach ($parentData['children'] as $child)
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;{{ $child['akun']->nama }}</td>
+        <td class="text-end">{{ number_format($child['saldo'], 2, ',', '.') }}</td>
+      </tr>
+      @endforeach
+      @endforeach
 
-          @include('jurnal.akun_row', ['akun' => $akun, 'level' => 0])
-          @php
-          
-          @endphp
-          @endforeach
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Total Aktiva</th>
-            <th>{{ number_format($totalAktiva, 2) }}</th>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
+      {{-- Kewajiban --}}
+      <tr class="table-primary">
+        <td colspan="2"><strong>Kewajiban</strong></td>
+      </tr>
+      @foreach ($data['kewajiban'] ?? [] as $parentData)
+      <tr>
+        <td><strong>{{ $parentData['parent']->nama }}</strong></td>
+        <td class="text-end"><strong>{{ number_format($parentData['total_saldo'], 2, ',', '.') }}</strong></td>
+      </tr>
+      @foreach ($parentData['children'] as $child)
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;{{ $child['akun']->nama }}</td>
+        <td class="text-end">{{ number_format($child['saldo'], 2, ',', '.') }}</td>
+      </tr>
+      @endforeach
+      @endforeach
 
-    <!-- Kewajiban dan Ekuitas -->
-    <div class="col-md-6">
-      <h4>Kewajiban dan Ekuitas</h4>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Akun</th>
-            <th>Saldo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="2"><strong>Kewajiban</strong></td>
-          </tr>
-          
-          @foreach ($kewajiban as $akun)
-          @include('jurnal.akun_row', ['akun' => $akun, 'level' => 0])
-          @endforeach
+      {{-- Ekuitas --}}
+      <tr class="table-primary">
+        <td colspan="2"><strong>Ekuitas</strong></td>
+      </tr>
+      @foreach ($data['ekuitas'] ?? [] as $parentData)
+      <tr>
+        <td><strong>{{ $parentData['parent']->nama }}</strong></td>
+        <td class="text-end"><strong>{{ number_format($parentData['total_saldo'], 2, ',', '.') }}</strong></td>
+      </tr>
+      @foreach ($parentData['children'] as $child)
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;{{ $child['akun']->nama }}</td>
+        <td class="text-end">{{ number_format($child['saldo'], 2, ',', '.') }}</td>
+      </tr>
+      @endforeach
+      @endforeach
 
-          <tr>
-            <td colspan="2"><strong>Ekuitas</strong></td>
-          </tr>
-          
-          @foreach ($ekuitas as $akun)
-          @include('jurnal.akun_row', ['akun' => $akun, 'level' => 0])
-          @endforeach
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Total Kewajiban dan Ekuitas</th>
-            <th>{{ number_format($totalKewajiban + $totalEkuitas, 2) }}</th>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  </div>
+      {{-- Total --}}
+      <tr class="table-success">
+        <th>Total Keseluruhan</th>
+        <th class="text-end">{{ number_format($totalAktiva + $totalKewajiban + $totalEkuitas, 2, ',', '.') }}</th>
+      </tr>
+    </tbody>
+  </table>
 </div>
 @endsection
